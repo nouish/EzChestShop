@@ -65,6 +65,8 @@ public class Utils {
         try {
             if (isFolia()) {
                 versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
+            } else if (Bukkit.getBukkitVersion().equals("1.21-R0.1-SNAPSHOT")) {
+                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_21_R1").newInstance();
             } else {
                 String packageName = Utils.class.getPackage().getName();
                 String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
