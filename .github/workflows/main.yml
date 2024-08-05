@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache local Maven repository
+        id: cache-maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Download Spigot Buildtools
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        run: |
+          mkdir ~/spigot-buildtools
+          cd ~/spigot-buildtools
+          wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+
+      - name: Setup JDK 8
+        uses: actions/setup-java@v4
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - name: Install Spigot 1.16.5
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        run: |
+          cd ~/spigot-buildtools
+          java -jar BuildTools.jar --rev 1.16.5
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Install Spigot 1.17.1, 1.18.2 and 1.19.4
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        run: |
+          cd ~/spigot-buildtools
+          java -jar BuildTools.jar --rev 1.17.1
+          java -jar BuildTools.jar --rev 1.18.2
+          java -jar BuildTools.jar --rev 1.19.4
+
+      - name: Setup JDK 22
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: temurin
+
+      - name: Install Spigot 1.20.4 and 1.21
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        run: |
+          cd ~/spigot-buildtools
+          java -jar BuildTools.jar --rev 1.20.4 --remapped
+          java -jar BuildTools.jar --rev 1.21 --remapped
+
+      - name: Build with Maven
+        run: |
+          mvn --version
+          mvn --batch-mode --no-transfer-progress clean package
+          echo "project_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: EzChestShop-${{ env.project_version }}+${{ github.run_number }}
+          path: |
+            target/EzChestShop-*.jar
+            !target/original-EzChestShop-*.jar
