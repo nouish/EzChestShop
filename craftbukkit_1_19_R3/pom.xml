@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.deadlight</groupId>
-    <artifactId>EzChestShop-craftbukkit_1_19_R3</artifactId>
-    <version>${project.parent.version}</version>
-    <packaging>jar</packaging>
     <parent>
         <groupId>me.deadlight</groupId>
         <artifactId>EzChestShop-parent</artifactId>
         <version>1.6.5</version>
     </parent>
 
-    <name>EzChestShop-craftbukkit_1_19_R3</name>
+    <artifactId>EzChestShop-craftbukkit_1_19_R3</artifactId>
+    <packaging>jar</packaging>
 
+    <name>EzChestShop NMS 1.19.4</name>
     <description>Easy Chest Shop that any server owner wants that for his/her players</description>
-    <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <repositories>
         <repository>
@@ -43,4 +37,19 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>17</release>
+                    <compilerArgs>
+                        <arg>-proc:full</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
