@@ -85,8 +85,9 @@ public final class EzChestShop extends JavaPlugin {
         if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18")
                 || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16")
                 || getServer().getVersion().contains("1.20")
-                || getServer().getVersion().contains("1.21"))){
-            logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.16.5, 1.17.1, 1.18.2, 1.19.4, 1.20.4 and 1.21!, &cself disabling...");
+                || getServer().getVersion().contains("1.21")
+                || getServer().getVersion().contains("1.21.1"))){
+            logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.16.5, 1.17.1, 1.18.2, 1.19.4, 1.20.4, 1.21 and 1.21.1!, &cself disabling...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         } else {

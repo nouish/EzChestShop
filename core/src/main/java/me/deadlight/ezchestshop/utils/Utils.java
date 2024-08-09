@@ -65,7 +65,7 @@ public class Utils {
         try {
             if (isFolia()) {
                 versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
-            } else if (Bukkit.getBukkitVersion().equals("1.21-R0.1-SNAPSHOT")) {
+            } else if (Bukkit.getBukkitVersion().equals("1.21-R0.1-SNAPSHOT") || Bukkit.getBukkitVersion().equals("1.21.1-R0.1-SNAPSHOT")) {
                 versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_21_R1").newInstance();
             } else {
                 String packageName = Utils.class.getPackage().getName();
@@ -97,12 +97,10 @@ public class Utils {
      * @throws IOException
      */
     public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
-
         String encodedItem = encodeItem(item);
         if (encodedItem != null) {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
         }
-
     }
 
     /**

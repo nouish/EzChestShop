@@ -63,12 +63,12 @@ jobs:
           java-version: 22
           distribution: temurin
 
-      - name: Install Spigot 1.20.4 and 1.21
+      - name: Install Spigot 1.20.4 and 1.21.1
         if: steps.cache-maven.outputs.cache-hit != 'true'
         run: |
           cd ~/spigot-buildtools
           java -jar BuildTools.jar --rev 1.20.4 --remapped
-          java -jar BuildTools.jar --rev 1.21 --remapped
+          java -jar BuildTools.jar --rev 1.21.1 --remapped
 
       - name: Build with Maven
         run: |

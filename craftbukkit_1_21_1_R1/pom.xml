@@ -10,10 +10,10 @@
         <version>1.6.5</version>
     </parent>
 
-    <artifactId>EzChestShop-craftbukkit_1_21_R1</artifactId>
+    <artifactId>EzChestShop-craftbukkit_1_21_1_R1</artifactId>
     <packaging>jar</packaging>
 
-    <name>EzChestShop NMS 1.21</name>
+    <name>EzChestShop NMS 1.21.1</name>
     <description>Easy Chest Shop that any server owner wants that for his/her players</description>
 
     <repositories>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
+            <version>1.21.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <classifier>remapped-mojang</classifier>
         </dependency>
