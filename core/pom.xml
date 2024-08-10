@@ -60,6 +60,10 @@
                             <pattern>com.zaxxer.hikari</pattern>
                             <shadedPattern>me.deadlight.ezchestshop.lib.hikari</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>me.deadlight.ezchestshop.lib.bstats</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -148,6 +152,12 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
         <!-- bundled with Minecraft, should be kept in sync -->
         <dependency>
