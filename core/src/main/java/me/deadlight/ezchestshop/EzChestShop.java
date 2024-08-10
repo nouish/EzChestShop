@@ -104,6 +104,9 @@ public final class EzChestShop extends JavaPlugin {
 //            return;
         }
 
+        if (Bukkit.getPluginManager().getPlugin("NBTAPI") == null) {
+            getLogger().warning("Please install the NBTAPI plugin by tr7zw in order to use the /checkprofits command: https://www.spigotmc.org/resources/nbt-api.7939/");
+        }
 
         LanguageManager.loadLanguages();
         try {

@@ -39,6 +39,7 @@
                             <artifact>*:*</artifact>
                             <excludes>
                                 <exclude>META-INF/MANIFEST.MF</exclude>
+                                <exclude>**/module-info.class</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -77,6 +78,13 @@
 
     <repositories>
         <repository>
+            <id>central</id>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -111,11 +119,6 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>maven_central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
     </repositories>
 

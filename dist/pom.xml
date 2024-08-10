@@ -58,10 +58,6 @@
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>me.deadlight.ezchestshop.lib.hikari</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>de.tr7zw.nbtapi</pattern>
-                                    <shadedPattern>me.deadlight.ezchestshop.lib.nbtapi</shadedPattern>
-                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>

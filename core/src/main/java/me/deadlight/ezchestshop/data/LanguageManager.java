@@ -909,6 +909,9 @@ public class LanguageManager {
     public BaseComponent[] joinProfitNotification() {
         return MineDown.parse( getList("checkprofits.join-notification").stream().map(s -> Utils.colorify(s)).collect(Collectors.joining("\n")));
     }
+    public String dependencyNbtapiMissing() {
+        return Utils.colorify(getString("checkprofits.dependency-nbtapi-missing"));
+    }
 
 
     //shulkershop-dropped-lore.
