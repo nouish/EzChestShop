@@ -1,18 +1,42 @@
 package me.deadlight.ezchestshop;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
-import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
+import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.integrations.AdvancedRegionMarket;
-import me.deadlight.ezchestshop.listeners.*;
+import me.deadlight.ezchestshop.listeners.BlockBreakListener;
+import me.deadlight.ezchestshop.listeners.BlockPistonExtendListener;
+import me.deadlight.ezchestshop.listeners.BlockPlaceListener;
+import me.deadlight.ezchestshop.listeners.ChatListener;
+import me.deadlight.ezchestshop.listeners.ChestOpeningListener;
+import me.deadlight.ezchestshop.listeners.ChestShopBreakPrevention;
+import me.deadlight.ezchestshop.listeners.PlayerCloseToChestListener;
+import me.deadlight.ezchestshop.listeners.PlayerJoinListener;
+import me.deadlight.ezchestshop.listeners.PlayerLeavingListener;
+import me.deadlight.ezchestshop.listeners.PlayerLookingAtChestShop;
+import me.deadlight.ezchestshop.listeners.PlayerTransactionListener;
+import me.deadlight.ezchestshop.listeners.UpdateChecker;
 import me.deadlight.ezchestshop.tasks.LoadedChunksTask;
-import me.deadlight.ezchestshop.utils.*;
+import me.deadlight.ezchestshop.utils.ASHologram;
+import me.deadlight.ezchestshop.utils.BlockOutline;
+import me.deadlight.ezchestshop.utils.CommandRegister;
+import me.deadlight.ezchestshop.utils.FloatingItem;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -21,14 +45,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 public final class EzChestShop extends JavaPlugin {
+    private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.<String>builder()
+            .add("1.16.5")
+            .add("1.17.1")
+            .add("1.18.2")
+            .add("1.19.4")
+            .add("1.20.4")
+            .add("1.20.6")
+            .add("1.21")
+            .add("1.21.1")
+            .build();
 
-    private static EzChestShop plugin;
+    private static final Set<String> VERSION_SOFTDEPEND_NBTAPI = ImmutableSet.<String>builder()
+            .add("1.20.6")
+            .add("1.21")
+            .add("1.21.1")
+            .build();
 
     private static Economy econ = null;
     public static boolean economyPluginFound = true;
@@ -39,6 +73,8 @@ public final class EzChestShop extends JavaPlugin {
     public static boolean advancedregionmarket = false;
 
     private static TaskScheduler scheduler;
+
+    private boolean started = false;
 
     /**
      * Get the scheduler of the plugin
@@ -58,10 +94,29 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        String serverImplVersion = getServer().getVersion();
+        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
 
-        plugin = this;
+        if (SUPPORTED_VERSIONS.contains(minecraftVersion)) {
+            getLogger().info("Minecraft version " + minecraftVersion + " detected.");
+        } else {
+            getLogger().severe("Unsupported version: " + minecraftVersion
+                    + ". Supported versions are: " + String.join(", ", SUPPORTED_VERSIONS) + ".");
+            getLogger().severe("The server will continue to load, but EzChestShop will be disabled. Be advised that this results in existing chest shops being unprotected, unless within the protected area of a separate plugin running.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Mojang changed some internals related to NBT and how metadata is saved after MC 1.20.4.
+        // Backwards compatibility was restored using tr7zw's NBTAPI plugin for later versions, but is not neccessary for earlier versions.
+        if (VERSION_SOFTDEPEND_NBTAPI.contains(minecraftVersion)
+                && Bukkit.getPluginManager().getPlugin("NBTAPI") == null) {
+            getLogger().warning(Strings.repeat("*", 40));
+            getLogger().warning("Please install the NBTAPI plugin by tr7zw in order to use the /checkprofits command: https://www.spigotmc.org/resources/nbt-api.7939/");
+            getLogger().warning(Strings.repeat("*", 40));
+        }
+
         scheduler = UniversalScheduler.getScheduler(this);
-        logConsole("&c[&eEzChestShop&c] &aEnabling EzChestShop - version " + this.getDescription().getVersion());
         saveDefaultConfig();
 
         try {
@@ -81,19 +136,6 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
-        // Plugin startup logic
-        if (!(getServer().getVersion().contains("1.19") || getServer().getVersion().contains("1.18")
-                || getServer().getVersion().contains("1.17") || getServer().getVersion().contains("1.16")
-                || getServer().getVersion().contains("1.20")
-                || getServer().getVersion().contains("1.21")
-                || getServer().getVersion().contains("1.21.1"))){
-            logConsole("&c[&eEzChestShop&c] &4This plugin only supports 1.16.5, 1.17.1, 1.18.2, 1.19.4, 1.20.4, 1.21 and 1.21.1!, &cself disabling...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else {
-            logConsole("&c[&eEzChestShop&c] &eCurrent Protocol version initialized.");
-        }
-
         economyPluginFound = setupEconomy();
         if (!economyPluginFound) {
             Config.useXP = true;
@@ -102,10 +144,6 @@ public final class EzChestShop extends JavaPlugin {
                 "&ePlease note that you need vault and at least one economy plugin installed to use a money based system.");
 //            Bukkit.getPluginManager().disablePlugin(this);
 //            return;
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("NBTAPI") == null) {
-            getLogger().warning("Please install the NBTAPI plugin by tr7zw in order to use the /checkprofits command: https://www.spigotmc.org/resources/nbt-api.7939/");
         }
 
         LanguageManager.loadLanguages();
@@ -291,6 +329,9 @@ public final class EzChestShop extends JavaPlugin {
 
         UpdateChecker checker = new UpdateChecker();
         checker.check();
+
+        // The plugin started without encountering unrecoverable problems.
+        started = true;
     }
 
     private void registerListeners() {
@@ -346,6 +387,10 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (!started) {
+            return;
+        }
+
         // Plugin shutdown logic
         if(scheduler != null)
             scheduler.cancelTasks();
@@ -391,7 +436,7 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     public static EzChestShop getPlugin() {
-        return plugin;
+        return getPlugin(EzChestShop.class);
     }
 
     public static void logConsole(String str) {

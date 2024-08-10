@@ -53,12 +53,6 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.zaxxer.hikari</pattern>
-                                    <shadedPattern>me.deadlight.ezchestshop.lib.hikari</shadedPattern>
-                                </relocation>
-                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -74,7 +68,12 @@
         </dependency>
         <dependency>
             <groupId>me.deadlight</groupId>
-            <artifactId>EzChestShop-craftbukkit_1_21_1_R1</artifactId>
+            <artifactId>EzChestShop-craftbukkit_1_21_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.deadlight</groupId>
+            <artifactId>EzChestShop-craftbukkit_1_20_R4</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

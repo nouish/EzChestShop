@@ -1,17 +1,19 @@
 package me.deadlight.ezchestshop.utils;
+
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import me.deadlight.ezchestshop.EzChestShop;
-import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import java.lang.reflect.Field;
-import java.util.Map;
 
-public class ChannelHandler_v1_21_R1 extends ChannelInboundHandlerAdapter {
+public class ChannelHandler_v1_20_R4 extends ChannelInboundHandlerAdapter {
 
     private final Player player;
     private static Field updateSignArrays;
@@ -25,7 +27,7 @@ public class ChannelHandler_v1_21_R1 extends ChannelInboundHandlerAdapter {
         }
     }
 
-    public ChannelHandler_v1_21_R1(Player player) {
+    public ChannelHandler_v1_20_R4(Player player) {
         this.player = player;
     }
 
@@ -63,7 +65,7 @@ public class ChannelHandler_v1_21_R1 extends ChannelInboundHandlerAdapter {
         }
 
         if (msg instanceof ServerboundSignUpdatePacket) {
-            for (Map.Entry<SignMenuFactory, UpdateSignListener> entry : v1_21_R1.getListeners().entrySet()) {
+            for (Map.Entry<SignMenuFactory, UpdateSignListener> entry : v1_20_R4.getListeners().entrySet()) {
                 UpdateSignListener listener = entry.getValue();
 
                 try {
@@ -81,6 +83,5 @@ public class ChannelHandler_v1_21_R1 extends ChannelInboundHandlerAdapter {
 
         ctx.fireChannelRead(msg);
     }
-
 
 }

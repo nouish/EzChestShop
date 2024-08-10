@@ -1,21 +1,23 @@
 package me.deadlight.ezchestshop.utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-public class MenuOpener_v1_21_R1 {
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+
+public class MenuOpener_v1_20_R4 {
 
     private static Constructor<ClientboundBlockEntityDataPacket> constructor;
 

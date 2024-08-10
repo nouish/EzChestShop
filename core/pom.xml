@@ -46,15 +46,19 @@
                     <relocations>
                         <relocation>
                             <pattern>dev.triumphteam.gui</pattern>
-                            <shadedPattern>me.deadlight.ezchestshop.gui</shadedPattern>
+                            <shadedPattern>me.deadlight.ezchestshop.lib.triumphgui</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>de.themoep.minedown</pattern>
-                            <shadedPattern>me.deadlight.ezchestshop.minedown</shadedPattern>
+                            <shadedPattern>me.deadlight.ezchestshop.lib.minedown</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>net.kyori</pattern>
-                            <shadedPattern>me.deadlight.ezchestshop.kyori</shadedPattern>
+                            <shadedPattern>me.deadlight.ezchestshop.lib.kyori</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.zaxxer.hikari</pattern>
+                            <shadedPattern>me.deadlight.ezchestshop.lib.hikari</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

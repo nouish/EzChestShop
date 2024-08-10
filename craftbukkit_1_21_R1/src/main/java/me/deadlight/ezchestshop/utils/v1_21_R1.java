@@ -1,15 +1,21 @@
 package me.deadlight.ezchestshop.utils;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import de.tr7zw.nbtapi.NBT;
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -27,16 +33,10 @@ import org.bukkit.craftbukkit.v1_21_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 public class v1_21_R1 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
-    private static Map<Integer, Entity> entities = new HashMap<>();
+    private static final Map<Integer, Entity> entities = new HashMap<>();
 
     /**
      * Convert an Item to a Text Compount. Used in Text Component Builders to show

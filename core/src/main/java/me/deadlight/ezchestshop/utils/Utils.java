@@ -1,15 +1,37 @@
 package me.deadlight.ezchestshop.utils;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
-import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.enums.Database;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.TransactionLogObject;
 import net.md_5.bungee.api.ChatMessageType;
@@ -17,8 +39,19 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.TileState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -34,17 +67,6 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -62,11 +84,16 @@ public class Utils {
     public static DatabaseManager databaseManager;
 
     static {
+        String serverImplVersion = Bukkit.getVersion();
+        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
+
         try {
-            if (isFolia()) {
-                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
-            } else if (Bukkit.getBukkitVersion().equals("1.21-R0.1-SNAPSHOT") || Bukkit.getBukkitVersion().equals("1.21.1-R0.1-SNAPSHOT")) {
+            if (minecraftVersion.equals("1.21") || minecraftVersion.equals("1.21.1")) {
                 versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_21_R1").newInstance();
+            } else if (minecraftVersion.equals("1.20.6")) {
+                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R4").newInstance();
+            } else if (minecraftVersion.equals("1.20.4")) {
+                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
             } else {
                 String packageName = Utils.class.getPackage().getName();
                 String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
@@ -74,18 +101,6 @@ public class Utils {
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
             Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
-        }
-    }
-
-
-
-
-    static boolean isFolia() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
         }
     }
 

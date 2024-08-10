@@ -9,18 +9,23 @@ import java.util.logging.Level;
 
 public class FloatingItem {
 
-    private int entityID;
-    private Player player;
+    private final int entityID;
+    private final Player player;
     private Location location;
 
     static VersionUtils versionUtils;
 
     static {
+        String serverImplVersion = Bukkit.getVersion();
+        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
+
         try {
-            if (Utils.isFolia()) {
-                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
-            } else if (Bukkit.getBukkitVersion().equals("1.21-R0.1-SNAPSHOT") || Bukkit.getBukkitVersion().equals("1.21.1-R0.1-SNAPSHOT")) {
+            if (minecraftVersion.equals("1.21") || minecraftVersion.equals("1.21.1")) {
                 versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_21_R1").newInstance();
+            } else if (minecraftVersion.equals("1.20.6")) {
+                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R4").newInstance();
+            } else if (minecraftVersion.equals("1.20.4")) {
+                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
             } else {
                 String packageName = Utils.class.getPackage().getName();
                 String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
