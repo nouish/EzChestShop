@@ -1,21 +1,43 @@
 package me.deadlight.ezchestshop.commands;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import com.palmergames.bukkit.towny.utils.ShopPlotUtil;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.SettingsGUI;
 import me.deadlight.ezchestshop.utils.BlockOutline;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
-import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Note;
+import org.bukkit.Sound;
+import org.bukkit.Tag;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,15 +52,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 public class MainCommands implements CommandExecutor, TabCompleter {
 
-    private EzChestShop plugin = EzChestShop.getPlugin();
-
+    private final EzChestShop plugin = EzChestShop.getPlugin();
 
     public static LanguageManager lm = new LanguageManager();
     public static HashMap<UUID, ShopSettings> settingsHashMap = new HashMap<>();
@@ -341,7 +357,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             ItemStack thatIteminplayer = player.getInventory().getItemInMainHand();
                             ItemStack thatItem = thatIteminplayer.clone();
                             thatItem.setAmount(1);
-                            if (Utils.isShulkerBox(thatItem.getType()) && Utils.isShulkerBox(target)) {
+                            if (Tag.SHULKER_BOXES.isTagged(thatItem.getType()) && Tag.SHULKER_BOXES.isTagged(target.getType())) {
                                 player.sendMessage(lm.invalidShopItem());
                                 return;
                             }

@@ -1,10 +1,9 @@
 package me.deadlight.ezchestshop.listeners;
 
-import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.Bukkit;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
@@ -43,14 +42,13 @@ public class BlockPlaceListener implements Listener {
     }
 
     private void placeBlock(Block block, ItemStack shulker) {
-        if (Utils.isShulkerBox(shulker.getType()) && Utils.isShulkerBox(block)) {
+        if (Tag.SHULKER_BOXES.isTagged(shulker.getType()) && Tag.SHULKER_BOXES.isTagged(block.getType())) {
             if (shulker.hasItemMeta()) {
                 ItemMeta meta = shulker.getItemMeta();
                 PersistentDataContainer container = meta.getPersistentDataContainer();
                 if (container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) != null) {
                     TileState state = ((TileState) block.getState());
-                    PersistentDataContainer bcontainer = state.getPersistentDataContainer();
-                    bcontainer = ShopContainer.copyContainerData(container, bcontainer);
+                    PersistentDataContainer bcontainer = ShopContainer.copyContainerData(container, state.getPersistentDataContainer());
                     state.update();
                     ShopContainer.loadShop(block.getLocation(), bcontainer);
                 }

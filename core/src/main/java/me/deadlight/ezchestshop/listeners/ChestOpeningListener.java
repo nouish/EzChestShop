@@ -35,9 +35,9 @@ import java.util.UUID;
 
 public class ChestOpeningListener implements Listener {
 
-    private NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
-    private OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-    private AdminShopGUI adminShopGUI = new AdminShopGUI();
+    private final NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
+    private final OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
+    private final AdminShopGUI adminShopGUI = new AdminShopGUI();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChestOpening(PlayerInteractEvent event) {
@@ -78,7 +78,7 @@ public class ChestOpeningListener implements Listener {
                 }
             } else if (clickedType == Material.BARREL) {
                 dataContainer = state.getPersistentDataContainer();
-            } else if (Utils.isShulkerBox(clickedType)) {
+            } else if (Tag.SHULKER_BOXES.isTagged(clickedType)) {
                 dataContainer = state.getPersistentDataContainer();
             }
 
@@ -107,7 +107,7 @@ public class ChestOpeningListener implements Listener {
                 boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
 
                 Player player = event.getPlayer();
-                
+
                 if (isAdminShop) {
                     if (EzChestShop.worldguard) {
                         if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_ADMIN_SHOP, player) && !player.isOp()) {
@@ -120,7 +120,7 @@ public class ChestOpeningListener implements Listener {
                     return;
                 }
                 boolean isAdmin = isAdmin(dataContainer, player.getUniqueId().toString());
-                
+
                 if (EzChestShop.worldguard) {
                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.USE_SHOP, player) && !player.isOp() && !(isAdmin || player.getUniqueId().toString().equalsIgnoreCase(owneruuid))) {
                         return;

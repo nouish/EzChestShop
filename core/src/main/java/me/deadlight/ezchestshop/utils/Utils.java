@@ -41,10 +41,12 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
@@ -207,9 +209,11 @@ public class Utils {
      *
      * @param block
      * @return
+     * @deprecated Use {@link Tag#isTagged(Keyed)} on {@link Tag#SHULKER_BOXES} instead.
      */
-    public static boolean isShulkerBox(Block block) {
-        return isShulkerBox(block.getType());
+    @Deprecated
+    public static boolean isShulkerBox(@NotNull Block block) {
+        return Tag.SHULKER_BOXES.isTagged(block.getType());
     }
 
     /**
@@ -217,14 +221,11 @@ public class Utils {
      *
      * @param type
      * @return
+     * @deprecated Use {@link Tag#isTagged(Keyed)} on {@link Tag#SHULKER_BOXES} instead.
      */
-    public static boolean isShulkerBox(Material type) {
-        return Arrays.asList(Material.SHULKER_BOX, Material.WHITE_SHULKER_BOX, Material.ORANGE_SHULKER_BOX,
-                Material.MAGENTA_SHULKER_BOX, Material.LIGHT_BLUE_SHULKER_BOX, Material.YELLOW_SHULKER_BOX,
-                Material.LIME_SHULKER_BOX, Material.PINK_SHULKER_BOX, Material.GRAY_SHULKER_BOX,
-                Material.LIGHT_GRAY_SHULKER_BOX, Material.CYAN_SHULKER_BOX, Material.PURPLE_SHULKER_BOX,
-                Material.GREEN_SHULKER_BOX, Material.BROWN_SHULKER_BOX, Material.BLUE_SHULKER_BOX,
-                Material.RED_SHULKER_BOX, Material.BLACK_SHULKER_BOX).contains(type);
+    @Deprecated
+    public static boolean isShulkerBox(@NotNull Material type) {
+        return Tag.SHULKER_BOXES.isTagged(type);
     }
 
     /**
@@ -247,7 +248,7 @@ public class Utils {
         return (type == Material.CHEST && Config.container_chests)
                 || (type == Material.TRAPPED_CHEST && Config.container_trapped_chests)
                 || (type == Material.BARREL && Config.container_barrels)
-                || (isShulkerBox(type) && Config.container_shulkers);
+                || (Tag.SHULKER_BOXES.isTagged(type) && Config.container_shulkers);
     }
 
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
@@ -342,19 +343,19 @@ public class Utils {
      * @param sloc
      * @return
      */
-    public static Location StringtoLocation(String sloc) {
+    public static Location StringtoLocation(@Nullable String sloc) {
         if (sloc == null)
             return null;
         String[] slocs = sloc.split(",");
         World w = Bukkit.getWorld(slocs[0].split(":")[1]);
-        Double x = Double.valueOf(slocs[1].split(":")[1]);
-        Double y = Double.valueOf(slocs[2].split(":")[1]);
-        Double z = Double.valueOf(slocs[3].split(":")[1]);
+        double x = Double.parseDouble(slocs[1].split(":")[1]);
+        double y = Double.parseDouble(slocs[2].split(":")[1]);
+        double z = Double.parseDouble(slocs[3].split(":")[1]);
         Location loc = new Location(w, x, y, z);
 
         if (sloc.contains("Yaw:") && sloc.contains("Pitch:")) {
-            loc.setYaw(Float.valueOf(slocs[4].split(":")[1]));
-            loc.setPitch(Float.valueOf(slocs[5].split(":")[1]));
+            loc.setYaw(Float.parseFloat(slocs[4].split(":")[1]));
+            loc.setPitch(Float.parseFloat(slocs[5].split(":")[1]));
         }
         return loc;
     }
@@ -941,7 +942,7 @@ public class Utils {
             }
         } else if (block.getType() == Material.BARREL) {
             dataContainer = state.getPersistentDataContainer();
-        } else if (Utils.isShulkerBox(block.getType())) {
+        } else if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
             dataContainer = state.getPersistentDataContainer();
         }
         return dataContainer;

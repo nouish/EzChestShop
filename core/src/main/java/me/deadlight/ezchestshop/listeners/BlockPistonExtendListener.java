@@ -1,9 +1,16 @@
 package me.deadlight.ezchestshop.listeners;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.events.ShulkerShopDropEvent;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -11,6 +18,7 @@ import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
@@ -26,8 +34,6 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.*;
 
 public class BlockPistonExtendListener implements Listener {
 
@@ -55,11 +61,10 @@ public class BlockPistonExtendListener implements Listener {
                     return;
                 }
 
-                if (Utils.isShulkerBox(block.getType())) {
+                if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
                     //it is a shulkerbox, now checking if its a shop
                     Location shulkerLoc = block.getLocation();
                     if (ShopContainer.isShop(shulkerLoc)) {
-
                         boolean adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
                         if (EzChestShop.worldguard) {
                             if (adminshop) {
@@ -89,13 +94,12 @@ public class BlockPistonExtendListener implements Listener {
                             ShopHologram.hideForAll(event.getBlock().getLocation());
                         }
                         EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
-
                             Collection<Entity> entitiyList = block.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);
                             entitiyList.forEach(entity -> {
                                 if (entity instanceof Item) {
                                     Item item = (Item) entity;
                                     ItemStack itemStack = item.getItemStack();
-                                    if (Utils.isShulkerBox(itemStack.getType())) {
+                                    if (Tag.SHULKER_BOXES.isTagged(itemStack.getType())) {
                                         //get the lock
                                         BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
                                         ShulkerBox box = (ShulkerBox) bsm.getBlockState();
@@ -143,7 +147,7 @@ public class BlockPistonExtendListener implements Listener {
     public void InventoryItemPickup(InventoryPickupItemEvent event) {
         Item item = event.getItem();
         ItemStack itemStack = item.getItemStack();
-        if (Utils.isShulkerBox(itemStack.getType())) {
+        if (Tag.SHULKER_BOXES.isTagged(itemStack.getType())) {
             //get the lock
             BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
             ShulkerBox box = (ShulkerBox) bsm.getBlockState();

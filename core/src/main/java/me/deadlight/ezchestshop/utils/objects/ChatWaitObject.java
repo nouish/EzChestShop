@@ -1,7 +1,12 @@
 package me.deadlight.ezchestshop.utils.objects;
-import me.deadlight.ezchestshop.utils.Utils;
+
 import org.bukkit.Material;
-import org.bukkit.block.*;
+import org.bukkit.Tag;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.persistence.PersistentDataContainer;
 
 public class ChatWaitObject {
@@ -34,7 +39,7 @@ public class ChatWaitObject {
             return ((Chest) state).getPersistentDataContainer();
         } else if (type == Material.BARREL) {
             return ((Barrel) state).getPersistentDataContainer();
-        } else if (Utils.isShulkerBox(type)) {
+        } else if (Tag.SHULKER_BOXES.isTagged(type)) {
             return ((ShulkerBox) state).getPersistentDataContainer();
         }
         return null;

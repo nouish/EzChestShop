@@ -1,21 +1,49 @@
 package me.deadlight.ezchestshop.commands;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
-import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.data.ShopContainer;
+import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.guis.GuiEditorGUI;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
-import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,16 +58,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EcsAdmin implements CommandExecutor, TabCompleter {
 
@@ -475,7 +493,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 ItemStack thatIteminplayer = player.getInventory().getItemInMainHand();
                                 ItemStack thatItem = thatIteminplayer.clone();
                                 thatItem.setAmount(1);
-                                if (Utils.isShulkerBox(thatItem.getType()) && Utils.isShulkerBox(target)) {
+                                if (Tag.SHULKER_BOXES.isTagged(thatItem.getType()) && Tag.SHULKER_BOXES.isTagged(target.getType())) {
                                     player.sendMessage(lm.invalidShopItem());
                                     return;
                                 }
