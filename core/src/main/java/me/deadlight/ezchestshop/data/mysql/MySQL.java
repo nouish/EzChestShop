@@ -1,18 +1,31 @@
 package me.deadlight.ezchestshop.data.mysql;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
-import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
-import me.deadlight.ezchestshop.utils.Utils;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import tr.zeltuv.ezql.objects.*;
+import tr.zeltuv.ezql.objects.DataType;
+import tr.zeltuv.ezql.objects.EzqlColumn;
+import tr.zeltuv.ezql.objects.EzqlDatabase;
+import tr.zeltuv.ezql.objects.EzqlRow;
+import tr.zeltuv.ezql.objects.EzqlTable;
 import tr.zeltuv.ezql.settings.EzqlCredentials;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class MySQL extends DatabaseManager {
     EzChestShop plugin;
@@ -29,11 +42,14 @@ public class MySQL extends DatabaseManager {
     }
 
     //TODO Don't forget to change this when adding a new database table that works with Player data!
-    public static List<String> playerTables = Arrays.asList("playerdata");
+    public static List<String> playerTables = Collections.singletonList("playerdata");
 
 
     @Override
     public void load() {
+        // Set the logger level for HikariCP to warn to reduce console noise.
+        Configurator.setLevel("me.deadlight.ezchestshop.lib.hikari", org.apache.logging.log4j.Level.WARN);
+
         //first connect to the database
 
         //then create a database named that is stated in the config,
@@ -65,11 +81,20 @@ public class MySQL extends DatabaseManager {
             Bukkit.getPluginManager().disablePlugin(plugin);
         }
 
+        try (Connection connection = database.getConnection()) {
+            DatabaseMetaData meta = connection.getMetaData();
+            String product = meta.getDatabaseProductName();
+            String version = meta.getDatabaseProductVersion();
+            plugin.getLogger().info(String.format("Database: %s v%s.", product, version));
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.WARNING, "Unable to determine database version.", e);
+        }
+
         createTables();
     }
 
     public void createTables() {
-        prefix= Config.databasemysqltables_prefix;
+        prefix = Config.databasemysqltables_prefix;
 
         shopdata = database.addTable(prefix + "shopdata",
                 EzqlColumn.get(DataType.VARCHAR, "location", 64, true),
@@ -129,7 +154,7 @@ public class MySQL extends DatabaseManager {
     }
 
     public boolean asBool(int i){
-        return i ==1;
+        return i == 1;
     }
 
     @Override
