@@ -1,9 +1,18 @@
 package me.deadlight.ezchestshop.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -14,14 +23,6 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This Manager handles custom commands server admins want to be executed when a shop is interacted with.
@@ -130,7 +131,7 @@ public class ShopCommandManager {
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
         for (ShopType type : ShopType.values()) {
             for (ShopAction action: ShopAction.values()) {
-                String path = "shops.commands." + type.name().toLowerCase() + "." + action.name().toLowerCase();
+                String path = "shops.commands." + type.name().toLowerCase(Locale.ENGLISH) + "." + action.name().toLowerCase(Locale.ENGLISH);
                 if (fc.contains(path)) {
                     // if there's a list, there are no options.
                     if (fc.isList(path)) {
@@ -166,7 +167,7 @@ public class ShopCommandManager {
         }
         for (String location: section.getKeys(false)) {
             for (ShopAction action: ShopAction.values()) {
-                String path = "commands." + location + "." + action.name().toLowerCase();
+                String path = "commands." + location + "." + action.name().toLowerCase(Locale.ENGLISH);
                 if (fc.contains(path)) {
                     // if there's a list, there are no options.
                     if (fc.isList(path)) {
@@ -209,7 +210,7 @@ public class ShopCommandManager {
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(customConfigFile);
 
         for (ShopCommandManager.ShopCommandEntry entry : shopCommandsAtLocation.entries) {
-            String subpath = "." + entry.action.name().toLowerCase();
+            String subpath = "." + entry.action.name().toLowerCase(Locale.ENGLISH);
             // ignore any entries that should not be saved.
             // If there is no entry without options, the user might not have used "none" in the command,
             // so we want to save it as option "none" entry.

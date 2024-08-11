@@ -174,7 +174,7 @@ public class Config {
         towny_integration_shops_only_in_shop_plots = config.getBoolean("integration.towny.shops-only-in-shop-plots");
         database_type = Database.valueOf(
                 Normalizer.normalize(config.getString("database.type"), Normalizer.Form.NFD)
-                        .replaceAll("\\p{M}", "").toUpperCase());
+                        .replaceAll("\\p{M}", "").toUpperCase(Locale.ENGLISH));
         databasemysql_ip = config.getString("database.mysql.ip");
         databasemysql_port = config.getInt("database.mysql.port");
         databasemysql_maxpool = config.getInt("database.mysql.max-pool");

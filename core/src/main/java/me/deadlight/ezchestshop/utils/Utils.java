@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,7 +114,7 @@ public class Utils {
      * @param data
      * @throws IOException
      */
-    public static void storeItem(ItemStack item, PersistentDataContainer data) throws IOException {
+    public static void storeItem(ItemStack item, PersistentDataContainer data) {
         String encodedItem = encodeItem(item);
         if (encodedItem != null) {
             data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
@@ -127,20 +128,11 @@ public class Utils {
      * @return
      */
     public static String encodeItem(ItemStack item) {
-        try {
-            ByteArrayOutputStream io = new ByteArrayOutputStream();
-            BukkitObjectOutputStream os = new BukkitObjectOutputStream(io);
-
-            os.writeObject(item);
-
-            os.flush();
-            byte[] rawData = io.toByteArray();
-
-            String encodedData = Base64.getEncoder().encodeToString(rawData);
-
-            os.close();
-            return encodedData;
-
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (BukkitObjectOutputStream os = new BukkitObjectOutputStream(baos)) {
+                os.writeObject(item);
+            }
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
         } catch (IOException ex) {
             System.out.println(ex);
             return null;
@@ -154,25 +146,15 @@ public class Utils {
      * @return
      */
     public static ItemStack decodeItem(String encodedItem) {
+        byte[] buf = Base64.getDecoder().decode(encodedItem);
 
-        byte[] rawData = Base64.getDecoder().decode(encodedItem);
-
-        try {
-
-            ByteArrayInputStream io = new ByteArrayInputStream(rawData);
-            BukkitObjectInputStream in = new BukkitObjectInputStream(io);
-
-            ItemStack thatItem = (ItemStack) in.readObject();
-
-            in.close();
-
-            return thatItem;
-
+        try (ByteArrayInputStream io = new ByteArrayInputStream(buf);
+             BukkitObjectInputStream in = new BukkitObjectInputStream(io)) {
+            return (ItemStack) in.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex);
             return null;
         }
-
     }
 
     /**
@@ -198,7 +180,7 @@ public class Utils {
             return ((Chest) block.getState()).getInventory();
         } else if (block.getType() == Material.BARREL) {
             return ((Barrel) block.getState()).getInventory();
-        } else if (isShulkerBox(block)) {
+        } else if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
             return ((ShulkerBox) block.getState()).getInventory();
         } else
             return null;
@@ -464,13 +446,14 @@ public class Utils {
      * @return
      */
     public static String capitalizeFirstSplit(String string) {
-        string = string.toLowerCase();
-        String n_string = "";
+        string = string.toLowerCase(Locale.ENGLISH);
+        StringBuilder sbuf = new StringBuilder();
         for (String s : string.split("_")) {
-            n_string += s.subSequence(0, 1).toString().toUpperCase()
-                    + s.subSequence(1, s.length()).toString().toLowerCase() + " ";
+            sbuf.append(s.subSequence(0, 1).toString().toUpperCase(Locale.ENGLISH))
+                .append(s.subSequence(1, s.length()).toString().toLowerCase(Locale.ENGLISH))
+                .append(" ");
         }
-        return n_string;
+        return sbuf.toString();
     }
 
     public static boolean hasEnoughSpace(Player player, int amount, ItemStack item) {

@@ -1,15 +1,27 @@
 package me.deadlight.ezchestshop.utils.holograms;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -20,8 +32,6 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-
 /**
  * This class is used to create a hologram that is bound to a block.
  * It will manage and update the shop hologram for all the players that are viewing it.
@@ -29,7 +39,7 @@ import java.util.*;
 public class BlockBoundHologram {
 
     public enum HologramRotation {
-        NORTH, SOUTH, EAST, WEST, UP, DOWN;
+        NORTH, SOUTH, EAST, WEST, UP, DOWN
     }
 
     private static final LanguageManager lm = new LanguageManager();
@@ -92,7 +102,7 @@ public class BlockBoundHologram {
         // Make sure we're not getting a null value or something that isn't a valid rotation
         HologramRotation hologramRotation;
         try {
-            hologramRotation = HologramRotation.valueOf(rotation.toUpperCase());
+            hologramRotation = HologramRotation.valueOf(rotation.toUpperCase(Locale.ENGLISH));
         } catch (Exception e) {
             hologramRotation = HologramRotation.UP;
         }

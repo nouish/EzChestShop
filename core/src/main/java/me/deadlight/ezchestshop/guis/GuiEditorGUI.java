@@ -1,11 +1,23 @@
 package me.deadlight.ezchestshop.guis;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.listeners.UpdateChecker;
 import me.deadlight.ezchestshop.utils.Utils;
 import net.kyori.adventure.text.Component;
@@ -17,16 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class GuiEditorGUI {
 
@@ -42,7 +44,7 @@ public class GuiEditorGUI {
         AtomicInteger i = new AtomicInteger();
         GuiData.getConfig().getKeys(false).forEach(key -> {
             ItemStack item;
-            GuiData.GuiType type = GuiData.GuiType.valueOf(key.toUpperCase().replace("-", "_"));
+            GuiData.GuiType type = GuiData.GuiType.valueOf(key.toUpperCase(Locale.ENGLISH).replace("-", "_"));
             switch (type) {
                 case SHOP_SETTINGS:
                     item = new ItemStack(Material.SMITHING_TABLE);
@@ -73,7 +75,7 @@ public class GuiEditorGUI {
     }
 
     public void showGuiSettingsEditor(Player player, GuiData.GuiType type) {
-        String guiName = type.toString().replace("_", "-").toLowerCase();
+        String guiName = type.toString().replace("_", "-").toLowerCase(Locale.ENGLISH);
 
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
@@ -184,7 +186,7 @@ public class GuiEditorGUI {
     }
 
     public void showGuiInEditor(Player player, GuiData.GuiType type) {
-        String guiName = type.toString().replace("_", "-").toLowerCase();
+        String guiName = type.toString().replace("_", "-").toLowerCase(Locale.ENGLISH);
 
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
@@ -354,7 +356,7 @@ public class GuiEditorGUI {
 
 
     public void showItemEditor(Player player, GuiData.GuiType type, String item) {
-        String guiName = type.toString().replace("_", "-").toLowerCase();
+        String guiName = type.toString().replace("_", "-").toLowerCase(Locale.ENGLISH);
 
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
@@ -369,11 +371,11 @@ public class GuiEditorGUI {
                     ItemStack clicked = event.getView().getBottomInventory().getItem(event.getSlot()).clone();
                     guiItemSelector.remove(player);
                     if (item.equals("background")) {
-                        config.set(guiName + "." + item + ".material", clicked.getType().toString().toLowerCase());
+                        config.set(guiName + "." + item + ".material", clicked.getType().toString().toLowerCase(Locale.ENGLISH));
                         config.set(guiName + "." + item + ".count", clicked.getAmount());
                         container.setBackground(new ItemStack(clicked.getType(), clicked.getAmount()));
                     } else {
-                        config.set(guiName + ".items." + item + ".material", clicked.getType().toString().toLowerCase());
+                        config.set(guiName + ".items." + item + ".material", clicked.getType().toString().toLowerCase(Locale.ENGLISH));
                         config.set(guiName + ".items." + item + ".count", clicked.getAmount());
                     }
                     try {
@@ -446,7 +448,7 @@ public class GuiEditorGUI {
         }));
 
         // Set is Enchanted:
-        boolean isEnchanted = (material.getEnchantments().size() > 0);
+        boolean isEnchanted = !material.getEnchantments().isEmpty();
         ItemStack enchanted = new ItemStack(isEnchanted ? Material.ENCHANTED_BOOK : Material.BOOK);
         ItemMeta enchantedMeta = enchanted.getItemMeta();
         enchantedMeta.setDisplayName(ChatColor.GOLD + "Enchanted");
@@ -490,7 +492,7 @@ public class GuiEditorGUI {
     }
 
     public void showGuiItemAdder(Player player, GuiData.GuiType type, int row, int column) {
-        String guiName = type.toString().replace("_", "-").toLowerCase();
+        String guiName = type.toString().replace("_", "-").toLowerCase(Locale.ENGLISH);
 
         FileConfiguration config = GuiData.getConfig();
         ContainerGui container = GuiData.getViaType(type);
@@ -521,7 +523,7 @@ public class GuiEditorGUI {
             if (internalGuis.isString(guiName + ".items." + key + ".material")) {
                 material = internalGuis.getString(guiName + ".items." + key + ".material");
             }
-            if (key == "decorative") {
+            if (key.equals("decorative")) {
                 material = "peony";
                 // update the key to have a unique ID
                 Integer max = external.stream()
@@ -538,7 +540,7 @@ public class GuiEditorGUI {
             item.setItemMeta(meta);
             gui.addItem(new GuiItem(item, event -> {
                 event.setCancelled(true);
-                config.set(guiName + ".items." + mKey + ".material", item.getType().toString().toLowerCase());
+                config.set(guiName + ".items." + mKey + ".material", item.getType().toString().toLowerCase(Locale.ENGLISH));
                 config.set(guiName + ".items." + mKey + ".count", 1);
                 config.set(guiName + ".items." + mKey + ".enchanted", false);
                 config.set(guiName + ".items." + mKey + ".row", row);
