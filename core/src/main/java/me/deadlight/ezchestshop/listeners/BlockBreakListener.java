@@ -1,18 +1,23 @@
 package me.deadlight.ezchestshop.listeners;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.TileState;
@@ -27,10 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 public class BlockBreakListener implements Listener {
 
@@ -74,8 +75,7 @@ public class BlockBreakListener implements Listener {
                 loc = Utils.isPartOfTheChestShop(event.getBlock().getLocation()).getLocation();
             }
             if (ShopContainer.isShop(loc) || isPartOfShop) {
-                if (Utils.isShulkerBox(event.getBlock())) {
-
+                if (Tag.SHULKER_BOXES.isTagged(event.getBlock().getType())) {
                     //first we check nobody is already in the shulker container (viewing it)
                     ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState();
                     int viewerCount = shulkerBox.getInventory().getViewers().size();
@@ -164,7 +164,6 @@ public class BlockBreakListener implements Listener {
                     }
                 }
             }
-
         }
     }
 

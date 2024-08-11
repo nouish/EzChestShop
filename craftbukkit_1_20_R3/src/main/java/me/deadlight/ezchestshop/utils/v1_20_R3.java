@@ -36,7 +36,7 @@ import java.util.Set;
 public class v1_20_R3 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
-    private static Map<Integer, Entity> entities = new HashMap<>();
+    private static final Map<Integer, Entity> entities = new HashMap<>();
 
     /**
      * Convert an Item to a Text Compount. Used in Text Component Builders to show

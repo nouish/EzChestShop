@@ -37,7 +37,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class BlockPistonExtendListener implements Listener {
 
-
     private static LanguageManager lm = new LanguageManager();
     private static HashMap<String, String> lockMap = new HashMap<>();
     private static List<String> lockList = new ArrayList<>();
@@ -46,9 +45,8 @@ public class BlockPistonExtendListener implements Listener {
 
     @EventHandler
     public void onExtend(BlockPistonExtendEvent event) {
-
         for (Block block : event.getBlocks()) {
-            if (Utils.isShulkerBox(block)) {
+            if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
                 BlockState blockState = block.getState();
                 TileState state = (TileState) blockState;
                 PersistentDataContainer container = state.getPersistentDataContainer();
