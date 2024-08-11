@@ -74,7 +74,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class Utils {
 
-    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile("(.*) \\(MC: (.*)\\)");
+    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile(".* \\(MC: (.*)\\)");
 
     public static List<Object> onlinePackets = new ArrayList<>();
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
@@ -115,7 +115,7 @@ public class Utils {
         Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(rawVersion);
 
         if (matcher.find()) {
-            return matcher.group(2);
+            return matcher.group(1);
         } else {
             // Just return raw version - not much we can do here.
             // This will probably not match the filter, and will result in the plugin stopping itself.
