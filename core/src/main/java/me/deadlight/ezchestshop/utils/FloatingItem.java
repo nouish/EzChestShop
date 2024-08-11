@@ -1,11 +1,11 @@
 package me.deadlight.ezchestshop.utils;
 
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.logging.Level;
 
 public class FloatingItem {
 
@@ -16,8 +16,7 @@ public class FloatingItem {
     static VersionUtils versionUtils;
 
     static {
-        String serverImplVersion = Bukkit.getVersion();
-        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
+        String minecraftVersion = Utils.getMinecraftVersion();
 
         try {
             if (minecraftVersion.equals("1.21") || minecraftVersion.equals("1.21.1")) {

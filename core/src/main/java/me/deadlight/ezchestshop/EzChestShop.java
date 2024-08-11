@@ -48,6 +48,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 
 public final class EzChestShop extends JavaPlugin {
     private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.<String>builder()
@@ -97,8 +98,7 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String serverImplVersion = getServer().getVersion();
-        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
+        String minecraftVersion = Utils.getMinecraftVersion();
 
         if (SUPPORTED_VERSIONS.contains(minecraftVersion)) {
             getLogger().info("Minecraft version " + minecraftVersion + " detected.");
@@ -112,11 +112,10 @@ public final class EzChestShop extends JavaPlugin {
 
         // Mojang changed some internals related to NBT and how metadata is saved after MC 1.20.4.
         // Backwards compatibility was restored using tr7zw's NBTAPI plugin for later versions, but is not neccessary for earlier versions.
-        if (VERSION_SOFTDEPEND_NBTAPI.contains(minecraftVersion)
-                && Bukkit.getPluginManager().getPlugin("NBTAPI") == null) {
-            getLogger().warning(Strings.repeat("*", 40));
+        if (isItemStackToNbtUnsupported()) {
+            getLogger().warning(Strings.repeat("*", 80));
             getLogger().warning("Please install the NBTAPI plugin by tr7zw in order to use the /checkprofits command: https://www.spigotmc.org/resources/nbt-api.7939/");
-            getLogger().warning(Strings.repeat("*", 40));
+            getLogger().warning(Strings.repeat("*", 80));
         }
 
         scheduler = UniversalScheduler.getScheduler(this);
@@ -296,6 +295,16 @@ public final class EzChestShop extends JavaPlugin {
 
         // The plugin started without encountering unrecoverable problems.
         started = true;
+    }
+
+
+    @ApiStatus.Internal
+    public boolean isItemStackToNbtUnsupported() {
+        if (VERSION_SOFTDEPEND_NBTAPI.contains(Utils.getMinecraftVersion())) {
+            return Bukkit.getPluginManager().getPlugin("NBTAPI") == null;
+        }
+        // Older versions can use Minecraft internals, and as a result is not dependant on NBTAPI.
+        return false;
     }
 
     private void registerListeners() {

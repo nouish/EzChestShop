@@ -14,8 +14,7 @@ public abstract class ImprovedOfflinePlayer {
     public static ImprovedOfflinePlayer improvedOfflinePlayer;
 
     static {
-        String serverImplVersion = Bukkit.getVersion();
-        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
+        String minecraftVersion = Utils.getMinecraftVersion();
 
         try {
             if (minecraftVersion.equals("1.21") || minecraftVersion.equals("1.21.1")) {

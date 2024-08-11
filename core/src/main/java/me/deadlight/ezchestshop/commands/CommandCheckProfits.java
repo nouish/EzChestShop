@@ -12,7 +12,6 @@ import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,11 +32,6 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
             Player p = (Player) sender;
             if (!p.hasPermission("ecs.checkprofits"))
                 return false;
-
-            if (Bukkit.getPluginManager().getPlugin("NBTAPI") == null) {
-                p.sendMessage(lm.dependencyNbtapiMissing());
-                return true;
-            }
 
             // Send stuff (multi pages), but first send a overview page. Then add a option
             // for details
@@ -93,6 +87,11 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                     pc.clearProfits();
                     p.sendMessage(lm.confirmProfitClearSuccess());
                 } else if (args[0].equals("p")) {
+                    if (EzChestShop.getPlugin().isItemStackToNbtUnsupported()) {
+                        p.sendMessage(lm.dependencyNbtapiMissing());
+                        return true;
+                    }
+
                     // ShopChest sc = ShopChest.getInstance();
                     int page;
                     try {

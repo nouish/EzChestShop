@@ -68,10 +68,13 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Utils {
+
+    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile("(.*) \\(MC: (.*)\\)");
 
     public static List<Object> onlinePackets = new ArrayList<>();
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
@@ -87,8 +90,7 @@ public class Utils {
     public static DatabaseManager databaseManager;
 
     static {
-        String serverImplVersion = Bukkit.getVersion();
-        String minecraftVersion = serverImplVersion.substring(0, serverImplVersion.indexOf('-'));
+        String minecraftVersion = Utils.getMinecraftVersion();
 
         try {
             if (minecraftVersion.equals("1.21") || minecraftVersion.equals("1.21.1")) {
@@ -104,6 +106,20 @@ public class Utils {
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
             Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
+        }
+    }
+
+    @ApiStatus.Internal
+    public static String getMinecraftVersion() {
+        String rawVersion = Bukkit.getVersion();
+        Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(rawVersion);
+
+        if (matcher.find()) {
+            return matcher.group(2);
+        } else {
+            // Just return raw version - not much we can do here.
+            // This will probably not match the filter, and will result in the plugin stopping itself.
+            return rawVersion;
         }
     }
 
