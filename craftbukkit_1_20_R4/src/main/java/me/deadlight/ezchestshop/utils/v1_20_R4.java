@@ -38,15 +38,6 @@ public class v1_20_R4 extends VersionUtils {
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
     private static final Map<Integer, Entity> entities = new HashMap<>();
 
-    /**
-     * Convert an Item to a Text Compount. Used in Text Component Builders to show
-     * items in chat.
-     *
-     * @category ItemUtils
-     * @param itemStack
-     * @return
-     */
-
     @Override
     String ItemToTextCompoundString(ItemStack itemStack) {
         return NBT.itemStackToNBT(itemStack).toString();
@@ -166,29 +157,24 @@ public class v1_20_R4 extends VersionUtils {
                 boolean success = menu.getResponse().test(player, array);
 
                 if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
-                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
+                    EzChestShop.getScheduler().runTaskLater(() -> menu.open(player), 2L);
                 }
 
                 removeSignMenuFactoryListen(signMenuFactory);
 
-                EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                EzChestShop.getScheduler().runTaskLater(() -> {
                     if (player.isOnline()) {
                         Location location = menu.getLocation();
                         player.sendBlockChange(location, location.getBlock().getBlockData());
                     }
                 }, 2L);
-
-
             }
         });
-
     }
 
     @Override
     void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory) {
-
         listeners.remove(signMenuFactory);
-
     }
 
     @Override
@@ -238,12 +224,10 @@ public class v1_20_R4 extends VersionUtils {
 
         ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(eID, shulker.getEntityData().getNonDefaultValues());
         ServerGamePacketListenerImpl.send(metaPacket);
-
     }
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
         return listeners;
     }
-
 
 }

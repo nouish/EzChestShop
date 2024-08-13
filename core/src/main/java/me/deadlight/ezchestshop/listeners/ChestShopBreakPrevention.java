@@ -15,7 +15,6 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 
 public class ChestShopBreakPrevention implements Listener {
 
-
     //BlockBreak of this section is handled in BlockBreakListener.java
     @EventHandler
     public void onExplosion(EntityExplodeEvent event) {
@@ -25,8 +24,6 @@ public class ChestShopBreakPrevention implements Listener {
 
         event.blockList().removeIf(block -> ShopContainer.isShop(block.getLocation()));
         event.blockList().removeIf(block -> Utils.isPartOfTheChestShop(block.getLocation()) != null);
-
-
     }
 
 

@@ -29,17 +29,10 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
         Player player = event.getPlayer();
-        if(player != null)
-            Utils.versionUtils.injectConnection(player);
-        /**
-         * Prepare the database player values.
-         *
-         * @param evt
-         */
+        Utils.versionUtils.injectConnection(player);
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         UUID uuid = event.getPlayer().getUniqueId();
-        if(Config.database_type.equals(Database.MYSQL)) {
-
+        if (Config.database_type.equals(Database.MYSQL)) {
             MySQL.playerTables.forEach(t -> {
                 if (db.hasTable(t)) {
                     if (!db.hasPlayer(t, uuid)) {
@@ -57,7 +50,6 @@ public class PlayerJoinListener implements Listener {
             });
         }
 
-
         if (Config.emptyShopNotificationOnJoin) {
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
             if (blocks.isEmpty()) {
@@ -74,8 +66,7 @@ public class PlayerJoinListener implements Listener {
             tones.add(Note.Tone.F);
             tones.add(Note.Tone.G);
             AtomicInteger actionBarCounter = new AtomicInteger();
-            EzChestShop.getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
-
+            EzChestShop.getScheduler().runTaskLaterAsynchronously(() -> {
                 //Iterate through each block with an asychronous delay of 5 ticks
                 blocks.forEach(b -> {
                     BlockOutline outline = new BlockOutline(player, b);
@@ -100,7 +91,6 @@ public class PlayerJoinListener implements Listener {
 
                     }, 2L * index);
                 });
-
             }, 80L);
         }
     }

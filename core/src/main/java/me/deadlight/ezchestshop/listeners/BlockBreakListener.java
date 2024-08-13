@@ -18,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
-import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
@@ -34,14 +33,13 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class BlockBreakListener implements Listener {
-
-    private static LanguageManager lm = new LanguageManager();
+    private static final LanguageManager lm = new LanguageManager();
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreak(BlockBreakEvent event) {
-
         if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
             Collection<Entity> entityList = event.getBlock().getLocation().getWorld().getNearbyEntities(event.getBlock().getLocation(), 2, 2 ,2);
+
             for (Entity en : entityList) {
                 if (en instanceof Item) {
                     Item item = (Item) en;
@@ -50,18 +48,13 @@ public class BlockBreakListener implements Listener {
                     }
                 }
             }
+
             if (event.isCancelled()) {
-
                 Utils.blockBreakMap.remove(event.getPlayer().getName());
-
-            } else {
-                if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
-
-                    event.setCancelled(true);
-                }
+            } else if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
+                event.setCancelled(true);
             }
         }
-
 
         if (!event.isCancelled()) {
             preventShopBreak(event);
@@ -102,10 +95,9 @@ public class BlockBreakListener implements Listener {
                         }
                     }
                 }
+
                 ShopContainer.deleteShop(loc);
             }
-
-
         }
     }
 
@@ -129,41 +121,32 @@ public class BlockBreakListener implements Listener {
     }
 
     private void preventShopBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        Location loc = block.getLocation();
-        boolean isPartOfShop = Utils.isPartOfTheChestShop(loc) != null;
-        if (isPartOfShop) {
-            loc = Utils.isPartOfTheChestShop(loc).getLocation();
+        EzShop shop = Utils.isPartOfTheChestShop(event.getBlock().getLocation());
+
+        if (shop == null) {
+            return;
         }
-        if (ShopContainer.isShop(loc) || isPartOfShop) {
-            boolean adminshop = ShopContainer.getShop(loc).getSettings().isAdminshop();
-            Player player = event.getPlayer();
-            if (EzChestShop.worldguard) {
-                if (adminshop) {
-                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
-                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
-                        event.setCancelled(true);
-                    }
-                } else {
-                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
-                        event.setCancelled(true);
-                    }
-                }
-            }
 
-            //shop protection section
-            if (Config.shopProtection) {
-
-                if (!event.getPlayer().hasPermission("ecs.admin")) {
-                    //check if player is owner of shop
-                    EzShop shop = ShopContainer.getShop(loc);
-                    if (!shop.getOwnerID().equals(event.getPlayer().getUniqueId())) {
-                        event.setCancelled(true);
-                        event.getPlayer().sendMessage(lm.cannotDestroyShop());
-                    }
+        Player player = event.getPlayer();
+        if (EzChestShop.worldguard) {
+            if (shop.getSettings().isAdminshop()) {
+                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
+                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                    event.setCancelled(true);
                 }
+            } else if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
+                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                event.setCancelled(true);
             }
+        }
+
+        //shop protection section
+        if (Config.shopProtection
+                && !shop.getOwnerID().equals(event.getPlayer().getUniqueId())
+                && !player.hasPermission("ecs.admin")) {
+            //check if player is owner of shop
+            event.setCancelled(true);
+            event.getPlayer().sendMessage(lm.cannotDestroyShop());
         }
     }
 

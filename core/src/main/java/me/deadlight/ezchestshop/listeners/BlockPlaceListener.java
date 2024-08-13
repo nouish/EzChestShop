@@ -33,7 +33,7 @@ public class BlockPlaceListener implements Listener {
         if (state instanceof Dispenser) {
             Dispenser dispenser = ((Dispenser) state);
             final Directional directional = (Directional) dispenser.getBlockData();
-            EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+            EzChestShop.getScheduler().runTaskLater(() -> {
                 Block block = event.getBlock().getRelative(directional.getFacing());
                 ItemStack item = event.getItem();
                 placeBlock(block, item);

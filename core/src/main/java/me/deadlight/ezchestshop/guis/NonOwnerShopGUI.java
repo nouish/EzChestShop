@@ -178,7 +178,7 @@ public class NonOwnerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
+                                        EzChestShop.getScheduler().runTask(() -> ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -213,7 +213,7 @@ public class NonOwnerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
+                                        EzChestShop.getScheduler().runTask(() -> ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -243,7 +243,7 @@ public class NonOwnerShopGUI {
 
     }
 
-    
+
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         LanguageManager lm = new LanguageManager();

@@ -1,17 +1,31 @@
 package me.deadlight.ezchestshop.listeners;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.FloatingItem;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.BlockBoundHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.*;
-import org.bukkit.block.*;
-import org.bukkit.entity.EntityType;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,116 +37,110 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class PlayerLookingAtChestShop implements Listener {
 
-    private HashMap<Player, Location> map = new HashMap<>();
-    private static LanguageManager lm = new LanguageManager();
+    private final Map<Player, Location> map = new HashMap<>();
+    private static final LanguageManager lm = new LanguageManager();
 
 
-    private static HashMap<Location, List<Player>> playershopmap = new HashMap<>();
+    private static final Map<Location, List<Player>> playershopmap = new HashMap<>();
 
     @EventHandler
     public void onLook(PlayerMoveEvent event) {
-
         Block target = event.getPlayer().getTargetBlockExact(5);
 
-        if (target != null) {
-            if (Utils.isApplicableContainer(target)) {
+        if (target == null) {
+            return;
+        }
 
-                Inventory inventory = Utils.getBlockInventory(target);
-                if (inventory instanceof DoubleChestInventory) {
-                    //double chest
+        if (!Utils.isApplicableContainer(target)) {
+            return;
+        }
 
-                    DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                    Chest leftchest = (Chest) doubleChest.getLeftSide();
-                    Chest rightchest = (Chest) doubleChest.getRightSide();
+        Inventory inventory = Utils.getBlockInventory(target);
+        if (inventory instanceof DoubleChestInventory) {
+            //double chest
 
-                    if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
-                            || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+            Chest leftchest = (Chest) doubleChest.getLeftSide();
+            Chest rightchest = (Chest) doubleChest.getRightSide();
 
-                        PersistentDataContainer rightone = null;
+            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
-                        if (!leftchest.getPersistentDataContainer().isEmpty()) {
-                            target = leftchest.getBlock();
-                            rightone = leftchest.getPersistentDataContainer();
-                        } else {
-                            target = rightchest.getBlock();
-                            rightone = rightchest.getPersistentDataContainer();
-                        }
+                PersistentDataContainer rightone = null;
 
-                        //show the hologram
+                if (!leftchest.getPersistentDataContainer().isEmpty()) {
+                    target = leftchest.getBlock();
+                    rightone = leftchest.getPersistentDataContainer();
+                } else {
+                    target = rightchest.getBlock();
+                    rightone = rightchest.getPersistentDataContainer();
+                }
+
+                //show the hologram
 //                        if (Utils.validateContainerValues(rightone, ShopContainer.getShop(target.getLocation()))) {
 //                            EzChestShop.logConsole(
 //                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
 //                            return;
 //                        }
-                        ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
-                        double buy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
-                        double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-                        boolean is_adminshop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
-                                PersistentDataType.INTEGER) == 1;
-                        boolean is_dbuy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
-                                PersistentDataType.INTEGER) == 1;
-                        boolean is_dsell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
-                                PersistentDataType.INTEGER) == 1;
-                        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
-                        String shopOwner = offlinePlayerOwner.getName();
-                        if (shopOwner == null) {
-                            shopOwner = ChatColor.RED + "Error";
-                        }
+                ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                double buy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
+                double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
+                boolean is_adminshop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                        PersistentDataType.INTEGER) == 1;
+                boolean is_dbuy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                        PersistentDataType.INTEGER) == 1;
+                boolean is_dsell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                        PersistentDataType.INTEGER) == 1;
+                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                String shopOwner = offlinePlayerOwner.getName();
+                if (shopOwner == null) {
+                    shopOwner = ChatColor.RED + "Error";
+                }
 
-                        Location holoLoc = getHoloLoc(target);
+                Location holoLoc = getHoloLoc(target);
 
-                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
-                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
-                        }
-                        map.put(event.getPlayer(), target.getLocation());
-                    }
-
-                } else {
-                    //not a double chest
-
-                    PersistentDataContainer container = ((TileState)target.getState()).getPersistentDataContainer();
-                    if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+                if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
+                    showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
+                }
+                map.put(event.getPlayer(), target.getLocation());
+            }
+        } else {
+            //not a double chest
+            PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
+            if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
 
 //                        if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
 //                            EzChestShop.logConsole(
 //                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
 //                            return;
 //                        }
-                        //show the hologram
-                        ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
-                        double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
-                        double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-                        boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
-                                PersistentDataType.INTEGER) == 1;
-                        boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
-                                PersistentDataType.INTEGER) == 1;
-                        boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
-                                PersistentDataType.INTEGER) == 1;
-                        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
-                        String shopOwner = offlinePlayerOwner.getName();
-                        if (shopOwner == null) {
-                            shopOwner = ChatColor.RED + "Error";
-                        }
-                        Location holoLoc = getHoloLoc(target);
+                //show the hologram
+                ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+                double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
+                double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
+                boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
+                        PersistentDataType.INTEGER) == 1;
+                boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
+                        PersistentDataType.INTEGER) == 1;
+                boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
+                        PersistentDataType.INTEGER) == 1;
+                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                String shopOwner = offlinePlayerOwner.getName();
+                if (shopOwner == null) {
+                    shopOwner = ChatColor.RED + "Error";
+                }
+                Location holoLoc = getHoloLoc(target);
 
-                        if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
-                            showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
-                        }
-
-                        map.put(event.getPlayer(), target.getLocation());
-                    }
+                if (!isAlreadyLooking(event.getPlayer(), target) && Config.showholo && !isAlreadyPresenting(target.getLocation(), event.getPlayer())) {
+                    showHologram(holoLoc, target.getLocation().clone(), thatItem, buy, sell, event.getPlayer(), is_adminshop, shopOwner, is_dbuy, is_dsell);
                 }
 
+                map.put(event.getPlayer(), target.getLocation());
             }
         }
-
     }
-
 
 
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell,
@@ -140,7 +148,6 @@ public class PlayerLookingAtChestShop implements Listener {
 
         List<ASHologram> holoTextList = new ArrayList<>();
         List<FloatingItem> holoItemList = new ArrayList<>();
-
 
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = "Error";
@@ -242,8 +249,7 @@ public class PlayerLookingAtChestShop implements Listener {
         playershopmap.put(shopLocation, players);
 
 
-
-        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+        EzChestShop.getScheduler().runTaskLater(() -> {
             for (ASHologram holo : holoTextList) {
                 holo.destroy();
                 Utils.onlinePackets.remove(holo);
@@ -263,13 +269,8 @@ public class PlayerLookingAtChestShop implements Listener {
                     playershopmap.put(shopLocation, players1);
                 }
             }
-
-        }, 20 * Config.holodelay);
-
-
+        }, 20L * Config.holodelay);
     }
-
-
 
     private boolean isAlreadyLooking(Player player, Block block) {
         return map.get(player) != null && block.getLocation().equals(map.get(player));
@@ -333,12 +334,10 @@ public class PlayerLookingAtChestShop implements Listener {
             } else {
                 holoLoc.add(direction);
             }
-
         } else {
             holoLoc = containerBlock.getLocation().clone().add(0.5D, 0, 0.5D).add(direction);
         }
         return holoLoc;
     }
-
 
 }

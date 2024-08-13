@@ -1,5 +1,13 @@
 package me.deadlight.ezchestshop.utils.holograms;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -8,13 +16,11 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a hologram of a shop.
@@ -27,15 +33,15 @@ import java.util.stream.Collectors;
 public class ShopHologram {
 
     private static final LanguageManager lm = new LanguageManager();
-    private static HashMap<UUID, HashMap<Location, ShopHologram>> playerLocationShopHoloMap = new HashMap<>();
-    private static HashMap<Location, BlockBoundHologram> locationBlockHoloMap = new HashMap<>();
+    private static final Map<UUID, HashMap<Location, ShopHologram>> playerLocationShopHoloMap = new HashMap<>();
+    private static final Map<Location, BlockBoundHologram> locationBlockHoloMap = new HashMap<>();
 
     /** The Hologram a player is currently inspecting (looking at). Only available if show item first is active. */
-    private static HashMap<UUID, ShopHologram> hologramInspections = new HashMap<>();
+    private static final Map<UUID, ShopHologram> hologramInspections = new HashMap<>();
 
-    private Location location;
-    private Player player;
-    private BlockBoundHologram blockHolo;
+    private final Location location;
+    private final Player player;
+    private final BlockBoundHologram blockHolo;
     private EzShop shop;
 
     /**
@@ -52,7 +58,7 @@ public class ShopHologram {
         // Make sure the BockBoundHologram is created
         if (!locationBlockHoloMap.containsKey(location)) {
             // Get the shop and it's hologram structure
-           shop = ShopContainer.getShop(location);
+            shop = ShopContainer.getShop(location);
             List<String> structure = new ArrayList<>(shop.getSettings().isAdminshop() ?
                     Config.holostructure_admin : Config.holostructure);
 
@@ -79,7 +85,6 @@ public class ShopHologram {
                 possibleCounts.add("0");
             }
 
-
             /*
              * Text default placeholders:
              * (%buyprice% or <emptyShopInfo/> for example - simply variables that are replaced with the actual values)
@@ -96,9 +101,9 @@ public class ShopHologram {
             textReplacements.put("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(), shop.getShopItem()) + "");
             textReplacements.put("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "");
             // the amount of itemdata replacements is defined in the config and may wary
-            int itemDataLines = structure.stream()
+            int itemDataLines = (int) structure.stream()
                     .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
-                    .collect(Collectors.toList()).size();
+                    .count();
             for (int i = 0; i < itemDataLines; i++) {
                 textReplacements.put("<itemdata" + (i + 1) + "/>", "");
             }
@@ -106,8 +111,8 @@ public class ShopHologram {
             // Emptyshop should only be shown for non-adminshops.
             // Previous config versions had the placeholder, so this check is needed for backwards compatibility.
             if (!shop.getSettings().isAdminshop() &&
-                (shop.getOwnerID() == player.getUniqueId() ||
-                    shop.getSettings().getAdmins().contains(player.getUniqueId().toString()))
+                    (shop.getOwnerID() == player.getUniqueId() ||
+                            shop.getSettings().getAdmins().contains(player.getUniqueId().toString()))
             ) {
                 // visible if the shop does not contain at least 1 item.
                 boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
@@ -116,9 +121,9 @@ public class ShopHologram {
                 textReplacements.put("<emptyShopInfo/>", "");
             }
             // the amount of custom message replacements is defined in the config and may wary
-            int customLines = structure.stream()
+            int customLines = (int) structure.stream()
                     .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
-                    .collect(Collectors.toList()).size();
+                    .count();
             for (int i = 0; i < customLines; i++) {
                 if (shop.getSettings().getCustomMessages().size() > i) {
                     textReplacements.put("<custom" + (i + 1) + "/>", shop.getSettings().getCustomMessages().get(i));
@@ -138,7 +143,7 @@ public class ShopHologram {
              * Conditional tags:
              * (buy, sell, separator for example - These tags are placed around content and are only shown if the condition is true)
              */
-            HashMap<String,  Boolean> conditionalTags = new HashMap<>();
+            HashMap<String, Boolean> conditionalTags = new HashMap<>();
             // buy and sell are inverted because true for the Hologram means it is shown
             // and true for isDbuy/isDsell means it is disabled aka hidden
             conditionalTags.put("buy", !shop.getSettings().isDbuy());
@@ -157,7 +162,7 @@ public class ShopHologram {
 
             /*
              * Always visible text replacements:
-             * (<emptyShopInfo/> for example - These tags are always visible, 
+             * (<emptyShopInfo/> for example - These tags are always visible,
              * even if show Item first is enabled - these Hologram texts render regardless)
              */
             List<String> alwaysVisibleTextReplacements = new ArrayList<>();
@@ -177,13 +182,9 @@ public class ShopHologram {
         this.blockHolo = locationBlockHoloMap.get(location);
 
         // Save the just created hologram to the player's hologram map
-        if (playerLocationShopHoloMap.containsKey(player.getUniqueId())) {
-            playerLocationShopHoloMap.get(player.getUniqueId()).put(location, this);
-        } else {
-            HashMap<Location, ShopHologram> locationShopHoloMap = new HashMap<>();
-            locationShopHoloMap.put(location, this);
-            playerLocationShopHoloMap.put(player.getUniqueId(), locationShopHoloMap);
-        }
+        playerLocationShopHoloMap
+                .computeIfAbsent(player.getUniqueId(), ignoredKey -> new HashMap<>())
+                .put(location, this);
 
         // Make sure inventory replacements are up to date for all players.
         ShopHologram.updateInventoryReplacements(location);
@@ -239,8 +240,10 @@ public class ShopHologram {
      * Reload all holograms. Called when the plugin is reloaded via /ecsadmin reload.
      */
     public static void reloadAll() {
-        List<ShopHologram> shopHolos = playerLocationShopHoloMap.values().stream().map(holo -> holo.values())
-                .flatMap(Collection::stream).collect(Collectors.toList());
+        List<ShopHologram> shopHolos = playerLocationShopHoloMap.values().stream()
+                .map(HashMap::values)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         shopHolos.forEach(hologram -> {
             hologram.blockHolo.updateContents(Config.holostructure);
             hideForAll(hologram.getLocation());
@@ -253,11 +256,10 @@ public class ShopHologram {
      */
     public static void hideAll(Player player) {
         if (playerLocationShopHoloMap.containsKey(player.getUniqueId())) {
-            List<ShopHologram> shopHolos = playerLocationShopHoloMap.get(player.getUniqueId()).values()
-                    .stream().collect(Collectors.toList());
-
-            shopHolos.forEach(hologram -> hologram.hide());
+            List<ShopHologram> shopHolos = new ArrayList<>(playerLocationShopHoloMap.get(player.getUniqueId()).values());
+            shopHolos.forEach(ShopHologram::hide);
             playerLocationShopHoloMap.remove(player.getUniqueId());
+
             if (ShopHologram.isPlayerInspectingShop(player)) {
                 ShopHologram.getInspectedShopHologram(player).removeInspectedShop();
             }
@@ -265,19 +267,22 @@ public class ShopHologram {
     }
 
     /**
-     * Hide a hologram at a specific location for all players. 
+     * Hide a hologram at a specific location for all players.
      * <br>
      * (each shop block has a hologram for each player that is viewing it, so all of those need to be hidden)
      * @param location The location of the shop
      */
     public static void hideForAll(Location location) {
         playerLocationShopHoloMap.values().forEach(locationShopHoloMap -> {
-            if (locationShopHoloMap.containsKey(location)) {
-                locationShopHoloMap.get(location).hide();
+            ShopHologram hologram = locationShopHoloMap.get(location);
+            if (hologram != null) {
+                hologram.hide();
             }
         });
-        ShopHologram.hologramInspections.values().stream().filter(shopHolo -> shopHolo.getLocation().equals(location)).collect(Collectors.toSet())
-                .forEach(shopHolo -> shopHolo.removeInspectedShop());
+        ShopHologram.hologramInspections.values().stream()
+                .filter(shopHolo -> shopHolo.getLocation().equals(location))
+                .collect(Collectors.toSet())
+                .forEach(ShopHologram::removeInspectedShop);
         locationBlockHoloMap.remove(location);
     }
 
@@ -329,9 +334,9 @@ public class ShopHologram {
     public void setCustomHologramMessage(List<String> messages) {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
-            int lines = playerHolo.getBlockHologram().getContents().stream()
+            int lines = (int) playerHolo.getBlockHologram().getContents().stream()
                     .filter(s -> s.startsWith("<custom"))
-                    .collect(Collectors.toList()).size();
+                    .count();
             // Update at most x lines
             for (int i = 0; i < lines; i++) {
                 if (i >= messages.size()) {
@@ -345,23 +350,22 @@ public class ShopHologram {
 
     public void setItemDataVisible(boolean visible) {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
-        int lines = playerHolo.getBlockHologram().getContents().stream()
+        int lines = (int) playerHolo.getBlockHologram().getContents().stream()
                 .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
-                .collect(Collectors.toList()).size();
+                .count();
         shop = ShopContainer.getShop(location);
-        if (playerHolo != null) {
-            for (int i = -1; i < lines; i++) {
-                ItemStack item = shop.getShopItem();
-                if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0 ||
-                        (item.getType() == Material.ENCHANTED_BOOK
-                                && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
-                    if (i == -1) {
-                        playerHolo.updateTextReplacement("<itemdataRest/>", visible ?
-                                BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
-                    } else {
-                        playerHolo.updateTextReplacement("<itemdata" + (i + 1) + "/>", visible ?
-                                BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
-                    }
+        for (int i = -1; i < lines; i++) {
+            ItemStack item = shop.getShopItem();
+            if (Tag.SHULKER_BOXES.isTagged(item.getType())
+                    || !item.getEnchantments().isEmpty()
+                    || (item.getType() == Material.ENCHANTED_BOOK
+                    && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
+                if (i == -1) {
+                    playerHolo.updateTextReplacement("<itemdataRest/>", visible ?
+                            BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
+                } else {
+                    playerHolo.updateTextReplacement("<itemdata" + (i + 1) + "/>", visible ?
+                            BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
                 }
             }
         }
@@ -501,12 +505,13 @@ public class ShopHologram {
     }
 
     public static void updateInventoryReplacements(Location location) {
+        BlockBoundHologram hologram = locationBlockHoloMap.get(location);
         // Ignore if the shop's Hologram doesn't exist
-        if (!locationBlockHoloMap.containsKey(location)) {
+        if (hologram == null) {
             return;
         }
         //laggy part
-        locationBlockHoloMap.get(location).getViewerHolograms().forEach(playerBlockBoundHologram -> {
+        hologram.getViewerHolograms().forEach(playerBlockBoundHologram -> {
             ShopHologram shopHolo = ShopHologram.getHologram(location, playerBlockBoundHologram.getPlayer());
             shopHolo.updateStockAndCapacity(); //second we gonna look into this
             shopHolo.updateEmptyShopInfo();
@@ -537,8 +542,7 @@ public class ShopHologram {
      * Remove the hologram a player is currently inspecting (looking at).
      */
     public void removeInspectedShop() {
-        if (hologramInspections.containsKey(player.getUniqueId())) {
-            hologramInspections.remove(player.getUniqueId());
+        if (hologramInspections.remove(player.getUniqueId()) != null) {
             blockHolo.removeInspector(player);
         }
     }

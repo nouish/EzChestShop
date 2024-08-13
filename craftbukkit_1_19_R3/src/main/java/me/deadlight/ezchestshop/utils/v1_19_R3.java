@@ -37,7 +37,7 @@ import java.util.Set;
 public class v1_19_R3 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
-    private static Map<Integer, Entity> entities = new HashMap<>();
+    private static final Map<Integer, Entity> entities = new HashMap<>();
 
     /**
      * Convert an Item to a Text Compount. Used in Text Component Builders to show
@@ -51,11 +51,7 @@ public class v1_19_R3 extends VersionUtils {
     @Override
     String ItemToTextCompoundString(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        NBTTagCompound compound = new NBTTagCompound();
-        compound = nmsItemStack.b(compound);
-
-        return compound.toString();
+        return CraftItemStack.asNMSCopy(itemStack).b(new NBTTagCompound()).toString();
     }
 
     @Override
@@ -165,28 +161,24 @@ public class v1_19_R3 extends VersionUtils {
                 boolean success = menu.getResponse().test(player, array);
 
                 if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
-                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
+                    EzChestShop.getScheduler().runTaskLater(() -> menu.open(player), 2L);
                 }
 
                 removeSignMenuFactoryListen(signMenuFactory);
 
-                EzChestShop.getScheduler().runTask(EzChestShop.getPlugin(), () -> {
+                EzChestShop.getScheduler().runTask(() -> {
                     if (player.isOnline()) {
                         Location location = menu.getLocation();
                         player.sendBlockChange(location, location.getBlock().getBlockData());
                     }
                 });
-
             }
         });
-
     }
 
     @Override
     void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory) {
-
         listeners.remove(signMenuFactory);
-
     }
 
     @Override
@@ -235,12 +227,10 @@ public class v1_19_R3 extends VersionUtils {
 
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(eID, shulker.aj().c());
         playerConnection.a(metaPacket);
-
     }
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
         return listeners;
     }
-
 
 }

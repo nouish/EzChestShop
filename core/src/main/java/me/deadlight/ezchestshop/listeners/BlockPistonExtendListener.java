@@ -91,7 +91,7 @@ public class BlockPistonExtendListener implements Listener {
                         if (Config.holodistancing) {
                             ShopHologram.hideForAll(event.getBlock().getLocation());
                         }
-                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+                        EzChestShop.getScheduler().runTaskLater(() -> {
                             Collection<Entity> entitiyList = block.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);
                             entitiyList.forEach(entity -> {
                                 if (entity instanceof Item) {
@@ -103,7 +103,7 @@ public class BlockPistonExtendListener implements Listener {
                                         ShulkerBox box = (ShulkerBox) bsm.getBlockState();
                                         String lock = box.getLock();
                                         //good, now validate that its the same shulker box that it was before
-                                        if (lock != null && lockList.contains(lock)) {
+                                        if (lockList.contains(lock)) {
                                             //it is surely that shulker
                                             //reset the lock
                                             box.setLock(lockMap.get(lock));

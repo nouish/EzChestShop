@@ -199,7 +199,7 @@ public class ServerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data));
+                                        EzChestShop.getScheduler().runTask(() -> ShopContainer.buyServerItem(containerBlock, buyPrice * amount, amount, thatplayer, mainitem, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -234,7 +234,7 @@ public class ServerShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data));
+                                        EzChestShop.getScheduler().runTask(() -> ShopContainer.sellServerItem(containerBlock, sellPrice * amount, amount, mainitem, thatplayer, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }

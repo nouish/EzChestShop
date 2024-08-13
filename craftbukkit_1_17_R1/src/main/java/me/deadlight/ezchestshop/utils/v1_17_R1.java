@@ -1,4 +1,8 @@
 package me.deadlight.ezchestshop.utils;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +19,6 @@ import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.entity.monster.EntityShulker;
 import net.minecraft.world.level.World;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
@@ -25,30 +28,15 @@ import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class v1_17_R1 extends VersionUtils {
 
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
-    private static Map<Integer, Entity> entities = new HashMap<>();
+    private static final Map<Integer, Entity> entities = new HashMap<>();
 
-    /**
-     * Convert a Item to a Text Compount. Used in Text Component Builders to show
-     * items in chat.
-     *
-     * @category ItemUtils
-     * @param itemStack
-     * @return
-     */
     @Override
     String ItemToTextCompoundString(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        NBTTagCompound compound = new NBTTagCompound();
-        compound = nmsItemStack.save(compound);
-
-        return compound.toString();
+        return CraftItemStack.asNMSCopy(itemStack).save(new NBTTagCompound()).toString();
     }
 
     @Override
@@ -156,22 +144,19 @@ public class v1_17_R1 extends VersionUtils {
                 boolean success = menu.getResponse().test(player, array);
 
                 if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
-                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
+                    EzChestShop.getScheduler().runTaskLater(() -> menu.open(player), 2L);
                 }
 
                 removeSignMenuFactoryListen(signMenuFactory);
 
-                EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                EzChestShop.getScheduler().runTaskLater(() -> {
                     if (player.isOnline()) {
                         Location location = menu.getLocation();
                         player.sendBlockChange(location, location.getBlock().getBlockData());
                     }
                 }, 2L);
-
-
             }
         });
-
     }
 
     @Override
@@ -220,9 +205,7 @@ public class v1_17_R1 extends VersionUtils {
 
         PacketPlayOutEntityMetadata metaPacket = new PacketPlayOutEntityMetadata(eID, shulker.getDataWatcher(), true);
         playerConnection.sendPacket(metaPacket);
-
     }
-
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
         return listeners;

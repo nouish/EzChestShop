@@ -1,21 +1,34 @@
 package me.deadlight.ezchestshop.guis;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.listeners.ChatListener;
+import me.deadlight.ezchestshop.utils.SignMenuFactory;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
-import me.deadlight.ezchestshop.utils.SignMenuFactory;
-import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
@@ -23,10 +36,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SettingsGUI {
     public static LanguageManager lm = new LanguageManager();
@@ -40,15 +49,10 @@ public class SettingsGUI {
     //adminshop 0/1
 
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
-
         ContainerGui container = GuiData.getSettings();
         PersistentDataContainer dataContainer = ((TileState)containerBlock.getState()).getPersistentDataContainer();
-
         boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
-
-
-        Gui gui = new Gui(container.getRows(), lm.settingsGuiTitle());
-
+        Gui gui = new Gui(container.getRows(), lm.settingsGuiTitle(), EnumSet.noneOf(InteractionModifier.class));
         gui.getFiller().fill(container.getBackground());
 
         //trans This menu will not be available for now, until I find a way to make it work properly
@@ -175,19 +179,15 @@ public class SettingsGUI {
                     //do the job
                     if (event.getClick() == ClickType.LEFT) {
                         //left click == add admin
-
                         ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "add", containerBlock));
                         player.closeInventory();
                         player.sendMessage(lm.addingAdminWaiting());
-
-
                     } else if (event.getClick() == ClickType.RIGHT) {
                         //right click == remove admin
                         ChatListener.chatmap.put(player.getUniqueId(), new ChatWaitObject("none", "remove", containerBlock));
                         player.closeInventory();
                         player.sendMessage(lm.removingAdminWaiting());
                     }
-
                 });
                 Utils.addItemIfEnoughSlots(gui, signItem.getSlot(), signItemg);
             }
@@ -324,7 +324,7 @@ public class SettingsGUI {
                                             player.sendMessage(lm.negativePrice());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+                                        EzChestShop.getScheduler().runTask(() -> {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, false);
@@ -358,7 +358,7 @@ public class SettingsGUI {
                                             player.sendMessage(lm.negativePrice());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+                                        EzChestShop.getScheduler().runTask(() -> {
                                                     // If these checks complete successfully continue.
                                                     if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
                                                         ShopContainer.changePrice(containerBlock.getState(), amount, true);
@@ -581,7 +581,7 @@ public class SettingsGUI {
                  .reopenIfFail(false).response((thatplayer, strings) -> {
                      try {
                          // Run checks here if allowed
-                         EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> {
+                         EzChestShop.getScheduler().runTask(() -> {
                                      int lines = Config.settings_hologram_message_line_count_default;
                                      if (Config.permission_hologram_message_line_count) {
                                          int maxShops = Utils.getMaxPermission(player, "ecs.shops.hologram.messages.lines.");
@@ -589,7 +589,7 @@ public class SettingsGUI {
                                          lines = maxShops;
                                      }
                                      List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
-                                             .filter(s -> !s.trim().equals("")).collect(Collectors.toList());
+                                             .filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
                                      // Save data!
                                      ShopContainer.getShopSettings(location)
                                              .setCustomMessages(messages);
@@ -604,9 +604,5 @@ public class SettingsGUI {
                  });
          menu.open(player);
      }
-
-
-
-
 
 }

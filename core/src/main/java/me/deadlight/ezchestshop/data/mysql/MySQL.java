@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
@@ -159,14 +158,13 @@ public class MySQL extends DatabaseManager {
 
     @Override
     public void deleteEntry(String primary_key, String key, String table) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.removeRows(primary_key, key));
+        EzqlTable ezqlTable = database.getTable(prefix + table);
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> ezqlTable.removeRows(primary_key, key));
     }
 
     @Override
     public void insertShop(String sloc, String owner, String item, double buyprice, double sellprice, boolean msgtoggle, boolean dbuy, boolean dsell, String admins, boolean shareincome, boolean adminshop, String rotation, List<String> customMessages) {
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->this.shopdata.pushRow(
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> this.shopdata.pushRow(
                 sloc,
                 owner,
                 item,
@@ -179,60 +177,54 @@ public class MySQL extends DatabaseManager {
                 shareincome,
                 adminshop,
                 rotation,
-                customMessages.stream().collect(Collectors.joining("#,#"))
+                String.join("#,#", customMessages)
         ));
     }
 
     @Override
     public String getString(String primary_key, String key, String column, String table) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
+        EzqlTable ezqlTable = database.getTable(prefix + table);
         return ezqlTable.getSingleValue(column, primary_key, key, String.class);
     }
 
     @Override
     public void setString(String primary_key, String key, String column, String table, String data) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
+        EzqlTable ezqlTable = database.getTable(prefix + table);
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
     }
 
     @Override
     public void setInt(String primary_key, String key, String column, String table, int data) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
+        EzqlTable ezqlTable = database.getTable(prefix + table);
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
     }
 
     @Override
     public void setBool(String primary_key, String key, String column, String table, Boolean data) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data ? 1 : 0)));
+        EzqlTable ezqlTable = database.getTable(prefix + table);
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data ? 1 : 0)));
     }
 
     @Override
     public void setDouble(String primary_key, String key, String column, String table, double data) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
+        EzqlTable ezqlTable = database.getTable(prefix + table);
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> ezqlTable.updateRow(primary_key, key, new EzqlRow(column, data)));
     }
 
 
     @Override
     public boolean hasPlayer(String table, UUID key) {
-        EzqlTable ezqlTable = database.getTable(prefix+table);
-
-        return ezqlTable.exists("uuid",key.toString());
+        EzqlTable ezqlTable = database.getTable(prefix + table);
+        return ezqlTable.exists("uuid", key.toString());
     }
 
     @Override
     public boolean hasTable(String table) {
-        return database.hasTable(prefix+table);
+        return database.hasTable(prefix + table);
     }
 
     @Override
     public void preparePlayerData(String table, String uuid) {
-        EzChestShop.getScheduler().runTaskAsynchronously(plugin,()->playerdata.pushRow(uuid,""));
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> playerdata.pushRow(uuid, ""));
     }
 }

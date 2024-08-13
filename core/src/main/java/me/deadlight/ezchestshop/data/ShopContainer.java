@@ -1,30 +1,35 @@
 package me.deadlight.ezchestshop.data;
-import me.deadlight.ezchestshop.enums.Changes;
-import me.deadlight.ezchestshop.events.PlayerTransactEvent;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.objects.ShopSettings;
-import me.deadlight.ezchestshop.utils.objects.SqlQueue;
-import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.WebhookSender;
-import me.deadlight.ezchestshop.utils.XPEconomy;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.TileState;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.enums.Changes;
+import me.deadlight.ezchestshop.events.PlayerTransactEvent;
+import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.WebhookSender;
+import me.deadlight.ezchestshop.utils.XPEconomy;
+import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.utils.objects.ShopSettings;
+import me.deadlight.ezchestshop.utils.objects.SqlQueue;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.TileState;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  * ShopContainer - a tool to retrieve and store data regarding shops,
@@ -33,7 +38,7 @@ import java.util.stream.Collectors;
 
 public class ShopContainer {
 
-    private static Economy econ = EzChestShop.getEconomy();
+    private static final Economy econ = EzChestShop.getEconomy();
     private static HashMap<Location, EzShop> shopMap = new HashMap<>();
 
     static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
@@ -76,7 +81,7 @@ public class ShopContainer {
      */
     public static void createShop(Location loc, Player p, ItemStack item, double buyprice, double sellprice, boolean msgtoggle,
                                   boolean dbuy, boolean dsell, String admins, boolean shareincome,
-                                   boolean adminshop, String rotation) {
+                                  boolean adminshop, String rotation) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
         String encodedItem = Utils.encodeItem(item);
@@ -84,30 +89,21 @@ public class ShopContainer {
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
-        EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(
-                EzChestShop.getPlugin(), () -> {
-
-                    try {
-                        WebhookSender.sendDiscordNewShopAlert(
-                                p.getName(),
-                                //Show buying price in string if dbuy is false, otherwise show "Disabled"
-                                dbuy ? "Disabled" : String.valueOf(buyprice),
-                                dsell ? "Disabled" : String.valueOf(sellprice),
-                                //Show Item name if it has custom name, otherwise show localized name
-                                item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name(),
-                                item.getType().name(),
-                                //Display Current Time Like This: 2023/5/1 | 23:10:23
-                                formatter.format(java.time.LocalDateTime.now()).replace("T", " | "),
-                                //Display shop location as this: world, x, y, z
-                                loc.getWorld().getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()
-                        );
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-        );
-
+        EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(EzChestShop.getPlugin(), () -> {
+            try {
+                WebhookSender.sendDiscordNewShopAlert(p.getName(),
+                        //Show buying price in string if dbuy is false, otherwise show "Disabled"
+                        dbuy ? "Disabled" : String.valueOf(buyprice), dsell ? "Disabled" : String.valueOf(sellprice),
+                        //Show Item name if it has custom name, otherwise show localized name
+                        item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name(), item.getType().name(),
+                        //Display Current Time Like This: 2023/5/1 | 23:10:23
+                        formatter.format(java.time.LocalDateTime.now()).replace("T", " | "),
+                        //Display shop location as this: world, x, y, z
+                        loc.getWorld().getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
@@ -180,10 +176,10 @@ public class ShopContainer {
      * @return the amount of shops a player owns.
      */
     public static int getShopCount(Player p, World world) {
-        return getShopFromOwner(p.getUniqueId()).stream().filter(ezShop -> {
+        return (int) getShopFromOwner(p.getUniqueId()).stream().filter(ezShop -> {
             if (world == null) return false;
             return world.equals(ezShop.getLocation().getWorld());
-        }).collect(Collectors.toList()).size();
+        }).count();
     }
 
     /**
@@ -216,17 +212,14 @@ public class ShopContainer {
     }
 
     public static EzShop getShop(Location location) {
-        if (isShop(location)) {
-            return shopMap.get(location);
-        }
-        return null;
+        return shopMap.get(location);
     }
 
     public static ShopSettings getShopSettings(Location loc) {
-        if (shopMap.containsKey(loc)) {
-            return shopMap.get(loc).getSettings();
+        EzShop shop = shopMap.get(loc);
+        if (shop != null) {
+            return shop.getSettings();
         } else {
-
             //why we would need to use database data for getting settings? just setting them in database is enough
             PersistentDataContainer dataContainer = Utils.getDataContainer(loc.getBlock());
             String sloc = Utils.LocationtoString(loc);
@@ -244,7 +237,7 @@ public class ShopContainer {
             String rotation = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
             rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
-            EzShop shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
+            shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
             shopMap.put(loc, shop);
             return settings;
         }
@@ -256,11 +249,8 @@ public class ShopContainer {
         LanguageManager lm = new LanguageManager();
         //check for money
         if (Utils.containsAtLeast(Utils.getBlockInventory(containerBlock), thatItem , count)) {
-
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
-
                 if (Utils.hasEnoughSpace(player, count, thatItem)) {
-
                     int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
                     int max_size = thatItem.getMaxStackSize();
                     for (int i = 0; i < stacks; i++) {
@@ -281,19 +271,14 @@ public class ShopContainer {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
                     Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                             ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.BUY, count + "");
-
                 } else {
                     player.sendMessage(lm.fullinv());
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
                 }
-
             } else {
-
                 player.sendMessage(lm.cannotAfford());
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-
             }
-
         } else {
             player.sendMessage(lm.outofStock());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
@@ -301,15 +286,11 @@ public class ShopContainer {
     }
 
     public static void sellItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
-
         LanguageManager lm = new LanguageManager();
-
         ItemStack thatItem = tthatItem.clone();
 
         if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
-
             if (ifHasMoney(owner, price)) {
-
                 if (Utils.containerHasEnoughSpace(Utils.getBlockInventory(containerBlock), count, thatItem)) {
                     int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
                     int max_size = thatItem.getMaxStackSize();
@@ -330,35 +311,27 @@ public class ShopContainer {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
                     Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                             ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.SELL, count + "");
-
                 } else {
                     player.sendMessage(lm.chestIsFull());
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
                 }
-
             } else {
-
                 player.sendMessage(lm.shopCannotAfford());
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-
             }
         } else {
             player.sendMessage(lm.notEnoughItemToSell());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
         }
-
     }
 
     public static void buyServerItem(Block containerBlock, double price, int count, Player player, ItemStack tthatItem, PersistentDataContainer data) {
         ItemStack thatItem = tthatItem.clone();
-
         LanguageManager lm = new LanguageManager();
+
         //check for money
-
         if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
-
             if (Utils.hasEnoughSpace(player, count, thatItem)) {
-
                 int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
                 int max_size = thatItem.getMaxStackSize();
                 for (int i = 0; i < stacks; i++) {
@@ -379,31 +352,21 @@ public class ShopContainer {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
                 Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                         ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.BUY, count + "");
-
             } else {
                 player.sendMessage(lm.fullinv());
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             }
-
         } else {
-
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
-
         }
-
-
-
     }
 
     public static void sellServerItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, PersistentDataContainer data) {
-
         LanguageManager lm = new LanguageManager();
-
         ItemStack thatItem = tthatItem.clone();
 
         if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
-
             thatItem.setAmount(count);
             deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
             transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
@@ -414,32 +377,26 @@ public class ShopContainer {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
             Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                     ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.SELL, count + "");
-
         } else {
             player.sendMessage(lm.notEnoughItemToSell());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
         }
-
     }
 
     private static void deposit(double price, OfflinePlayer deposit) {
-
         if (Config.useXP) {
             XPEconomy.depositPlayer(deposit, price);
         } else {
             econ.depositPlayer(deposit, price);
         }
-
     }
 
     private static boolean withdraw(double price, OfflinePlayer deposit) {
-
         if (Config.useXP) {
             return XPEconomy.withDrawPlayer(deposit, price);
         } else {
             return econ.withdrawPlayer(deposit, price).transactionSuccess();
         }
-
     }
 
     private static boolean ifHasMoney(OfflinePlayer player, double price) {
@@ -452,18 +409,14 @@ public class ShopContainer {
     }
 
     private static void getandgive(OfflinePlayer withdraw, double price, OfflinePlayer deposit) {
-
         withdraw(price, withdraw);
         deposit(price, deposit);
-
     }
 
     private static void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, ItemStack item, int count, Block containerBlock) {
-
         //buying = True, Selling = False
         PlayerTransactEvent transactEvent = new PlayerTransactEvent(owner, customer, price, isBuy, item, count, Utils.getAdminsList(data), containerBlock);
         Bukkit.getPluginManager().callEvent(transactEvent);
-
     }
 
     private static void sharedIncomeCheck(PersistentDataContainer data, double price) {
@@ -471,8 +424,8 @@ public class ShopContainer {
         if (isSharedIncome) {
             UUID ownerUUID = UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING));
             List<UUID> adminsList = Utils.getAdminsList(data);
-            double profit = price/(adminsList.size() + 1);
-            if (adminsList.size() > 0) {
+            double profit = price / (adminsList.size() + 1);
+            if (!adminsList.isEmpty()) {
                 if (ifHasMoney(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
                     boolean succesful = withdraw(profit * adminsList.size(), Bukkit.getOfflinePlayer(ownerUUID));
                     if (succesful) {
@@ -481,13 +434,9 @@ public class ShopContainer {
                         }
                     }
                 }
-
             }
         }
-
     }
-
-
 
     public static void transferOwner(BlockState state, OfflinePlayer newOwner) {
         Location loc = state.getLocation();
@@ -517,23 +466,16 @@ public class ShopContainer {
         }
     }
 
-
     public static void startSqlQueueTask() {
-        EzChestShop.getScheduler().runTaskTimer(EzChestShop.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-
-                //now looping through all shops and executing mysql commands
-
-                for (EzShop shop : shopMap.values()) {
-                    if (shop.getSettings().getSqlQueue().isChanged()) {
-                        runSqlTask(shop, shop.getSettings().getSqlQueue());
-                    }
-                    if (shop.getSqlQueue().isChanged()) {
-                        runSqlTask(shop, shop.getSqlQueue());
-                    }
+        EzChestShop.getScheduler().runTaskTimer(() -> {
+            //now looping through all shops and executing mysql commands
+            for (EzShop shop : shopMap.values()) {
+                if (shop.getSettings().getSqlQueue().isChanged()) {
+                    runSqlTask(shop, shop.getSettings().getSqlQueue());
                 }
-
+                if (shop.getSqlQueue().isChanged()) {
+                    runSqlTask(shop, shop.getSqlQueue());
+                }
             }
         }, 0, 20 * 60); //for now leaving it as non-editable value
     }
@@ -554,6 +496,7 @@ public class ShopContainer {
         //ok then it's time to execute the mysql thingys
         HashMap<Changes, Object> changes = queue.getChangesList();
         String sloc = shop.getSettings().getSloc();
+
         for (Changes change : changes.keySet()) {
             Object valueObject = changes.get(change);
 
@@ -576,14 +519,6 @@ public class ShopContainer {
 
         //the last thing has to be clearing the SqlQueue object so don't remove this
         queue.resetChangeList(shop.getSettings(), shop); //giving new shop settings to keep the queue updated
-
     }
 
-/*
-
-            db.getDouble("location", sloc,
-                    "buyPrice", "shopdata");
-            db.getDouble("location", sloc,
-                    "sellPrice", "shopdata");
- */
 }

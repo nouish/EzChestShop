@@ -1,9 +1,13 @@
 package me.deadlight.ezchestshop.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.AdminShopGUI;
 import me.deadlight.ezchestshop.guis.NonOwnerShopGUI;
 import me.deadlight.ezchestshop.guis.OwnerShopGUI;
@@ -13,7 +17,10 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -29,10 +36,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 public class ChestOpeningListener implements Listener {
 
     private final NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
@@ -41,11 +44,10 @@ public class ChestOpeningListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChestOpening(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) return;
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getClickedBlock() == null || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Material clickedType = event.getClickedBlock().getType();
-        if (Utils.isApplicableContainer(clickedType)) {
 
+        if (Utils.isApplicableContainer(clickedType)) {
             Block chestblock = event.getClickedBlock();
             if (EzChestShop.slimefun) {
                 if (BlockStorage.hasBlockInfo(chestblock.getLocation())) {
@@ -63,7 +65,6 @@ public class ChestOpeningListener implements Listener {
                     DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
                     Chest chestleft = (Chest) doubleChest.getLeftSide();
                     Chest chestright = (Chest) doubleChest.getRightSide();
-
 
                     if (!chestleft.getPersistentDataContainer().isEmpty()) {
                         dataContainer = chestleft.getPersistentDataContainer();
@@ -134,35 +135,19 @@ public class ChestOpeningListener implements Listener {
                 }
 
                 if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
-
                     ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
-
                 } else {
-
                     //not owner show default
                     nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
-
                 }
-
             }
-
         }
-
     }
-
-
 
     private boolean isAdmin(PersistentDataContainer data, String uuid) {
         UUID owneruuid = UUID.fromString(uuid);
         List<UUID> adminsUUID = Utils.getAdminsList(data);
-        if (adminsUUID.contains(owneruuid)) {
-            return true;
-        } else {
-            return false;
-        }
+        return adminsUUID.contains(owneruuid);
     }
-
-
-
 
 }

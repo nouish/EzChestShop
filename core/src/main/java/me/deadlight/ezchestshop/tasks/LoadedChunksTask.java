@@ -1,16 +1,15 @@
 package me.deadlight.ezchestshop.tasks;
 
-import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.Bukkit;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.World;
 
 public class LoadedChunksTask {
 
     public static void startTask() {
-        EzChestShop.getScheduler().scheduleSyncRepeatingTask(() -> {
+        EzChestShop.getScheduler().runTaskTimer(() -> {
             //fix credited to Huke
             for (final EzShop shop : ShopContainer.getShops()) {
                 final World world = shop.getLocation().getWorld();

@@ -1,15 +1,21 @@
 package me.deadlight.ezchestshop.utils;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -26,12 +32,6 @@ import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class v1_20_R3 extends VersionUtils {
 
@@ -50,11 +50,7 @@ public class v1_20_R3 extends VersionUtils {
     @Override
     String ItemToTextCompoundString(ItemStack itemStack) {
         // First we convert the item stack into an NMS itemstack
-        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        CompoundTag compound = new CompoundTag();
-        compound = nmsItemStack.save(compound);
-
-        return compound.toString();
+        return CraftItemStack.asNMSCopy(itemStack).save(new CompoundTag()).toString();
     }
 
     @Override
@@ -154,11 +150,9 @@ public class v1_20_R3 extends VersionUtils {
 
     @Override
     void signFactoryListen(SignMenuFactory signMenuFactory) {
-
         listeners.put(signMenuFactory, new UpdateSignListener() {
             @Override
             public void listen(Player player, String[] array) {
-
                 SignMenuFactory.Menu menu = signMenuFactory.getInputs().remove(player);
 
                 if (menu == null) {
@@ -169,29 +163,24 @@ public class v1_20_R3 extends VersionUtils {
                 boolean success = menu.getResponse().test(player, array);
 
                 if (!success && menu.isReopenIfFail() && !menu.isForceClose()) {
-                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> menu.open(player), 2L);
+                    EzChestShop.getScheduler().runTaskLater(() -> menu.open(player), 2L);
                 }
 
                 removeSignMenuFactoryListen(signMenuFactory);
 
-                EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                EzChestShop.getScheduler().runTaskLater(() -> {
                     if (player.isOnline()) {
                         Location location = menu.getLocation();
                         player.sendBlockChange(location, location.getBlock().getBlockData());
                     }
                 }, 2L);
-
-
             }
         });
-
     }
 
     @Override
     void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory) {
-
         listeners.remove(signMenuFactory);
-
     }
 
     @Override
@@ -240,12 +229,10 @@ public class v1_20_R3 extends VersionUtils {
 
         ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(eID, shulker.getEntityData().getNonDefaultValues());
         ServerGamePacketListenerImpl.send(metaPacket);
-
     }
 
     public static Map<SignMenuFactory, UpdateSignListener> getListeners() {
         return listeners;
     }
-
 
 }

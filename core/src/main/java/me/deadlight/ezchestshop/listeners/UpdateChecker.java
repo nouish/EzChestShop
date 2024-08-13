@@ -1,70 +1,70 @@
 package me.deadlight.ezchestshop.listeners;
 
-import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.data.gui.ContainerGui;
-import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
-import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.EzChestShop;
-import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.gui.ContainerGui;
+import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
+import me.deadlight.ezchestshop.data.gui.GuiData;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+
 public class UpdateChecker implements Listener{
 
-    LanguageManager lm = new LanguageManager();
+    private static final String BASE_URL = "https://api.spigotmc.org/legacy/update.php?resource=%d";
+    private static final int PLUGIN_ID = 90411;
 
-    private String url = "https://api.spigotmc.org/legacy/update.php?resource=";
-    private String id = "90411";
+    LanguageManager lm = new LanguageManager();
 
     private static String newVersion = EzChestShop.getPlugin().getDescription().getVersion();
 
     private static boolean isSpigotUpdateAvailable;
+
     public static boolean isSpigotUpdateAvailable() {
         return isSpigotUpdateAvailable;
     }
 
     private static boolean isGuiUpdateAvailable;
+
     public static boolean isGuiUpdateAvailable() {
         return isGuiUpdateAvailable;
     }
 
-    private static HashMap<GuiData.GuiType, List<List<String>>> overlappingItems = new HashMap<>();
-    private static HashMap<GuiData.GuiType, Integer> requiredOverflowRows = new HashMap<>();
+    private static final HashMap<GuiData.GuiType, List<List<String>>> overlappingItems = new HashMap<>();
+    private static final HashMap<GuiData.GuiType, Integer> requiredOverflowRows = new HashMap<>();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().isOp()) {
             if (Config.notify_updates && isSpigotUpdateAvailable) {
-                EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
-                    event.getPlayer().spigot().sendMessage(lm.updateNotification(EzChestShop.getPlugin().getDescription().getVersion(), newVersion));
-                }, 10l);
+                EzChestShop.getScheduler().runTaskLater(
+                        () -> event.getPlayer().spigot().sendMessage(lm.updateNotification(EzChestShop.getPlugin().getDescription().getVersion(), newVersion)), 10L);
             }
             if (isGuiUpdateAvailable) {
                 if (Config.notify_overflowing_gui_items && !requiredOverflowRows.isEmpty()) {
-                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
-                        event.getPlayer().spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows));
-                    }, 10l);
+                    EzChestShop.getScheduler().runTaskLater(
+                            () -> event.getPlayer().spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows)), 10L);
                 }
                 if (Config.notify_overlapping_gui_items && !overlappingItems.isEmpty()) {
-                    EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
-                        event.getPlayer().spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems));
-                    }, 10l);
+                    EzChestShop.getScheduler().runTaskLater(
+                            () -> event.getPlayer().spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems)), 10L);
                 }
             }
         }
-
-
     }
 
     public void check() {
@@ -80,8 +80,9 @@ public class UpdateChecker implements Listener{
     }
 
     public static int getGuiOverflow(GuiData.GuiType guiType) {
-        if (requiredOverflowRows.containsKey(guiType)) {
-            return requiredOverflowRows.get(guiType);
+        Integer value = requiredOverflowRows.get(guiType);
+        if (value != null) {
+            return value;
         } else {
             return -1;
         }
@@ -94,7 +95,8 @@ public class UpdateChecker implements Listener{
     private boolean checkUpdate() {
         try {
             String localVersion = EzChestShop.getPlugin().getDescription().getVersion();
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(url + id).openConnection();
+            String url = String.format(BASE_URL, PLUGIN_ID);
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
             connection.setRequestMethod("GET");
             String raw = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 
@@ -208,9 +210,7 @@ public class UpdateChecker implements Listener{
             // get the List from GuiData (so I don't forget to update it) and
             // loop over the list and try to match the entry to the list with containsAll!
             if (GuiData.getAllowedDefaultOverlappingItems(type) != null) {
-                List<List<String>> overlapping = items.entrySet().stream().filter(entry -> {
-                    List<String> list = entry.getValue();
-
+                List<List<String>> overlapping = items.values().stream().filter(list -> {
                     // Make sure that the list doesn't contain values that are not allowed to overlap
                     // The list may contain all allowed values, some allowed values, no allowed values or a mix of allowed and not allowed values
                     if (list.isEmpty()) return false;
@@ -219,7 +219,7 @@ public class UpdateChecker implements Listener{
                     List<String> containing = GuiData.getAllowedDefaultOverlappingItems(type).stream().flatMap(List::stream).collect(Collectors.toList());
                     List<String> subtractList = new ArrayList<>(list);
                     subtractList.removeAll(containing);
-                    if (subtractList.size() > 0) {
+                    if (!subtractList.isEmpty()) {
                         return true;
                     }
 
@@ -236,18 +236,14 @@ public class UpdateChecker implements Listener{
                         }
                     });
                     return returnValue.get();
+                }).collect(Collectors.toList());
 
-
-                }).map(entry -> entry.getValue()).collect(Collectors.toList());
-
-                if (overlapping.size() > 0) {
+                if (!overlapping.isEmpty()) {
                     overlappingItems.put(type, overlapping);
                     isGuiUpdateAvailable = true;
                 }
             }
-
         }
-
     }
 
 }

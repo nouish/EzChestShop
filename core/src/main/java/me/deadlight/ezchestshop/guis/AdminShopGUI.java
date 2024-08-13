@@ -1,18 +1,26 @@
 package me.deadlight.ezchestshop.guis;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.*;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
@@ -23,13 +31,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 public class AdminShopGUI {
     public AdminShopGUI() {
-
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
@@ -232,7 +235,7 @@ public class AdminShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
+                                        EzChestShop.getScheduler().runTask(() -> ShopContainer.buyItem(containerBlock, buyPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -268,7 +271,7 @@ public class AdminShopGUI {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
-                                        EzChestShop.getScheduler().scheduleSyncDelayedTask(() -> ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
+                                        EzChestShop.getScheduler().runTask(() -> ShopContainer.sellItem(containerBlock, sellPrice * amount, amount, mainitem, player, offlinePlayerOwner, data));
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -292,12 +295,8 @@ public class AdminShopGUI {
             }
         }
 
-
         gui.open(player);
-
-
     }
-
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         if (disabling) {
@@ -313,6 +312,5 @@ public class AdminShopGUI {
             return mainItem;
         }
     }
-
 
 }

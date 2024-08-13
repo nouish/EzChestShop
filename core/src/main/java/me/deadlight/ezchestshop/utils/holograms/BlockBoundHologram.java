@@ -49,9 +49,9 @@ public class BlockBoundHologram {
 
     // Viewers
     /** Contains all the players that are currently in range/viewing this shops hologram. */
-    private HashMap<UUID, PlayerBlockBoundHologram> viewerHolograms = new HashMap<>();
+    private final Map<UUID, PlayerBlockBoundHologram> viewerHolograms = new HashMap<>();
     /** Contains all the players that are currently inspecting (looking at) this shops hologram. */
-    private HashMap<UUID, PlayerBlockBoundHologram> inspectorHolograms = new HashMap<>();
+    private final Map<UUID, PlayerBlockBoundHologram> inspectorHolograms = new HashMap<>();
 
     // Replacements
     protected HashMap<String, String> textDefaultReplacements;
