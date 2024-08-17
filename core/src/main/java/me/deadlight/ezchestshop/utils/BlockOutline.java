@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 
-import static me.deadlight.ezchestshop.utils.Utils.versionUtils;
+import static me.deadlight.ezchestshop.utils.Utils.nmsHandle;
 
 public class BlockOutline {
 
@@ -31,7 +31,7 @@ public class BlockOutline {
             checkForDoubleChestShop();
         }
         outlineID = (int) (Math.random() * Integer.MAX_VALUE);
-        versionUtils.showOutline(player, block, outlineID);
+        nmsHandle.showOutline(player, block, outlineID);
         Utils.activeOutlines.put(outlineID, this);
         //check if destroyAfter is not null
         if (destroyAfter != 0) {
@@ -42,7 +42,7 @@ public class BlockOutline {
     }
 
     public void hideOutline() {
-        versionUtils.destroyEntity(player, outlineID);
+        nmsHandle.destroyEntity(player, outlineID);
         Utils.activeOutlines.remove(outlineID);
 
         if (aParentOrChild != null) {
@@ -52,7 +52,7 @@ public class BlockOutline {
 
     }
     public void hideRequestedOutline() {
-        versionUtils.destroyEntity(player, outlineID);
+        nmsHandle.destroyEntity(player, outlineID);
         Utils.activeOutlines.remove(outlineID);
         this.aParentOrChild = null;
     }

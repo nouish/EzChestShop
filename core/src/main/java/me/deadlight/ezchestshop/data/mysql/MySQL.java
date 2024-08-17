@@ -47,7 +47,7 @@ public class MySQL extends DatabaseManager {
     @Override
     public void load() {
         // Set the logger level for HikariCP to warn to reduce console noise.
-        Configurator.setLevel("me.deadlight.ezchestshop.lib.hikari", org.apache.logging.log4j.Level.WARN);
+        Configurator.setLevel("me.deadlight.ezchestshop.internal.hikari", org.apache.logging.log4j.Level.WARN);
 
         //first connect to the database
 

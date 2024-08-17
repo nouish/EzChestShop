@@ -18,12 +18,12 @@ public class ASHologram {
         this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
         this.handler = p;
         this.location = location;
-        Utils.versionUtils.spawnHologram(p, location, name, entityID);
+        Utils.nmsHandle.spawnHologram(p, location, name, entityID);
     }
 
 
     public void destroy() {
-        Utils.versionUtils.destroyEntity(handler, entityID);
+        Utils.nmsHandle.destroyEntity(handler, entityID);
     }
 
     public String getName() {
@@ -36,11 +36,11 @@ public class ASHologram {
 
     public void teleport(Location location) {
         this.location = location;
-        Utils.versionUtils.teleportEntity(handler, entityID, location);
+        Utils.nmsHandle.teleportEntity(handler, entityID, location);
     }
 
     public void rename(String name) {
         this.name = name;
-        Utils.versionUtils.renameEntity(handler, entityID, name);
+        Utils.nmsHandle.renameEntity(handler, entityID, name);
     }
 }

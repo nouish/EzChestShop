@@ -5,17 +5,17 @@ import org.bukkit.OfflinePlayer;
 public class XPEconomy {
 
     public static double getXP(OfflinePlayer player) {
-        ImprovedOfflinePlayer iop = ImprovedOfflinePlayer.improvedOfflinePlayer.fromOfflinePlayer(player);
+        ImprovedOfflinePlayer iop = Utils.nmsHandle.getImprovedOfflinePlayer().fromOfflinePlayer(player);
         return iop.hasPlayedBefore() ? getPlayerXpPoints(iop) : 0.0;
     }
 
     public static boolean has(OfflinePlayer player, double price) {
-        ImprovedOfflinePlayer iop = ImprovedOfflinePlayer.improvedOfflinePlayer.fromOfflinePlayer(player);
+        ImprovedOfflinePlayer iop = Utils.nmsHandle.getImprovedOfflinePlayer().fromOfflinePlayer(player);
         return iop.hasPlayedBefore() ? getPlayerXpPoints(iop) >= price : false;
     }
 
     public static boolean withDrawPlayer(OfflinePlayer player, double price) {
-        ImprovedOfflinePlayer iop = ImprovedOfflinePlayer.improvedOfflinePlayer.fromOfflinePlayer(player);
+        ImprovedOfflinePlayer iop = Utils.nmsHandle.getImprovedOfflinePlayer().fromOfflinePlayer(player);
         if (iop.getLevel() > 200000000) {
             return iop.hasPlayedBefore() ? updatePlayerXp(iop, calculateLevelPointDifference(iop, -price)): false;
         } else {
@@ -24,7 +24,7 @@ public class XPEconomy {
     }
 
     public static void depositPlayer(OfflinePlayer player, double price) {
-        ImprovedOfflinePlayer iop = ImprovedOfflinePlayer.improvedOfflinePlayer.fromOfflinePlayer(player);
+        ImprovedOfflinePlayer iop = Utils.nmsHandle.getImprovedOfflinePlayer().fromOfflinePlayer(player);
         if (iop.getLevel() > 200000000) {
             updatePlayerXp(iop, calculateLevelPointDifference(iop, price));
         } else {

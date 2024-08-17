@@ -14,16 +14,16 @@ public class FloatingItem {
         this.player = player;
         this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
         this.location = location;
-        Utils.versionUtils.spawnFloatingItem(player, location, itemStack, entityID);
+        Utils.nmsHandle.spawnFloatingItem(player, location, itemStack, entityID);
     }
 
     public void destroy() {
-        Utils.versionUtils.destroyEntity(player, entityID);
+        Utils.nmsHandle.destroyEntity(player, entityID);
     }
 
     public void teleport(Location location) {
         this.location = location;
-        Utils.versionUtils.teleportEntity(player, entityID, location);
+        Utils.nmsHandle.teleportEntity(player, entityID, location);
     }
 
     public Location getLocation() {

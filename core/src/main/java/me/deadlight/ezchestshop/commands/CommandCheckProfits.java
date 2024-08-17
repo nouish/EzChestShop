@@ -10,7 +10,9 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
+import me.deadlight.ezchestshop.utils.VersionUtil;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 public class CommandCheckProfits implements CommandExecutor, Listener, TabCompleter {
@@ -87,9 +90,15 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                     pc.clearProfits();
                     p.sendMessage(lm.confirmProfitClearSuccess());
                 } else if (args[0].equals("p")) {
-                    if (EzChestShop.getPlugin().isItemStackToNbtUnsupported()) {
-                        p.sendMessage(lm.dependencyNbtapiMissing());
-                        return true;
+                    VersionUtil.MinecraftVersion version = VersionUtil.getMinecraftVersion().orElseThrow(AssertionError::new);
+                    for (VersionUtil.Dependency dependency : version.getDependencies()) {
+                        if (dependency.getName().equals("NBTAPI")) {
+                            Plugin plugin = Bukkit.getPluginManager().getPlugin(dependency.getName());
+                            if (plugin == null || !plugin.isEnabled()) {
+                                p.sendMessage(lm.dependencyNbtapiMissing());
+                                return true;
+                            }
+                        }
                     }
 
                     // ShopChest sc = ShopChest.getInstance();

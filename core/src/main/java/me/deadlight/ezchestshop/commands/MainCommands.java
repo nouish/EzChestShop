@@ -65,7 +65,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         MainCommands.lm = languageManager;
     }
 
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
@@ -78,7 +77,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 if (mainarg.equalsIgnoreCase("create") && target != null) {
                     if (args.length >= 3) {
                         if (Utils.isNumeric(args[1]) && Utils.isNumeric(args[2])) {
-
                             if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
                                 if (Config.permissions_create_shop_enabled) {
                                     // first check the world, if nothing is found return -2

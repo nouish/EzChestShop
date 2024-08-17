@@ -34,7 +34,7 @@ public final class SignMenuFactory {
     }
 
     private void listen() {
-        Utils.versionUtils.signFactoryListen(this);
+        Utils.nmsHandle.signFactoryListen(this);
     }
 
     public final class Menu {
@@ -63,7 +63,7 @@ public final class SignMenuFactory {
         }
 
         public void open(Player player) {
-            Utils.versionUtils.openMenu(this, player);
+            Utils.nmsHandle.openMenu(this, player);
         }
 
         /**

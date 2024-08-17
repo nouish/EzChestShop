@@ -3,12 +3,10 @@ package me.deadlight.ezchestshop;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.OptionalInt;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
@@ -36,6 +34,8 @@ import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.CommandRegister;
 import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.VersionUtil;
+import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -46,28 +46,13 @@ import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class EzChestShop extends JavaPlugin {
-    private static final Set<String> SUPPORTED_VERSIONS = ImmutableSet.<String>builder()
-            .add("1.16.5")
-            .add("1.17.1")
-            .add("1.18.2")
-            .add("1.19.4")
-            .add("1.20.4")
-            .add("1.20.6")
-            .add("1.21")
-            .add("1.21.1")
-            .build();
-
-    private static final Set<String> VERSION_SOFTDEPEND_NBTAPI = ImmutableSet.<String>builder()
-            .add("1.20.6")
-            .add("1.21")
-            .add("1.21.1")
-            .build();
-
     private static Economy econ = null;
     public static boolean economyPluginFound = true;
 
@@ -98,24 +83,41 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String minecraftVersion = Utils.getMinecraftVersion();
+        Logger logger = LoggerFactory.getLogger(getLogger().getName());
+        MinecraftVersion minecraftVersion = VersionUtil.getMinecraftVersion().orElse(null);
 
-        if (SUPPORTED_VERSIONS.contains(minecraftVersion)) {
-            getLogger().info("Minecraft version " + minecraftVersion + " detected.");
-        } else {
-            getLogger().severe("Unsupported version: " + minecraftVersion
-                    + ". Supported versions are: " + String.join(", ", SUPPORTED_VERSIONS) + ".");
-            getLogger().severe("The server will continue to load, but EzChestShop will be disabled. Be advised that this results in existing chest shops being unprotected, unless within the protected area of a separate plugin running.");
+        if (minecraftVersion == null) {
+            OptionalInt dataVersion = VersionUtil.getDataVersion();
+            String dataVersionInfo = dataVersion.isPresent() ? String.valueOf(dataVersion.getAsInt()) : "Unknown";
+            logger.error("Unsupported version: {} (Data version: {})", Bukkit.getVersion(), dataVersionInfo);
+            logger.error("Supported versions: {}", VersionUtil.getSupportedVersions());
+            logger.error("The server will continue to load, but EzChestShop will be disabled. "
+                    + "Be advised that this results in existing chest shops being unprotected, "
+                    + "unless within the protected area of a separate plugin running.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        // Mojang changed some internals related to NBT and how metadata is saved after MC 1.20.4.
-        // Backwards compatibility was restored using tr7zw's NBTAPI plugin for later versions, but is not neccessary for earlier versions.
-        if (isItemStackToNbtUnsupported()) {
-            getLogger().warning(Strings.repeat("*", 80));
-            getLogger().warning("Please install the NBTAPI plugin by tr7zw in order to use the /checkprofits command: https://www.spigotmc.org/resources/nbt-api.7939/");
-            getLogger().warning(Strings.repeat("*", 80));
+        logger.info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
+
+        boolean failedDependencies = false;
+        for (VersionUtil.Dependency dependency : minecraftVersion.getDependencies()) {
+            Plugin plugin = Bukkit.getPluginManager().getPlugin(dependency.getName());
+            if (plugin == null || !plugin.isEnabled()) {
+                if (dependency.isRequired()) {
+                    failedDependencies = true;
+                    logger.error("Missing required dependency {} by {}. See {}.",
+                            dependency.getName(), dependency.getAuthor(), dependency.getUrl());
+                } else {
+                    logger.warn("Detected missing optional dependency, {} by {}. This may result in some features being unavailable. See {}.",
+                            dependency.getName(), dependency.getAuthor(), dependency.getUrl());
+                }
+            }
+        }
+
+        if (failedDependencies) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
 
         scheduler = UniversalScheduler.getScheduler(this);
@@ -295,16 +297,6 @@ public final class EzChestShop extends JavaPlugin {
 
         // The plugin started without encountering unrecoverable problems.
         started = true;
-    }
-
-
-    @ApiStatus.Internal
-    public boolean isItemStackToNbtUnsupported() {
-        if (VERSION_SOFTDEPEND_NBTAPI.contains(Utils.getMinecraftVersion())) {
-            return Bukkit.getPluginManager().getPlugin("NBTAPI") == null;
-        }
-        // Older versions can use Minecraft internals, and as a result is not dependant on NBTAPI.
-        return false;
     }
 
     private void registerListeners() {

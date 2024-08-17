@@ -29,7 +29,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
         Player player = event.getPlayer();
-        Utils.versionUtils.injectConnection(player);
+        Utils.nmsHandle.injectConnection(player);
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         UUID uuid = event.getPlayer().getUniqueId();
         if (Config.database_type.equals(Database.MYSQL)) {

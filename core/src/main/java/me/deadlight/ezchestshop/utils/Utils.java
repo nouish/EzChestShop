@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,14 +67,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Utils {
-
-    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile(".* \\(MC: (.*)\\)");
-
     public static List<Object> onlinePackets = new ArrayList<>();
     public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
 
@@ -86,40 +81,21 @@ public class Utils {
 
     private static String discordLink;
 
-    public static VersionUtils versionUtils;
+    public static NmsHandle nmsHandle;
     public static DatabaseManager databaseManager;
 
     static {
-        String minecraftVersion = Utils.getMinecraftVersion();
+        VersionUtil.MinecraftVersion version = VersionUtil.getMinecraftVersion().orElse(null);
+
+        if (version == null) {
+            throw new AssertionError();
+        }
 
         try {
-            if (minecraftVersion.equals("1.21") || minecraftVersion.equals("1.21.1")) {
-                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_21_R1").newInstance();
-            } else if (minecraftVersion.equals("1.20.6")) {
-                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R4").newInstance();
-            } else if (minecraftVersion.equals("1.20.4")) {
-                versionUtils = (VersionUtils) Class.forName("me.deadlight.ezchestshop.utils.v1_20_R3").newInstance();
-            } else {
-                String packageName = Utils.class.getPackage().getName();
-                String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-                versionUtils = (VersionUtils) Class.forName(packageName + "." + internalsName).newInstance();
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
-            Bukkit.getLogger().log(Level.SEVERE, "EzChestShop could not find a valid implementation for this server version.");
-        }
-    }
-
-    @ApiStatus.Internal
-    public static String getMinecraftVersion() {
-        String rawVersion = Bukkit.getVersion();
-        Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(rawVersion);
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            // Just return raw version - not much we can do here.
-            // This will probably not match the filter, and will result in the plugin stopping itself.
-            return rawVersion;
+            Class<?> clazz = Class.forName(version.getHandle());
+            nmsHandle = (NmsHandle) clazz.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -182,7 +158,7 @@ public class Utils {
      * @category ItemUtils
      */
     public static String ItemToTextCompoundString(ItemStack itemStack) {
-        return versionUtils.ItemToTextCompoundString(itemStack);
+        return nmsHandle.ItemToTextCompoundString(itemStack);
     }
 
     /**

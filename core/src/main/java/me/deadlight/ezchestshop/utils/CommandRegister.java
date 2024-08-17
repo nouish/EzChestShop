@@ -1,5 +1,10 @@
 package me.deadlight.ezchestshop.utils;
 
+import javax.inject.Singleton;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Map;
+
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import org.bukkit.Server;
@@ -7,11 +12,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.SimplePluginManager;
-
-import javax.inject.Singleton;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Map;
 
 @Singleton
 public class CommandRegister {
@@ -39,8 +39,6 @@ public class CommandRegister {
 
         // First replace it the normal way.
         knownCommands.put(alias, command);
-
-        int aliases = 0;
 
         command.setAliases(Arrays.asList(alias));
         return true;

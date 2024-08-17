@@ -46,23 +46,23 @@
           <relocations>
             <relocation>
               <pattern>dev.triumphteam.gui</pattern>
-              <shadedPattern>me.deadlight.ezchestshop.lib.triumphgui</shadedPattern>
+              <shadedPattern>me.deadlight.ezchestshop.internal.triumphgui</shadedPattern>
             </relocation>
             <relocation>
               <pattern>de.themoep.minedown</pattern>
-              <shadedPattern>me.deadlight.ezchestshop.lib.minedown</shadedPattern>
+              <shadedPattern>me.deadlight.ezchestshop.internal.minedown</shadedPattern>
             </relocation>
             <relocation>
               <pattern>net.kyori</pattern>
-              <shadedPattern>me.deadlight.ezchestshop.lib.kyori</shadedPattern>
+              <shadedPattern>me.deadlight.ezchestshop.internal.kyori</shadedPattern>
             </relocation>
             <relocation>
               <pattern>com.zaxxer.hikari</pattern>
-              <shadedPattern>me.deadlight.ezchestshop.lib.hikari</shadedPattern>
+              <shadedPattern>me.deadlight.ezchestshop.internal.hikari</shadedPattern>
             </relocation>
             <relocation>
               <pattern>org.bstats</pattern>
-              <shadedPattern>me.deadlight.ezchestshop.lib.bstats</shadedPattern>
+              <shadedPattern>me.deadlight.ezchestshop.internal.bstats</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
@@ -128,6 +128,14 @@
         <exclusion>
           <groupId>org.jetbrains</groupId>
           <artifactId>annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.gson</groupId>
+          <artifactId>gson</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.auto.service</groupId>
+          <artifactId>auto-service-annotations</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
