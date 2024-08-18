@@ -9,6 +9,7 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
@@ -32,23 +33,22 @@ public class PlayerJoinListener implements Listener {
         Utils.nmsHandle.injectConnection(player);
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         UUID uuid = event.getPlayer().getUniqueId();
-        if (Config.database_type.equals(Database.MYSQL)) {
-            MySQL.playerTables.forEach(t -> {
-                if (db.hasTable(t)) {
+
+        Bukkit.getScheduler().runTaskAsynchronously(EzChestShop.getPlugin(), () -> {
+            if (Config.database_type.equals(Database.MYSQL)) {
+                MySQL.playerTables.forEach(t -> {
                     if (!db.hasPlayer(t, uuid)) {
                         db.preparePlayerData(t, uuid.toString());
                     }
-                }
-            });
-        } else if (Config.database_type.equals(Database.SQLITE)) {
-            SQLite.playerTables.forEach(t -> {
-                if (db.hasTable(t)) {
+                });
+            } else if (Config.database_type.equals(Database.SQLITE)) {
+                SQLite.playerTables.forEach(t -> {
                     if (!db.hasPlayer(t, uuid)) {
                         db.preparePlayerData(t, uuid.toString());
                     }
-                }
-            });
-        }
+                });
+            }
+        });
 
         if (Config.emptyShopNotificationOnJoin) {
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
