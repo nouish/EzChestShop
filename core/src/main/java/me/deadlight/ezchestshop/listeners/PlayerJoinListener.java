@@ -34,7 +34,7 @@ public class PlayerJoinListener implements Listener {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         UUID uuid = event.getPlayer().getUniqueId();
 
-        Bukkit.getScheduler().runTaskAsynchronously(EzChestShop.getPlugin(), () -> {
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> {
             if (Config.database_type.equals(Database.MYSQL)) {
                 MySQL.playerTables.forEach(t -> {
                     if (!db.hasPlayer(t, uuid)) {
