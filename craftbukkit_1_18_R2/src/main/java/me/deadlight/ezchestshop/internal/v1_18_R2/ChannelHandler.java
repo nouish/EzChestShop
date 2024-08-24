@@ -58,10 +58,8 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
                 BlockOutline outline = Utils.activeOutlines.get(entityID);
                 outline.hideOutline();
                 //Then it means somebody is clicking on the outline shulkerbox
-                EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(
-                        EzChestShop.getPlugin(), () -> {
-                            Bukkit.getPluginManager().callEvent(new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getItemInUse(), outline.block, outline.block.getFace(outline.block), null));
-                        }, 1L);
+                EzChestShop.getScheduler().runTaskLater(outline.block.getLocation(), () -> Bukkit.getPluginManager().callEvent(
+                        new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getItemInUse(), outline.block, outline.block.getFace(outline.block), null)), 1);
             }
         }
 

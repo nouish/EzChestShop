@@ -72,23 +72,18 @@ public class PlayerJoinListener implements Listener {
                     BlockOutline outline = new BlockOutline(player, b);
                     outline.destroyAfter = 10;
                     int index = blocks.indexOf(b);
-                    EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> {
+                    EzChestShop.getScheduler().runTaskLater(player, () -> {
                         outline.showOutline();
                         if (outline.muted) {
                             return;
                         }
                         actionBarCounter.getAndIncrement();
-                        Utils.sendActionBar(
-                                player,
-                                lm.emptyShopActionBar(actionBarCounter.get())
-                        );
-
+                        Utils.sendActionBar(player, lm.emptyShopActionBar(actionBarCounter.get()));
                         player.playNote(b.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
                         noteIndex.getAndIncrement();
                         if (noteIndex.get() == 7) {
                             noteIndex.set(0);
                         }
-
                     }, 2L * index);
                 });
             }, 80L);

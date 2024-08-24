@@ -37,16 +37,13 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws NoSuchFieldException, IllegalAccessException {
-
-        if (msg instanceof ServerboundInteractPacket) {
-
+        if (msg instanceof ServerboundInteractPacket packet) {
             if (!Utils.enabledOutlines.contains(player.getUniqueId())) {
                 ctx.fireChannelRead(msg);
                 return;
             }
 
             //now we check if player is right clicking on the outline shulkerbox, if so we open the shop for them
-            ServerboundInteractPacket packet = (ServerboundInteractPacket) msg;
             Field field;
             try {
                 field = packet.getClass().getDeclaredField("b"); //The field a is entity ID
@@ -61,10 +58,8 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
                 BlockOutline outline = Utils.activeOutlines.get(entityID);
                 outline.hideOutline();
                 //Then it means somebody is clicking on the outline shulkerbox
-                EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(
-                        EzChestShop.getPlugin(), () -> {
-                            Bukkit.getPluginManager().callEvent(new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getItemInUse(), outline.block, outline.block.getFace(outline.block), null));
-                        }, 1L);
+                EzChestShop.getScheduler().runTaskLater(outline.block.getLocation(), () -> Bukkit.getPluginManager().callEvent(
+                        new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getItemInUse(), outline.block, outline.block.getFace(outline.block), null)), 1);
             }
         }
 
@@ -87,6 +82,5 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
 
         ctx.fireChannelRead(msg);
     }
-
 
 }

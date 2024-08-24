@@ -1,5 +1,8 @@
 package me.deadlight.ezchestshop.internal.v1_17_R1;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -13,9 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.lang.reflect.Field;
-import java.util.Map;
 
 public class ChannelHandler extends ChannelInboundHandlerAdapter {
     private final Player player;
@@ -58,10 +58,8 @@ public class ChannelHandler extends ChannelInboundHandlerAdapter {
                 BlockOutline outline = Utils.activeOutlines.get(entityID);
                 outline.hideOutline();
                 //Then it means somebody is clicking on the outline shulkerbox
-                EzChestShop.getPlugin().getServer().getScheduler().runTaskLater(
-                        EzChestShop.getPlugin(), () -> {
-                            Bukkit.getPluginManager().callEvent(new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getItemInUse(), outline.block, outline.block.getFace(outline.block), null));
-                        }, 1L);
+                EzChestShop.getScheduler().runTaskLater(outline.block.getLocation(), () -> Bukkit.getPluginManager().callEvent(
+                        new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getItemInUse(), outline.block, outline.block.getFace(outline.block), null)), 1);
             }
         }
 

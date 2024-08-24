@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
+import com.google.common.base.Preconditions;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
@@ -28,6 +30,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -89,19 +92,27 @@ public class ShopContainer {
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
-        EzChestShop.getPlugin().getServer().getScheduler().runTaskAsynchronously(EzChestShop.getPlugin(), () -> {
+
+
+        ItemMeta meta = item.getItemMeta();
+        World world = Preconditions.checkNotNull(loc.getWorld(), "Location cannot be in null world");
+        final String ownerName = p.getName();
+        // Show buying price in string if dbuy is false, otherwise show "Disabled"
+        final String priceBuy = dbuy ? "Disabled" : String.valueOf(buyprice);
+        final String priceSell = dsell ? "Disabled" : String.valueOf(sellprice);
+        // Show Item name if it has custom name, otherwise show localized name
+        final String itemName = meta != null && meta.hasDisplayName() ? meta.getDisplayName() : item.getType().name();
+        final String materialType = item.getType().name();
+        // Display Current Time Like This: 2023/5/1 | 23:10:23
+        final String time = formatter.format(java.time.LocalDateTime.now()).replace("T", " | ");
+        // Display shop location as this: world, x, y, z
+        final String shopLocation = world.getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ();
+
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> {
             try {
-                WebhookSender.sendDiscordNewShopAlert(p.getName(),
-                        //Show buying price in string if dbuy is false, otherwise show "Disabled"
-                        dbuy ? "Disabled" : String.valueOf(buyprice), dsell ? "Disabled" : String.valueOf(sellprice),
-                        //Show Item name if it has custom name, otherwise show localized name
-                        item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name(), item.getType().name(),
-                        //Display Current Time Like This: 2023/5/1 | 23:10:23
-                        formatter.format(java.time.LocalDateTime.now()).replace("T", " | "),
-                        //Display shop location as this: world, x, y, z
-                        loc.getWorld().getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
+                WebhookSender.sendDiscordNewShopAlert(ownerName, priceBuy, priceSell, itemName, materialType, time, shopLocation);
             } catch (Exception e) {
-                e.printStackTrace();
+                EzChestShop.getPlugin().getLogger().log(Level.WARNING, "Discord webhook failed!", e);
             }
         });
     }

@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.utils;
+
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,9 +18,7 @@ public class BlockOutline {
     public int destroyAfter; //set seconds to destroy after
     public boolean muted = false;
     public boolean isMadeFromACheck = false;
-
     public BlockOutline aParentOrChild;
-
 
     public BlockOutline(Player player, Block block) {
         this.player = player;
@@ -33,11 +32,10 @@ public class BlockOutline {
         outlineID = (int) (Math.random() * Integer.MAX_VALUE);
         nmsHandle.showOutline(player, block, outlineID);
         Utils.activeOutlines.put(outlineID, this);
+
         //check if destroyAfter is not null
         if (destroyAfter != 0) {
-            EzChestShop.getPlugin().getServer().getScheduler().runTaskLaterAsynchronously(EzChestShop.getPlugin(), () -> {
-                hideOutline();
-            }, destroyAfter * 20L);
+            EzChestShop.getScheduler().runTaskLaterAsynchronously(this::hideOutline, destroyAfter * 20L);
         }
     }
 
@@ -49,14 +47,13 @@ public class BlockOutline {
             aParentOrChild.hideRequestedOutline();
             aParentOrChild = null;
         }
-
     }
+
     public void hideRequestedOutline() {
         nmsHandle.destroyEntity(player, outlineID);
         Utils.activeOutlines.remove(outlineID);
         this.aParentOrChild = null;
     }
-
 
     private void checkForDoubleChestShop() {
         //check if the block is a chest and if it is a double chest
@@ -85,12 +82,7 @@ public class BlockOutline {
                     this.aParentOrChild = outline;
                     outline.showOutline();
                 }
-
             }
-
         }
-
     }
-
-
 }

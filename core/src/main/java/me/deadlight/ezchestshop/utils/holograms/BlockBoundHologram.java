@@ -26,6 +26,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -333,11 +334,12 @@ public class BlockBoundHologram {
      * @param target The block to get the shop container location for.
      * @return The shop container location. If not found, the location of the block.
      */
-    public static Location getShopChestLocation(Block target ) {
+    public static Location getShopChestLocation(Block target) {
         Location loc = target.getLocation();
         Inventory inventory = ((Container) target.getState()).getInventory();
-        if (inventory instanceof DoubleChestInventory) {
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
+        InventoryHolder holder = inventory.getHolder();
+        if (holder instanceof DoubleChest) {
+            DoubleChest doubleChest = (DoubleChest) holder;
             Chest leftchest = (Chest) doubleChest.getLeftSide();
             Chest rightchest = (Chest) doubleChest.getRightSide();
 

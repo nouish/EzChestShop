@@ -218,15 +218,19 @@ public class PlayerCloseToChestListener implements Listener {
 
     @EventHandler
     public void onShopCapacityChangeByBlockPlace(BlockPlaceEvent event) {
-        if (!event.isCancelled() && (event.getBlockPlaced().getType() == Material.CHEST
-                || event.getBlockPlaced().getType() == Material.TRAPPED_CHEST)) {
-            EzChestShop.getScheduler().runTaskLater(() -> {
-                Location location = BlockBoundHologram.getShopChestLocation(event.getBlockPlaced());
-                if (ShopContainer.isShop(location)) {
-                    ShopHologram.updateInventoryReplacements(location);
-                }
-            }, 1);
+        if (event.isCancelled())
+            return;
+        Block block = event.getBlockPlaced();
+        if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) {
+            return;
         }
+
+        EzChestShop.getScheduler().runTaskLater(block.getLocation(), () -> {
+            Location location = BlockBoundHologram.getShopChestLocation(block);
+            if (ShopContainer.isShop(location)) {
+                ShopHologram.updateInventoryReplacements(location);
+            }
+        }, 1);
     }
 
     //TODO, breaking blocks doesn't update the hologram, in fact the hologram gets hidden and the shop needs to be reopened to show the hologram again at all.
@@ -243,13 +247,21 @@ public class PlayerCloseToChestListener implements Listener {
 
     @EventHandler
     public void onShopTransactionCapacityChange(PlayerTransactEvent event) {
-        EzChestShop.getScheduler().runTaskLater(() -> ShopHologram.updateInventoryReplacements(event.getContainerBlock().getLocation()), 1);
+        Location location = event.getContainerBlock().getLocation();
+        EzChestShop.getScheduler().runTaskLater(
+                location,
+                () -> ShopHologram.updateInventoryReplacements(event.getContainerBlock().getLocation()), 1);
     }
 
     private void inventoryModifyEventHandler(boolean cancelled, HumanEntity whoClicked) {
-        if (!cancelled) {
-            ShopHologram.getViewedHolograms((Player) whoClicked).forEach(shopHolo ->
-                    EzChestShop.getScheduler().runTaskLater(() -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation()), 1));
+        if (cancelled)
+            return;
+
+        List<ShopHologram> viewed = ShopHologram.getViewedHolograms((Player) whoClicked);
+        for (ShopHologram hologram : viewed) {
+            EzChestShop.getScheduler().runTaskLater(
+                    hologram.getLocation(),
+                    () -> ShopHologram.updateInventoryReplacements(hologram.getLocation()), 1);
         }
     }
 
