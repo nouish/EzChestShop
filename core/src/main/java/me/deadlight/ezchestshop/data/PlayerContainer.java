@@ -1,38 +1,44 @@
 package me.deadlight.ezchestshop.data;
 
 
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.stream.Collectors;
+public final class PlayerContainer {
+    private static final Cache<UUID, PlayerContainer> cache = CacheBuilder.newBuilder()
+            .maximumSize(16)
+            .expireAfterAccess(30, TimeUnit.MINUTES)
+            .build();
 
-public class PlayerContainer {
-
-    private static HashMap<UUID, PlayerContainer> playerContainerMap = new HashMap<>();
-
-    private UUID uuid;
-    private String suuid;
+    private final UUID playerId;
 
     private HashMap<String, CheckProfitEntry> checkProfits = null;
 
-    public PlayerContainer(OfflinePlayer offlinePlayer) {
-        this.uuid = offlinePlayer.getUniqueId();
-        this.suuid = this.uuid.toString();
+    private PlayerContainer(@NotNull UUID playerId) {
+        this.playerId = Objects.requireNonNull(playerId);
     }
 
     public static PlayerContainer get(OfflinePlayer offlinePlayer) {
-        UUID uuid = offlinePlayer.getUniqueId();
-        if (playerContainerMap.containsKey(uuid)) {
-            return playerContainerMap.get(uuid);
-        } else {
-            PlayerContainer pc = new PlayerContainer(offlinePlayer);
-            playerContainerMap.put(uuid, pc);
-            return pc;
+        UUID playerId = offlinePlayer.getUniqueId();
+        PlayerContainer result = cache.getIfPresent(playerId);
+
+        if (result == null) {
+            result = new PlayerContainer(playerId);
+            cache.put(playerId, result);
         }
+
+        return result;
     }
 
     /*
@@ -44,7 +50,7 @@ public class PlayerContainer {
         if (checkProfits == null) {
             checkProfits = new HashMap<>();
             DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-            String checkProfitsList = db.getString("uuid", suuid, "checkprofits", "playerdata");
+            String checkProfitsList = db.getString("uuid", playerId.toString(), "checkprofits", "playerdata");
             if (checkProfitsList == null || checkProfitsList.equalsIgnoreCase("") || checkProfitsList.equalsIgnoreCase("NULL")) {
                 checkProfits = new HashMap<>();
                 return checkProfits;
@@ -75,18 +81,18 @@ public class PlayerContainer {
             checkProfits.put(id, entry);
         }
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        String profit_string = checkProfits.entrySet().stream().map(x -> x.getValue().toString())
+        String profit_string = checkProfits.values().stream().map(CheckProfitEntry::toString)
                 .collect(Collectors.joining(CheckProfitEntry.itemSpacer));
         if (profit_string == null)
-            db.setString("uuid", suuid, "checkprofits", "playerdata", "NULL");
+            db.setString("uuid", playerId.toString(), "checkprofits", "playerdata", "NULL");
         else
-            db.setString("uuid", suuid, "checkprofits", "playerdata", profit_string);
+            db.setString("uuid", playerId.toString(), "checkprofits", "playerdata", profit_string);
     }
 
     public void clearProfits() {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         checkProfits.clear();
-        db.setString("uuid", suuid, "checkprofits", "playerdata", "NULL");
+        db.setString("uuid", playerId.toString(), "checkprofits", "playerdata", "NULL");
     }
 
 }
