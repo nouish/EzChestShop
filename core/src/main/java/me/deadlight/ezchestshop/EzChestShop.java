@@ -7,6 +7,8 @@ import java.util.OptionalInt;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
+import com.google.common.base.Preconditions;
+import de.tr7zw.changeme.nbtapi.NBT;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
@@ -46,7 +48,6 @@ import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
@@ -100,25 +101,7 @@ public final class EzChestShop extends JavaPlugin {
 
         logger.info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
 
-        boolean failedDependencies = false;
-        for (VersionUtil.Dependency dependency : minecraftVersion.getDependencies()) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin(dependency.getName());
-            if (plugin == null || !plugin.isEnabled()) {
-                if (dependency.isRequired()) {
-                    failedDependencies = true;
-                    logger.error("Missing required dependency {} by {}. See {}.",
-                            dependency.getName(), dependency.getAuthor(), dependency.getUrl());
-                } else {
-                    logger.warn("Detected missing optional dependency, {} by {}. This may result in some features being unavailable. See {}.",
-                            dependency.getName(), dependency.getAuthor(), dependency.getUrl());
-                }
-            }
-        }
-
-        if (failedDependencies) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
+        Preconditions.checkState(NBT.preloadApi(), "Outdated NBT API version!");
 
         scheduler = UniversalScheduler.getScheduler(this);
         saveDefaultConfig();

@@ -68,6 +68,10 @@
               <pattern>org.bstats</pattern>
               <shadedPattern>me.deadlight.ezchestshop.internal.bstats</shadedPattern>
             </relocation>
+            <relocation>
+              <pattern>de.tr7zw.changeme.nbtapi</pattern>
+              <shadedPattern>me.deadlight.ezchestshop.internal.nbtapi</shadedPattern>
+            </relocation>
           </relocations>
         </configuration>
         <executions>
@@ -201,6 +205,12 @@
       <groupId>com.github.Anon8281</groupId>
       <artifactId>UniversalScheduler</artifactId>
       <version>0.1.6</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.tr7zw</groupId>
+      <artifactId>item-nbt-api</artifactId>
+      <version>2.13.2</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

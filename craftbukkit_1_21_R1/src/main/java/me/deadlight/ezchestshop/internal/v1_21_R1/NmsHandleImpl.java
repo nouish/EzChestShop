@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.tr7zw.nbtapi.NBT;
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.internal.nbtapi.NBT;
 import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
 import me.deadlight.ezchestshop.utils.NmsHandle;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
