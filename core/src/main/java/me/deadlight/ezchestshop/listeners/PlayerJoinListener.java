@@ -32,23 +32,26 @@ public class PlayerJoinListener implements Listener {
         Utils.nmsHandle.injectConnection(player);
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         UUID uuid = event.getPlayer().getUniqueId();
-        if (Config.database_type.equals(Database.MYSQL)) {
-            MySQL.playerTables.forEach(t -> {
-                if (db.hasTable(t)) {
-                    if (!db.hasPlayer(t, uuid)) {
-                        db.preparePlayerData(t, uuid.toString());
+
+        EzChestShop.getScheduler().runTaskAsynchronously(() -> {
+            if (Config.database_type.equals(Database.MYSQL)) {
+                MySQL.playerTables.forEach(t -> {
+                    if (db.hasTable(t)) {
+                        if (!db.hasPlayer(t, uuid)) {
+                            db.preparePlayerData(t, uuid.toString());
+                        }
                     }
-                }
-            });
-        } else if (Config.database_type.equals(Database.SQLITE)) {
-            SQLite.playerTables.forEach(t -> {
-                if (db.hasTable(t)) {
-                    if (!db.hasPlayer(t, uuid)) {
-                        db.preparePlayerData(t, uuid.toString());
+                });
+            } else if (Config.database_type.equals(Database.SQLITE)) {
+                SQLite.playerTables.forEach(t -> {
+                    if (db.hasTable(t)) {
+                        if (!db.hasPlayer(t, uuid)) {
+                            db.preparePlayerData(t, uuid.toString());
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
 
         if (Config.emptyShopNotificationOnJoin) {
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
