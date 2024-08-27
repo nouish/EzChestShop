@@ -1086,7 +1086,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 blocks.forEach(b -> {
                     BlockOutline outline = new BlockOutline(player, b);
                     int index = blocks.indexOf(b);
-                    EzChestShop.getScheduler().runTaskLater(() -> {
+                    EzChestShop.getScheduler().runTaskLater(player, () -> {
                         outline.showOutline();
                         if (outline.muted) {
                             return;
