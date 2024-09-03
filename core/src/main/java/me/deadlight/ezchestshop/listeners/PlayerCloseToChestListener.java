@@ -225,12 +225,12 @@ public class PlayerCloseToChestListener implements Listener {
             return;
         }
 
-        EzChestShop.getScheduler().runTaskLater(block.getLocation(), () -> {
+        EzChestShop.getScheduler().runTask(block.getLocation(), () -> {
             Location location = BlockBoundHologram.getShopChestLocation(block);
             if (ShopContainer.isShop(location)) {
                 ShopHologram.updateInventoryReplacements(location);
             }
-        }, 1);
+        });
     }
 
     //TODO, breaking blocks doesn't update the hologram, in fact the hologram gets hidden and the shop needs to be reopened to show the hologram again at all.
@@ -248,9 +248,7 @@ public class PlayerCloseToChestListener implements Listener {
     @EventHandler
     public void onShopTransactionCapacityChange(PlayerTransactEvent event) {
         Location location = event.getContainerBlock().getLocation();
-        EzChestShop.getScheduler().runTaskLater(
-                location,
-                () -> ShopHologram.updateInventoryReplacements(event.getContainerBlock().getLocation()), 1);
+        EzChestShop.getScheduler().runTask(location, () -> ShopHologram.updateInventoryReplacements(location));
     }
 
     private void inventoryModifyEventHandler(boolean cancelled, HumanEntity whoClicked) {

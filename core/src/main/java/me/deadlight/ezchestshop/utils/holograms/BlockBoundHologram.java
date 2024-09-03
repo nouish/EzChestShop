@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
@@ -26,12 +27,12 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class is used to create a hologram that is bound to a block.
@@ -212,11 +213,7 @@ public class BlockBoundHologram {
     }
 
     public String getConditionalText(String tag) {
-        if (conditionalTextReplacements.containsKey(tag)) {
-            return conditionalTextReplacements.get(tag);
-        } else {
-            return null;
-        }
+        return conditionalTextReplacements.get(tag);
     }
 
     public void setConditionalText(String tag, String text) {
@@ -279,7 +276,6 @@ public class BlockBoundHologram {
                 break;
         }
 
-
         return holoLoc;
     }
 
@@ -334,24 +330,26 @@ public class BlockBoundHologram {
      * @param target The block to get the shop container location for.
      * @return The shop container location. If not found, the location of the block.
      */
-    public static Location getShopChestLocation(Block target) {
-        Location loc = target.getLocation();
-        Inventory inventory = ((Container) target.getState()).getInventory();
-        InventoryHolder holder = inventory.getHolder();
-        if (holder instanceof DoubleChest) {
-            DoubleChest doubleChest = (DoubleChest) holder;
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
+    public static Location getShopChestLocation(@NotNull Block target) {
+        if (target.getState() instanceof Container) {
+            Container container = (Container) target.getState();
 
-            if (leftchest.getPersistentDataContainer().has(
-                    new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
-                loc = leftchest.getLocation();
-            } else if (rightchest.getPersistentDataContainer().has(
-                    new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
-                loc = rightchest.getLocation();
+            if (container.getInventory().getHolder() instanceof DoubleChest) {
+                DoubleChest doubleChest = (DoubleChest) container.getInventory().getHolder();
+                NamespacedKey ownerKey = new NamespacedKey(EzChestShop.getPlugin(), "owner");
+                Chest leftChest = (Chest) doubleChest.getLeftSide();
+                Chest rightChest = (Chest) doubleChest.getRightSide();
+
+                if (leftChest != null && leftChest.getPersistentDataContainer().has(ownerKey, PersistentDataType.STRING)) {
+                    return leftChest.getLocation();
+                }
+
+                if (rightChest != null && rightChest.getPersistentDataContainer().has(ownerKey, PersistentDataType.STRING)) {
+                    return rightChest.getLocation();
+                }
             }
         }
-        return loc;
+        return target.getLocation();
     }
 
     /**
@@ -371,7 +369,7 @@ public class BlockBoundHologram {
      */
     public static String getHologramItemData(int lineNum, ItemStack item, int lines) {
         String itemData = "";
-        if (item.getType().name().contains("SHULKER_BOX")) {
+        if (Tag.SHULKER_BOXES.isTagged(item.getType())) {
             // Get the shulker box inventory
             if (item.getItemMeta() instanceof BlockStateMeta) {
                 BlockStateMeta shulkerBlockStateMeta = (BlockStateMeta)item.getItemMeta();
