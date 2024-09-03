@@ -1,13 +1,17 @@
 package me.deadlight.ezchestshop.listeners;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.guis.SettingsGUI;
-import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -17,10 +21,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 public class ChatListener implements Listener {
 
@@ -40,7 +40,7 @@ public class ChatListener implements Listener {
             ChatWaitObject waitObject = chatmap.get(player.getUniqueId());
             Block waitChest = waitObject.containerBlock;
             if (waitChest == null) return;
-            String owneruuid = waitObject.dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
+            String owneruuid = waitObject.dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
             if (event.getMessage().equalsIgnoreCase(player.getName())) {
                 OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(UUID.fromString(owneruuid));
                 if (player.getName().equalsIgnoreCase(ofplayer.getName())) {
@@ -103,7 +103,7 @@ public class ChatListener implements Listener {
             String adminsString = convertListUUIDtoString(admins);
             TileState state = ((TileState)chest.getState());
             PersistentDataContainer data = state.getPersistentDataContainer();
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, adminsString);
+            data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
             ShopContainer.getShopSettings(chest.getLocation()).setAdmins(adminsString);
             player.sendMessage(lm.sucAdminAdded(answer));
@@ -121,14 +121,14 @@ public class ChatListener implements Listener {
             admins.remove(answerUUID);
             if (admins.isEmpty()) {
                 PersistentDataContainer data = state.getPersistentDataContainer();
-                data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, "none");
+                data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
                 state.update();
                 player.sendMessage(lm.sucAdminRemoved(answer));
                 return;
             }
             String adminsString = convertListUUIDtoString(admins);
             PersistentDataContainer data = state.getPersistentDataContainer();
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, adminsString);
+            data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
             ShopContainer.getShopSettings(chest.getLocation()).setAdmins(adminsString);
             player.sendMessage(lm.sucAdminRemoved(answer));

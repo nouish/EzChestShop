@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
@@ -12,7 +13,6 @@ import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.WebhookSender;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -33,7 +33,7 @@ public class PlayerTransactionListener implements Listener {
     public void onTransaction(PlayerTransactEvent event) {
         logProfits(event);
         sendDiscordWebhook(event);
-        if (((TileState)event.getContainerBlock().getState()).getPersistentDataContainer().get(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER) == 1) {
+        if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
             OfflinePlayer owner = event.getOwner();
             List<UUID> getters = event.getAdminsUUID();
             getters.add(owner.getUniqueId());
@@ -115,7 +115,7 @@ public class PlayerTransactionListener implements Listener {
         } else {
             owner.updateProfits(id, item, 0, 0.0, event.getBuyPrice(), count, price, event.getSellPrice());
         }
-            // ItemStack,BuyAmount,BuyPrice,SellAmount,SellPrice
+        // ItemStack,BuyAmount,BuyPrice,SellAmount,SellPrice
     }
 
 }

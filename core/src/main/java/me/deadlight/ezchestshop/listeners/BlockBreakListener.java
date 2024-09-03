@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -84,7 +85,7 @@ public class BlockBreakListener implements Listener {
                         ItemMeta meta = shulker.getItemMeta();
                         PersistentDataContainer container = meta.getPersistentDataContainer();
                         PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState()).getPersistentDataContainer();
-                        if (bcontainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING) != null) {
+                        if (bcontainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) != null) {
                             container = ShopContainer.copyContainerData(bcontainer, container);
                             meta = addLore(meta, container);
                             shulker.setItemMeta(meta);
@@ -103,21 +104,21 @@ public class BlockBreakListener implements Listener {
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
-            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
-                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, "item"))),
-                    getContainerDouble(container, "buy"),
-                    getContainerDouble(container, "sell"));
+            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, EzChestShopConstants.OWNER_KEY))).getName(),
+                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, EzChestShopConstants.ITEM_KEY))),
+                    getContainerDouble(container, EzChestShopConstants.BUY_PRICE_KEY),
+                    getContainerDouble(container, EzChestShopConstants.SELL_PRICE_KEY));
             meta.setLore(nlore);
         }
         return meta;
     }
 
-    private String getContainerString(PersistentDataContainer container, String key) {
-        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.STRING);
+    private String getContainerString(PersistentDataContainer container, NamespacedKey key) {
+        return container.get(key, PersistentDataType.STRING);
     }
 
-    private Double getContainerDouble(PersistentDataContainer container, String key) {
-        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.DOUBLE);
+    private Double getContainerDouble(PersistentDataContainer container, NamespacedKey key) {
+        return container.get(key, PersistentDataType.DOUBLE);
     }
 
     private void preventShopBreak(BlockBreakEvent event) {

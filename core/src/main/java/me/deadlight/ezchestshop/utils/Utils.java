@@ -21,10 +21,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -44,7 +46,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
 import org.bukkit.World;
@@ -109,7 +110,7 @@ public class Utils {
     public static void storeItem(ItemStack item, PersistentDataContainer data) {
         String encodedItem = encodeItem(item);
         if (encodedItem != null) {
-            data.set(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING, encodedItem);
+            data.set(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING, encodedItem);
         }
     }
 
@@ -226,14 +227,13 @@ public class Utils {
     }
 
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
-
-        String adminsString = data.get(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING);
+        String adminList = data.get(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING);
+        Preconditions.checkNotNull(adminList);
         // UUID@UUID@UUID
-        assert adminsString != null;
-        if (adminsString.equalsIgnoreCase("none")) {
+        if (adminList.equalsIgnoreCase("none")) {
             return new ArrayList<>();
         } else {
-            String[] stringUUIDS = adminsString.split("@");
+            String[] stringUUIDS = adminList.split("@");
             List<UUID> finalList = new ArrayList<>();
             for (String uuidInString : stringUUIDS) {
                 finalList.add(UUID.fromString(uuidInString));
@@ -242,13 +242,12 @@ public class Utils {
         }
     }
 
-
     public static List<TransactionLogObject> getListOfTransactions(Location containerBlock) {
         return null;
     }
 
     public static String getFinalItemName(ItemStack item) {
-        String itemname = "Error";
+        String itemname;
         if (item.hasItemMeta()) {
             if (item.getItemMeta().hasDisplayName()) {
                 itemname = colorify(item.getItemMeta().getDisplayName());
@@ -1101,36 +1100,27 @@ public class Utils {
     }
 
     public static boolean reInstallNamespacedKeyValues(PersistentDataContainer container, Location containerLocation) {
-
         EzShop shop = ShopContainer.getShop(containerLocation);
         if (shop == null) {
             return false; //false means the shop doesn't even exist in the database, so we don't need to do anything and send the message
         }
 
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING, shop.getOwnerID().toString());
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE, shop.getBuyPrice());
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE, shop.getSellPrice());
+        container.set(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING, shop.getOwnerID().toString());
+        container.set(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, shop.getBuyPrice());
+        container.set(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, shop.getSellPrice());
         //add new settings data later
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "msgtoggle"), PersistentDataType.INTEGER, shop.getSettings().isMsgtoggle() ? 1 : 0);
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER, shop.getSettings().isDbuy() ?
+        container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, shop.getSettings().isMsgtoggle() ? 1 : 0);
+        container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, shop.getSettings().isDbuy() ?
                 (shop.getBuyPrice() == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
                 : (Config.settings_defaults_dbuy ? 1 : 0));
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER, shop.getSettings().isDsell() ?
+        container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, shop.getSettings().isDsell() ?
                 (shop.getSellPrice() == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
                 : (Config.settings_defaults_dsell ? 1 : 0));
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "admins"), PersistentDataType.STRING, shop.getSettings().getAdmins());
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "shareincome"), PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
-        //container.set(new NamespacedKey(EzChestShop.getPlugin(), "trans"), PersistentDataType.STRING, "none");
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
-        container.set(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING, shop.getSettings().getRotation());
-
+        container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, shop.getSettings().getAdmins());
+        container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
+        container.set(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
+        container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, shop.getSettings().getRotation());
         return true;
-
     }
-
-
-//    public static Object getRequestedData(Contain) {
-//
-//    }
 
 }

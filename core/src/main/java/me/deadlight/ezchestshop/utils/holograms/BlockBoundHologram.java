@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -16,7 +16,6 @@ import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -336,15 +335,14 @@ public class BlockBoundHologram {
 
             if (container.getInventory().getHolder() instanceof DoubleChest) {
                 DoubleChest doubleChest = (DoubleChest) container.getInventory().getHolder();
-                NamespacedKey ownerKey = new NamespacedKey(EzChestShop.getPlugin(), "owner");
                 Chest leftChest = (Chest) doubleChest.getLeftSide();
                 Chest rightChest = (Chest) doubleChest.getRightSide();
 
-                if (leftChest != null && leftChest.getPersistentDataContainer().has(ownerKey, PersistentDataType.STRING)) {
+                if (leftChest != null && leftChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
                     return leftChest.getLocation();
                 }
 
-                if (rightChest != null && rightChest.getPersistentDataContainer().has(ownerKey, PersistentDataType.STRING)) {
+                if (rightChest != null && rightChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
                     return rightChest.getLocation();
                 }
             }

@@ -1,5 +1,10 @@
 package me.deadlight.ezchestshop.events;
-import me.deadlight.ezchestshop.EzChestShop;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -11,13 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
 public class PlayerTransactEvent extends Event {
-
-
     private OfflinePlayer owner;
     private OfflinePlayer customer;
     private double price;
@@ -40,7 +39,6 @@ public class PlayerTransactEvent extends Event {
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
-
 
     public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, ItemStack item, int count, List<UUID> admins, Block containerBlock) {
         this.owner = owner;
@@ -94,34 +92,26 @@ public class PlayerTransactEvent extends Event {
     }
 
     public boolean isShareIncome() {
-        return getBoolean(containerBlock, "shareincome");
+        return getBoolean(containerBlock, EzChestShopConstants.ENABLE_SHARED_INCOME_KEY);
     }
 
     public double getBuyPrice() {
-        return getDouble(containerBlock, "buy");
+        return getDouble(containerBlock, EzChestShopConstants.BUY_PRICE_KEY);
     }
 
     public double getSellPrice() {
-        return getDouble(containerBlock, "sell");
+        return getDouble(containerBlock, EzChestShopConstants.SELL_PRICE_KEY);
     }
 
-    private boolean getBoolean(Block containerBlock, String key) {
+    private boolean getBoolean(Block containerBlock, NamespacedKey key) {
         TileState state = (TileState) containerBlock.getState();
         PersistentDataContainer container = state.getPersistentDataContainer();
-        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.INTEGER) == 1;
+        return container.getOrDefault(key, PersistentDataType.INTEGER, 0) == 1;
     }
 
-    private double getDouble(Block containerBlock, String key) {
+    private double getDouble(Block containerBlock, NamespacedKey key) {
         TileState state = (TileState) containerBlock.getState();
         PersistentDataContainer container = state.getPersistentDataContainer();
-        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.DOUBLE);
+        return container.getOrDefault(key, PersistentDataType.DOUBLE, 0.0);
     }
-
-
-
-
-
-
-
-
 }

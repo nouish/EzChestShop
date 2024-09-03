@@ -1,17 +1,28 @@
 package me.deadlight.ezchestshop.guis;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.data.LanguageManager;
-import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.*;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,19 +30,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-//mojodi
-//balance
-
 public class NonOwnerShopGUI {
 
     public NonOwnerShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = new LanguageManager();
-        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(data.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+        String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+        Preconditions.checkNotNull(rawId);
+        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
         String shopOwner = offlinePlayerOwner.getName();
         if (shopOwner == null) {
             boolean result = Utils.reInstallNamespacedKeyValues(data, containerBlock.getLocation());
@@ -48,17 +55,19 @@ public class NonOwnerShopGUI {
                 return;
             }
         }
-        double sellPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-        double buyPrice = data.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
-        boolean disabledBuy = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"), PersistentDataType.INTEGER) == 1;
-        boolean disabledSell = data.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"), PersistentDataType.INTEGER) == 1;
+
+        // Double.MAX_VALUE simply represents a large value to effectively render this shop disabled in the event the data is missing.
+        double sellPrice = data.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+        double buyPrice = data.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+        boolean disabledBuy = data.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean disabledSell = data.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
 
         ContainerGui container = GuiData.getShop();
 
         Gui gui = new Gui(container.getRows(), lm.guiNonOwnerTitle(shopOwner));
         gui.getFiller().fill(container.getBackground());
 
-        ItemStack mainitem = Utils.decodeItem(data.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
+        ItemStack mainitem = Utils.decodeItem(data.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
         if (container.hasItem("shop-item")) {
             ItemStack guiMainItem = mainitem.clone();
             ItemMeta mainmeta = guiMainItem.getItemMeta();
@@ -151,7 +160,6 @@ public class NonOwnerShopGUI {
         });
 
         if (container.hasItem("custom-buy-sell")) {
-
             List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
             ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
 
@@ -226,8 +234,6 @@ public class NonOwnerShopGUI {
                             });
                     menu.open(player);
                     player.sendMessage(lm.enterTheAmount());
-
-
                 }
             });
             if (Config.settings_custom_amout_transactions) {
@@ -236,14 +242,8 @@ public class NonOwnerShopGUI {
             }
         }
 
-
         gui.open(player);
-
-
-
     }
-
-
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         LanguageManager lm = new LanguageManager();
@@ -254,7 +254,6 @@ public class NonOwnerShopGUI {
             disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
             disabledItemMeta.setLore(lm.disabledButtonLore());
             disabledItemStack.setItemMeta(disabledItemMeta);
-
             return disabledItemStack;
         } else {
             return mainItem;

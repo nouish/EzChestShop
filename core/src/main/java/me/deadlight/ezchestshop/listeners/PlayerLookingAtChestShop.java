@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -65,8 +66,8 @@ public class PlayerLookingAtChestShop implements Listener {
             Chest leftchest = (Chest) doubleChest.getLeftSide();
             Chest rightchest = (Chest) doubleChest.getRightSide();
 
-            if (leftchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)
-                    || rightchest.getPersistentDataContainer().has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+            if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
 
                 PersistentDataContainer rightone = null;
 
@@ -84,16 +85,13 @@ public class PlayerLookingAtChestShop implements Listener {
 //                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
 //                            return;
 //                        }
-                ItemStack thatItem = Utils.decodeItem(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
-                double buy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
-                double sell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-                boolean is_adminshop = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
-                        PersistentDataType.INTEGER) == 1;
-                boolean is_dbuy = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
-                        PersistentDataType.INTEGER) == 1;
-                boolean is_dsell = rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
-                        PersistentDataType.INTEGER) == 1;
-                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                ItemStack thatItem = Utils.decodeItem(rightone.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
+                double buy = rightone.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+                double sell = rightone.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+                boolean is_adminshop = rightone.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+                boolean is_dbuy = rightone.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+                boolean is_dsell = rightone.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
+                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)));
                 String shopOwner = offlinePlayerOwner.getName();
                 if (shopOwner == null) {
                     shopOwner = ChatColor.RED + "Error";
@@ -109,7 +107,7 @@ public class PlayerLookingAtChestShop implements Listener {
         } else {
             //not a double chest
             PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
-            if (container.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+            if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
 
 //                        if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
 //                            EzChestShop.logConsole(
@@ -117,16 +115,13 @@ public class PlayerLookingAtChestShop implements Listener {
 //                            return;
 //                        }
                 //show the hologram
-                ItemStack thatItem = Utils.decodeItem(container.get(new NamespacedKey(EzChestShop.getPlugin(), "item"), PersistentDataType.STRING));
-                double buy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "buy"), PersistentDataType.DOUBLE);
-                double sell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "sell"), PersistentDataType.DOUBLE);
-                boolean is_adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"),
-                        PersistentDataType.INTEGER) == 1;
-                boolean is_dbuy = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dbuy"),
-                        PersistentDataType.INTEGER) == 1;
-                boolean is_dsell = container.get(new NamespacedKey(EzChestShop.getPlugin(), "dsell"),
-                        PersistentDataType.INTEGER) == 1;
-                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)));
+                ItemStack thatItem = Utils.decodeItem(container.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
+                double buy = container.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+                double sell = container.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+                boolean is_adminshop = container.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+                boolean is_dbuy = container.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+                boolean is_dsell = container.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
+                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)));
                 String shopOwner = offlinePlayerOwner.getName();
                 if (shopOwner == null) {
                     shopOwner = ChatColor.RED + "Error";
@@ -154,7 +149,7 @@ public class PlayerLookingAtChestShop implements Listener {
         itemname = Utils.getFinalItemName(thatItem);
         List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                 Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
-                        .get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))), player.getInventory().getStorageContents(),
+                        .get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))), player.getInventory().getStorageContents(),
                 Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
                 buy, sell, thatItem);
 
@@ -284,8 +279,7 @@ public class PlayerLookingAtChestShop implements Listener {
         Location holoLoc;
         Inventory inventory = Utils.getBlockInventory(containerBlock);
         PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
-        String rotation = container.get(new NamespacedKey(EzChestShop.getPlugin(), "rotation"), PersistentDataType.STRING);
-        rotation = rotation == null ? Config.settings_defaults_rotation : rotation;
+        String rotation = container.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
         //Add rotation checks
         switch (rotation) {

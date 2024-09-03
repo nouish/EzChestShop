@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -19,7 +20,6 @@ import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -83,8 +83,7 @@ public class ChestOpeningListener implements Listener {
                 dataContainer = state.getPersistentDataContainer();
             }
 
-
-            if (dataContainer.has(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING)) {
+            if (dataContainer != null && dataContainer.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
                 event.setCancelled(true);
                 // Load old shops into the Database when clicked
                 if (!ShopContainer.isShop(loc)) {
@@ -101,12 +100,8 @@ public class ChestOpeningListener implements Listener {
                     }
                 }
 
-
-
-                //String owner = Bukkit.getOfflinePlayer(UUID.fromString(rightone.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING))).getName();
-                String owneruuid = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "owner"), PersistentDataType.STRING);
-                boolean isAdminShop = dataContainer.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
-
+                String owneruuid = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+                boolean isAdminShop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
                 Player player = event.getPlayer();
 
                 if (isAdminShop) {
@@ -120,6 +115,7 @@ public class ChestOpeningListener implements Listener {
                     serverShopGUI.showGUI(player, dataContainer, chestblock);
                     return;
                 }
+
                 boolean isAdmin = isAdmin(dataContainer, player.getUniqueId().toString());
 
                 if (EzChestShop.worldguard) {

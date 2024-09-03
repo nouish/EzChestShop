@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -37,11 +38,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class BlockPistonExtendListener implements Listener {
 
-    private static LanguageManager lm = new LanguageManager();
-    private static HashMap<String, String> lockMap = new HashMap<>();
-    private static List<String> lockList = new ArrayList<>();
-    private static HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
-    private static HashMap<String, Location> lockLocationMap = new HashMap<>();
+    private static final LanguageManager lm = new LanguageManager();
+    private static final HashMap<String, String> lockMap = new HashMap<>();
+    private static final List<String> lockList = new ArrayList<>();
+    private static final HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
+    private static final HashMap<String, Location> lockLocationMap = new HashMap<>();
 
     @EventHandler
     public void onExtend(BlockPistonExtendEvent event) {
@@ -63,7 +64,7 @@ public class BlockPistonExtendListener implements Listener {
                     //it is a shulkerbox, now checking if its a shop
                     Location shulkerLoc = block.getLocation();
                     if (ShopContainer.isShop(shulkerLoc)) {
-                        boolean adminshop = container.get(new NamespacedKey(EzChestShop.getPlugin(), "adminshop"), PersistentDataType.INTEGER) == 1;
+                        boolean adminshop = container.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
                         if (EzChestShop.worldguard) {
                             if (adminshop) {
                                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, shulkerLoc)) {
@@ -178,7 +179,6 @@ public class BlockPistonExtendListener implements Listener {
                 ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
                 //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
                 Bukkit.getPluginManager().callEvent(shopDropEvent);
-
             }
         }
     }
@@ -186,21 +186,21 @@ public class BlockPistonExtendListener implements Listener {
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
-            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, "owner"))).getName(),
-                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, "item"))),
-                    getContainerDouble(container, "buy"),
-                    getContainerDouble(container, "sell"));
+            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, EzChestShopConstants.OWNER_KEY))).getName(),
+                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, EzChestShopConstants.ITEM_KEY))),
+                    getContainerDouble(container, EzChestShopConstants.BUY_PRICE_KEY),
+                    getContainerDouble(container, EzChestShopConstants.SELL_PRICE_KEY));
             meta.setLore(nlore);
         }
         return meta;
     }
 
-    private String getContainerString(PersistentDataContainer container, String key) {
-        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.STRING);
+    private String getContainerString(PersistentDataContainer container, NamespacedKey key) {
+        return container.get(key, PersistentDataType.STRING);
     }
 
-    private Double getContainerDouble(PersistentDataContainer container, String key) {
-        return container.get(new NamespacedKey(EzChestShop.getPlugin(), key), PersistentDataType.DOUBLE);
+    private Double getContainerDouble(PersistentDataContainer container, NamespacedKey key) {
+        return container.get(key, PersistentDataType.DOUBLE);
     }
 
 
