@@ -35,6 +35,7 @@
       <url>https://repo.maven.apache.org/maven2</url>
       <snapshots>
         <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
     <repository>
@@ -42,35 +43,64 @@
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
       <snapshots>
         <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
     <repository>
       <id>codemc-repo</id>
       <url>https://repo.codemc.io/repository/maven-public/</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
     <repository>
       <id>minebench-repo</id>
       <url>https://repo.minebench.de/</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
     <repository>
       <id>sk89q-repo</id>
       <url>https://maven.enginehub.org/repo/</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
     <repository>
       <id>placeholderapi</id>
       <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
     <repository>
       <id>towny-repo</id>
       <url>https://repo.glaremasters.me/repository/towny/</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
     <repository>
       <id>alex9849</id>
       <url>https://nexus.alex9849.net/repository/maven-releases/</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
     </repository>
   </repositories>
 
