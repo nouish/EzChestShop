@@ -58,7 +58,7 @@
       <id>minebench-repo</id>
       <url>https://repo.minebench.de/</url>
       <snapshots>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
@@ -66,7 +66,7 @@
       <id>sk89q-repo</id>
       <url>https://maven.enginehub.org/repo/</url>
       <snapshots>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
