@@ -101,7 +101,10 @@ public final class EzChestShop extends JavaPlugin {
 
         logger.info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
 
-        Preconditions.checkState(NBT.preloadApi(), "Outdated NBT API version!");
+        if (!NBT.preloadApi()) {
+            logger.warn("The bundled NBT API is not compatible with this Minecraft version.");
+        }
+
 
         scheduler = UniversalScheduler.getScheduler(this);
         saveDefaultConfig();

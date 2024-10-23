@@ -79,6 +79,10 @@ jobs:
         if: steps.cache-maven.outputs.cache-hit != 'true'
         run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.21.1-R0.1-SNAPSHOT/spigot-1.21.1-R0.1-SNAPSHOT-remapped-mojang.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.21.1 --remapped; fi
 
+      - name: Install Spigot 1.21.2
+        if: steps.cache-maven.outputs.cache-hit != 'true'
+        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.21.2-R0.1-SNAPSHOT/spigot-1.21.2-R0.1-SNAPSHOT-remapped-mojang.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.21.2 --remapped; fi
+
       - name: Build with Maven
         run: |
           ./mvnw clean package --batch-mode --no-transfer-progress --show-version
