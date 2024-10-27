@@ -7,7 +7,6 @@ import java.util.OptionalInt;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
-import com.google.common.base.Preconditions;
 import de.tr7zw.changeme.nbtapi.NBT;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
@@ -39,15 +38,16 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.VersionUtil;
 import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
@@ -159,108 +159,7 @@ public final class EzChestShop extends JavaPlugin {
         registerListeners();
         registerCommands();
         registerTabCompleters();
-
-        // bStats Metrics
-        Metrics metrics = new Metrics(this, 10756);
-        metrics.addCustomChart(new SimplePie("database_type", () -> Config.database_type.toString()));
-        metrics.addCustomChart(new SimplePie("update_notification", () -> String.valueOf(Config.notify_updates)));
-        metrics.addCustomChart(new SimplePie("language", () -> Config.language));
-
-        metrics.addCustomChart(new SingleLineChart("total_shops", () -> {
-            // (This is useless as there is already a player chart by default.)
-            return ShopContainer.getShops().size();
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("materials_used", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-           for (EzShop shop : ShopContainer.getShops()) {
-                    String itemMaterial = shop.getShopItem().getType().toString();
-                    if (valueMap.containsKey(itemMaterial)) {
-                        valueMap.put(itemMaterial, valueMap.get(itemMaterial) + 1);
-                    } else {
-                        valueMap.put(itemMaterial, 1);
-                    }
-                }
-            return valueMap;
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("rotation_used", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (EzShop shop : ShopContainer.getShops()) {
-                String rotation = shop.getSettings().getRotation();
-                if (valueMap.containsKey(rotation)) {
-                    valueMap.put(rotation, valueMap.get(rotation) + 1);
-                } else {
-                    valueMap.put(rotation, 1);
-                }
-            }
-            return valueMap;
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("is_admin_shop", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (EzShop shop : ShopContainer.getShops()) {
-                boolean adminshop = shop.getSettings().isAdminshop();
-                if (valueMap.containsKey(String.valueOf(adminshop))) {
-                    valueMap.put(String.valueOf(adminshop), valueMap.get(String.valueOf(adminshop)) + 1);
-                } else {
-                    valueMap.put(String.valueOf(adminshop), 1);
-                }
-            }
-            return valueMap;
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("disabled_buy_count", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (EzShop shop : ShopContainer.getShops()) {
-                boolean disabledBuy = shop.getSettings().isDbuy();
-                if (valueMap.containsKey(String.valueOf(disabledBuy))) {
-                    valueMap.put(String.valueOf(disabledBuy), valueMap.get(String.valueOf(disabledBuy)) + 1);
-                } else {
-                    valueMap.put(String.valueOf(disabledBuy), 1);
-                }
-            }
-            return valueMap;
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("disabled_sell_count", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (EzShop shop : ShopContainer.getShops()) {
-                boolean disabledSell = shop.getSettings().isDsell();
-                if (valueMap.containsKey(String.valueOf(disabledSell))) {
-                    valueMap.put(String.valueOf(disabledSell), valueMap.get(String.valueOf(disabledSell)) + 1);
-                } else {
-                    valueMap.put(String.valueOf(disabledSell), 1);
-                }
-            }
-            return valueMap;
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("message_toggle_count", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (EzShop shop : ShopContainer.getShops()) {
-                boolean messageToggle = shop.getSettings().isMsgtoggle();
-                if (valueMap.containsKey(String.valueOf(messageToggle))) {
-                    valueMap.put(String.valueOf(messageToggle), valueMap.get(String.valueOf(messageToggle)) + 1);
-                } else {
-                    valueMap.put(String.valueOf(messageToggle), 1);
-                }
-            }
-            return valueMap;
-        }));
-
-        metrics.addCustomChart(new AdvancedPie("shared_income_count", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            for (EzShop shop : ShopContainer.getShops()) {
-                boolean sharedIncome = shop.getSettings().isShareincome();
-                if (valueMap.containsKey(String.valueOf(sharedIncome))) {
-                    valueMap.put(String.valueOf(sharedIncome), valueMap.get(String.valueOf(sharedIncome)) + 1);
-                } else {
-                    valueMap.put(String.valueOf(sharedIncome), 1);
-                }
-            }
-            return valueMap;
-        }));
+        registerMetrics();
 
         if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
             slimefun = true;
@@ -283,6 +182,39 @@ public final class EzChestShop extends JavaPlugin {
 
         // The plugin started without encountering unrecoverable problems.
         started = true;
+    }
+
+    private void registerMetrics() {
+        Metrics metrics = new Metrics(this, EzChestShopConstants.BSTATS_PROJECT_ID);
+
+        metrics.addCustomChart(new DrilldownPie("economyBackend", () -> {
+            Map<String, Map<String, Integer>> result = new HashMap<>();
+            Map<String, Integer> entry = new HashMap<>();
+            if (economyPluginFound) {
+                entry.put(econ.getName(), 1);
+                result.put("Vault", entry);
+            } else {
+                entry.put("XP", 1);
+                result.put("XP", entry);
+            }
+            return result;
+        }));
+
+        metrics.addCustomChart(new AdvancedPie("language", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                //noinspection deprecation
+                String locale = player.getLocale();
+                result.put(locale, result.getOrDefault(locale, 0) + 1);
+            }
+            return result;
+        }));
+
+
+        metrics.addCustomChart(new SimplePie("databaseType", () -> Config.database_type.getName()));
+        metrics.addCustomChart(new SimplePie("update_notification", () -> String.valueOf(Config.notify_updates)));
+        metrics.addCustomChart(new SimplePie("language", () -> Config.language));
+        metrics.addCustomChart(new SingleLineChart("totalShopCount", () -> ShopContainer.getShops().size()));
     }
 
     private void registerListeners() {
@@ -383,7 +315,6 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         logConsole("&c[&eEzChestShop&c] &4Plugin is now disabled. ");
-
     }
 
     public static EzChestShop getPlugin() {

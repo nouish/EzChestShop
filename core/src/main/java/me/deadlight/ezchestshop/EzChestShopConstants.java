@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
 public final class EzChestShopConstants {
+    public static final int BSTATS_PROJECT_ID = 23732;
 
     public static final NamespacedKey OWNER_KEY = createKey("owner");
     public static final NamespacedKey ADMIN_LIST_KEY = createKey("admins");
