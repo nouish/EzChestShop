@@ -38,6 +38,7 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.VersionUtil;
 import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
+import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
@@ -104,7 +105,6 @@ public final class EzChestShop extends JavaPlugin {
         if (!NBT.preloadApi()) {
             logger.warn("The bundled NBT API is not compatible with this Minecraft version.");
         }
-
 
         scheduler = UniversalScheduler.getScheduler(this);
         saveDefaultConfig();
@@ -194,6 +194,10 @@ public final class EzChestShop extends JavaPlugin {
 
     private void registerMetrics() {
         Metrics metrics = new Metrics(this, EzChestShopConstants.BSTATS_PROJECT_ID);
+        metrics.addCustomChart(new SimplePie("databaseType", () -> Config.database_type.getName()));
+        metrics.addCustomChart(new SimplePie("updateNotification", () -> Config.notify_updates ? "Enabled" : "Disabled"));
+        metrics.addCustomChart(new SimplePie("language", () -> Config.language));
+        metrics.addCustomChart(new SingleLineChart("totalShopCount", () -> ShopContainer.getShops().size()));
 
         metrics.addCustomChart(new DrilldownPie("economyBackend", () -> {
             Map<String, Map<String, Integer>> result = new HashMap<>();
@@ -213,16 +217,73 @@ public final class EzChestShop extends JavaPlugin {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 //noinspection deprecation
                 String locale = player.getLocale();
-                result.put(locale, result.getOrDefault(locale, 0) + 1);
+                result.merge(locale, 1, Integer::sum);
             }
             return result;
         }));
 
+        metrics.addCustomChart(new AdvancedPie("stockMaterial", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String material = shop.getShopItem().getType().getKey().getKey();
+                result.merge(material, 1, Integer::sum);
+            }
+            return result;
+        }));
 
-        metrics.addCustomChart(new SimplePie("databaseType", () -> Config.database_type.getName()));
-        metrics.addCustomChart(new SimplePie("update_notification", () -> String.valueOf(Config.notify_updates)));
-        metrics.addCustomChart(new SimplePie("language", () -> Config.language));
-        metrics.addCustomChart(new SingleLineChart("totalShopCount", () -> ShopContainer.getShops().size()));
+        metrics.addCustomChart(new AdvancedPie("rotation", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String rotation = shop.getSettings().getRotation();
+                result.merge(rotation, 1, Integer::sum);
+            }
+            return result;
+        }));
+
+        metrics.addCustomChart(new AdvancedPie("stockType", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String stock = shop.getSettings().isAdminshop() ? "Admin" : "Regular";
+                result.merge(stock, 1, Integer::sum);
+            }
+            return result;
+        }));
+
+        metrics.addCustomChart(new AdvancedPie("buyToggle", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String state = shop.getSettings().isDbuy() ? "Disabled" : "Enabled";
+                result.merge(state, 1, Integer::sum);
+            }
+            return result;
+        }));
+
+        metrics.addCustomChart(new AdvancedPie("sellToggle", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String state = shop.getSettings().isDsell() ? "Disabled" : "Enabled";
+                result.merge(state, 1, Integer::sum);
+            }
+            return result;
+        }));
+
+        metrics.addCustomChart(new AdvancedPie("shareIncomeToggle", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String state = shop.getSettings().isShareincome() ? "Enabled" : "Disabled";
+                result.merge(state, 1, Integer::sum);
+            }
+            return result;
+        }));
+
+        metrics.addCustomChart(new AdvancedPie("notificationToggle", () -> {
+            Map<String, Integer> result = new HashMap<>();
+            for (EzShop shop : ShopContainer.getShops()) {
+                String state = shop.getSettings().isMsgtoggle() ? "Enabled" : "Disabled";
+                result.merge(state, 1, Integer::sum);
+            }
+            return result;
+        }));
     }
 
     private void registerListeners() {
