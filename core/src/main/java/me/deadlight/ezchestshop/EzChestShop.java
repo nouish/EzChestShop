@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +81,24 @@ public final class EzChestShop extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             worldguard = true;
             FlagRegistry.onLoad();
+        }
+
+        migrateDataToFork();
+    }
+
+    private void migrateDataToFork() {
+        Logger logger = LoggerFactory.getLogger(getLogger().getName());
+        File dataFolder = getDataFolder();
+        File oldDataFolder = new File(dataFolder.getParentFile(), "EzChestShop");
+
+        if (oldDataFolder.exists()) {
+            if (dataFolder.exists()) {
+                logger.warn("Skipping automatic migration from EzChestShop because your directory contains data from both plugins.");
+            } else if (oldDataFolder.renameTo(dataFolder)) {
+                logger.info("Successfully renamed directory '{}' to '{}'", oldDataFolder, dataFolder);
+            } else {
+                logger.warn("Unable to rename directory '{}' to '{}'", oldDataFolder, dataFolder);
+            }
         }
     }
 
