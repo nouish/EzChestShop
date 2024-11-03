@@ -28,22 +28,20 @@ If you need help or need to report an issue, please [open a new issue here](http
 
 This is a full list of Minecraft versions supported by EzChestShopReborn:
 
-| Minecraft version |    | Status                                      |
-|-------------------|----|---------------------------------------------|
-| Minecraft 1.21.3  | 🛠️ | Development builds available*               |
-| Minecraft 1.21.2  | 🛠️ | Development builds available*               |
-| Minecraft 1.21.1  | ✅ |                                             |
-| Minecraft 1.21    | ✅ |                                             |
-| Minecraft 1.20.6  | ✅ |                                             |
-| Minecraft 1.20.4  | ⚠️ | Support may be dropped in future versions** |
-| Minecraft 1.19.4  | ⚠️ | Support may be dropped in future versions** |
-| Minecraft 1.18.2  | ⚠️ | Support may be dropped in future versions** |
-| Minecraft 1.17.1  | ⚠️️ | Support may be dropped in future versions** |
-| Minecraft 1.16.5  | ⚠️ | Support may be dropped in future versions** |
+| Minecraft version |    | Status                                     |
+|-------------------|----|--------------------------------------------|
+| Minecraft 1.21.3  | ✅ |                                            |
+| Minecraft 1.21.2  | ✅ |                                            |
+| Minecraft 1.21.1  | ✅ |                                            |
+| Minecraft 1.21    | ✅ |                                            |
+| Minecraft 1.20.6  | ✅ |                                            |
+| Minecraft 1.20.4  | ⚠️ | Support may be dropped in future versions* |
+| Minecraft 1.19.4  | ⚠️ | Support may be dropped in future versions* |
+| Minecraft 1.18.2  | ⚠️ | Support may be dropped in future versions* |
+| Minecraft 1.17.1  | ⚠️️ | Support may be dropped in future versions* |
+| Minecraft 1.16.5  | ⚠️ | Support may be dropped in future versions* |
 
-\*: A new release with support for MC 1.21.2 and MC 1.21.3 is planned for when our dependencies are available. Still waiting for "NBT API" to support either version.
-
-\**: Currently supported by the latest version, but may be discontinued in future versions in order to use newer features in Java 21 going forwards.
+\*: Currently supported by the latest version, but may be discontinued in future versions in order to use newer features in Java 21 going forwards.
 
 ## Contribute
 
