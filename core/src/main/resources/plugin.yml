@@ -1,7 +1,7 @@
-name: EzChestShop
-version: ${project.version}
-main: me.deadlight.ezchestshop.EzChestShop
-api-version: 1.16
+name: 'EzChestShopReborn'
+version: '${project.version}'
+main: 'me.deadlight.ezchestshop.EzChestShop'
+api-version: '1.16'
 folia-supported: true
 softdepend:
   - Vault
@@ -13,8 +13,11 @@ softdepend:
   - PlaceholderAPI
   - Towny
   - AdvancedRegionMarket
-authors: [ItzAmirreza, ElitoGame]
-description: ${project.description}
+authors:
+  - ItzAmirreza
+  - ElitoGame
+  - nouish
+description: '${project.description}'
 commands:
   ecs:
     description: create or delete a shop

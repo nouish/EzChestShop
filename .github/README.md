@@ -1,7 +1,8 @@
-# 🎃 EzChestShopReborn 🎃
+# EzChestShopReborn
 
 ---
 
+[![Discord](https://img.shields.io/discord/1302627666007953559?label=Discord&color=blue)](https://discord.gg/invite/gjV6BgKxFV)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nouish/EzChestShop/main.yml)](https://github.com/nouish/EzChestShop/actions/workflows/main.yml)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/nouish/EzChestShop/total)](https://github.com/nouish/EzChestShop/releases/latest)
 [![GitHub Release](https://img.shields.io/github/v/release/nouish/EzChestShop?label=version)](https://github.com/nouish/EzChestShop/releases/latest)
@@ -16,7 +17,7 @@ As of October 27th 2024 the original EzChestShop plugin is not actively maintain
 
 ## Download
 
-You can find the most recent version for download [here](https://github.com/nouish/EzChestShop/releases/latest) on GitHub.
+You can find the most recent version for download [here](https://github.com/nouish/EzChestShop/releases/latest) on GitHub, or join [Discord](https://discord.gg/invite/gjV6BgKxFV) to chat.
 
 
 ## Support

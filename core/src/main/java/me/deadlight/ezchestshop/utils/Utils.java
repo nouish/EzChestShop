@@ -877,21 +877,21 @@ public class Utils {
 
     public static void sendVersionMessage(Player player) {
         player.spigot().sendMessage(
-                new ComponentBuilder("Ez Chest Shop plugin, " + EzChestShop.getPlugin().getDescription().getVersion())
+                new ComponentBuilder("EzChestShopReborn v" + EzChestShop.getPlugin().getDescription().getVersion())
                         .color(net.md_5.bungee.api.ChatColor.GREEN)
-                        .append("\nSpigot: ").color(net.md_5.bungee.api.ChatColor.GOLD).append("LINK")
-                        .color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
+                        .append("\nDiscord: ").color(net.md_5.bungee.api.ChatColor.BLUE).append("https://discord.gg/invite/gjV6BgKxFV")
+                        .color(net.md_5.bungee.api.ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                TextComponent.fromLegacyText(colorify("&fClick to open the plugins Spigot page!"))))
+                                TextComponent.fromLegacyText(colorify("&fClick to join the plugin discord!"))))
                         .event(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                                "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/"))
+                                "https://discord.gg/invite/gjV6BgKxFV"))
                         .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE)
-                        .color(net.md_5.bungee.api.ChatColor.RED).append("LINK")
-                        .color(net.md_5.bungee.api.ChatColor.GRAY).bold(true)
+                        .color(net.md_5.bungee.api.ChatColor.RED).append("https://github.com/nouish/EzChestShop")
+                        .color(net.md_5.bungee.api.ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 TextComponent.fromLegacyText(
-                                        colorify("&fClick to check out the plugins\n Open Source GitHub repository!"))))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/ItzAmirreza/EzChestShop"))
+                                        colorify("&fClick to browse the GitHub repository!"))))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/nouish/EzChestShop"))
                         .create());
     }
 

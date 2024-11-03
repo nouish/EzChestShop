@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>me.deadlight</groupId>
-    <artifactId>EzChestShop-parent</artifactId>
-    <version>1.6.5-SNAPSHOT</version>
+    <groupId>com.github.nouish.ezchestshop</groupId>
+    <artifactId>ezchestshop-parent</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>EzChestShop-craftbukkit_1_19_R3</artifactId>
+  <artifactId>ezchestshop-craftbukkit_1_19_R3</artifactId>
   <packaging>jar</packaging>
 
   <name>EzChestShop NMS 1.19.4</name>
@@ -24,8 +24,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>me.deadlight</groupId>
-      <artifactId>EzChestShop-core</artifactId>
+      <groupId>com.github.nouish.ezchestshop</groupId>
+      <artifactId>ezchestshop-core</artifactId>
       <version>${project.parent.version}</version>
       <scope>compile</scope>
     </dependency>
