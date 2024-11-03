@@ -178,7 +178,15 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         UpdateChecker checker = new UpdateChecker();
-        checker.check();
+        checker.checkGuiUpdate();
+
+        // TODO automatic version check
+        if (Config.notify_updates) {
+            logger.warn("Automatic version check is enabled, but temporarily unavailable.");
+            logger.warn("Please follow either of these sources for up to date versions of EzChestShopReborn:");
+            logger.warn("GitHub: https://github.com/nouish/EzChestShop");
+            logger.warn("Discord: https://discord.gg/invite/gjV6BgKxFV");
+        }
 
         // The plugin started without encountering unrecoverable problems.
         started = true;

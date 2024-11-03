@@ -1,10 +1,5 @@
 package me.deadlight.ezchestshop.listeners;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,18 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class UpdateChecker implements Listener{
 
-    private static final String BASE_URL = "https://api.spigotmc.org/legacy/update.php?resource=%d";
-    private static final int PLUGIN_ID = 90411;
-
     LanguageManager lm = new LanguageManager();
-
-    private static String newVersion = EzChestShop.getPlugin().getDescription().getVersion();
-
-    private static boolean isSpigotUpdateAvailable;
-
-    public static boolean isSpigotUpdateAvailable() {
-        return isSpigotUpdateAvailable;
-    }
 
     private static boolean isGuiUpdateAvailable;
 
@@ -50,10 +34,6 @@ public class UpdateChecker implements Listener{
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (event.getPlayer().isOp()) {
-            if (Config.notify_updates && isSpigotUpdateAvailable) {
-                EzChestShop.getScheduler().runTaskLater(
-                        () -> event.getPlayer().spigot().sendMessage(lm.updateNotification(EzChestShop.getPlugin().getDescription().getVersion(), newVersion)), 10L);
-            }
             if (isGuiUpdateAvailable) {
                 if (Config.notify_overflowing_gui_items && !requiredOverflowRows.isEmpty()) {
                     EzChestShop.getScheduler().runTaskLater(
@@ -65,11 +45,6 @@ public class UpdateChecker implements Listener{
                 }
             }
         }
-    }
-
-    public void check() {
-        isSpigotUpdateAvailable = checkUpdate();
-        checkGuiUpdate();
     }
 
     public void resetGuiCheck() {
@@ -88,85 +63,7 @@ public class UpdateChecker implements Listener{
         }
     }
 
-    /**
-     * Checks if there is an update available on spigot
-     * @return true if there is an update available, false if not
-     */
-    private boolean checkUpdate() {
-        try {
-            String localVersion = EzChestShop.getPlugin().getDescription().getVersion();
-            String url = String.format(BASE_URL, PLUGIN_ID);
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-            connection.setRequestMethod("GET");
-            String raw = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-
-            String remoteVersion;
-            if(raw.contains("-")) {
-                remoteVersion = raw.split("-")[0].trim();
-            } else {
-                remoteVersion = raw;
-            }
-            newVersion = remoteVersion;
-            if (versionCompare(localVersion, remoteVersion) < 0)
-                // localVersion is smaller (older) than remoteVersion
-                return true;
-            else
-                // localVersion is greater (newer) than or equal to the remoteVersion
-                return false;
-
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Compares two version strings
-     * Source: https://www.geeksforgeeks.org/compare-two-version-numbers/
-     * @param v1 version 1
-     * @param v2 version 2
-     * @return 1 if v1 is greater than v2, -1 if v1 is smaller than v2, 0 if v1 is equal to v2
-     */
-    static int versionCompare(String v1, String v2)
-    {
-        // vnum stores each numeric part of version
-        int vnum1 = 0, vnum2 = 0;
-
-        // loop until both String are processed
-        for (int i = 0, j = 0; (i < v1.length()
-                || j < v2.length());) {
-            // Storing numeric part of
-            // version 1 in vnum1
-            while (i < v1.length()
-                    && v1.charAt(i) != '.') {
-                vnum1 = vnum1 * 10
-                        + (v1.charAt(i) - '0');
-                i++;
-            }
-
-            // storing numeric part
-            // of version 2 in vnum2
-            while (j < v2.length()
-                    && v2.charAt(j) != '.') {
-                vnum2 = vnum2 * 10
-                        + (v2.charAt(j) - '0');
-                j++;
-            }
-
-            if (vnum1 > vnum2)
-                return 1;
-            if (vnum2 > vnum1)
-                return -1;
-
-            // if equal, reset variables and
-            // go for next numeric part
-            vnum1 = vnum2 = 0;
-            i++;
-            j++;
-        }
-        return 0;
-    }
-
-    private void checkGuiUpdate() {
+    public void checkGuiUpdate() {
         // Check all GUIs (GuiData.getViaType()) for updates. See if items are outside bounds and if items that should not overlap suddenly overlap.
         // If any of these are true, return true.
 
