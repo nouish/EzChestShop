@@ -244,7 +244,7 @@ public final class EzChestShop extends JavaPlugin {
         metrics.addCustomChart(new AdvancedPie("stockMaterial", () -> {
             Map<String, Integer> result = new HashMap<>();
             for (EzShop shop : ShopContainer.getShops()) {
-                String material = shop.getShopItem().getType().getKey().getKey();
+                String material = shop.getShopItem().getType().getKey().toString();
                 result.merge(material, 1, Integer::sum);
             }
             return result;
