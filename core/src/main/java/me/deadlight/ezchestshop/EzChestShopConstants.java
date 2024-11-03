@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 public final class EzChestShopConstants {
     public static final int BSTATS_PROJECT_ID = 23732;
 
+    // Continue to use the old namespace to ensure existing shops work.
+    private static final String NAMESPACE = "ezchestshop";
+
     public static final NamespacedKey OWNER_KEY = createKey("owner");
     public static final NamespacedKey ADMIN_LIST_KEY = createKey("admins");
     public static final NamespacedKey ITEM_KEY = createKey("item");
@@ -25,7 +28,7 @@ public final class EzChestShopConstants {
     public static final NamespacedKey ROTATION_KEY = createKey("rotation");
 
     private static @NotNull NamespacedKey createKey(@NotNull String key) {
-        return new NamespacedKey(EzChestShop.getPlugin(), key);
+        return new NamespacedKey(EzChestShopConstants.NAMESPACE, key);
     }
 
     private EzChestShopConstants() {}
