@@ -1,5 +1,7 @@
 package me.deadlight.ezchestshop.utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +14,7 @@ public class FloatingItem {
 
     public FloatingItem(Player player, ItemStack itemStack, Location location) {
         this.player = player;
-        this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
+        this.entityID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
         this.location = location;
         Utils.nmsHandle.spawnFloatingItem(player, location, itemStack, entityID);
     }

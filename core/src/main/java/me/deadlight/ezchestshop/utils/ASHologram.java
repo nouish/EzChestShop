@@ -1,8 +1,9 @@
 package me.deadlight.ezchestshop.utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
 
 
 public class ASHologram {
@@ -10,17 +11,15 @@ public class ASHologram {
     private int entityID;
     private String name;
     private Player handler;
-
     private Location location;
 
-    public ASHologram(Player p, String name,Location location) {
+    public ASHologram(Player p, String name, Location location) {
         this.name = name;
-        this.entityID = (int) (Math.random() * Integer.MAX_VALUE);
+        this.entityID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
         this.handler = p;
         this.location = location;
         Utils.nmsHandle.spawnHologram(p, location, name, entityID);
     }
-
 
     public void destroy() {
         Utils.nmsHandle.destroyEntity(handler, entityID);

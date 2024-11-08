@@ -1,5 +1,7 @@
 package me.deadlight.ezchestshop.utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,7 +31,7 @@ public class BlockOutline {
         if (!isMadeFromACheck) {
             checkForDoubleChestShop();
         }
-        outlineID = (int) (Math.random() * Integer.MAX_VALUE);
+        outlineID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
         nmsHandle.showOutline(player, block, outlineID);
         Utils.activeOutlines.put(outlineID, this);
 
