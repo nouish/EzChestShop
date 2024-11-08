@@ -879,19 +879,17 @@ public class Utils {
         player.spigot().sendMessage(
                 new ComponentBuilder("EzChestShopReborn v" + EzChestShop.getPlugin().getDescription().getVersion())
                         .color(net.md_5.bungee.api.ChatColor.GREEN)
-                        .append("\nDiscord: ").color(net.md_5.bungee.api.ChatColor.BLUE).append("https://discord.gg/invite/gjV6BgKxFV")
+                        .append("\nDiscord: ").color(net.md_5.bungee.api.ChatColor.BLUE).append(EzChestShopConstants.DISCORD_LINK)
                         .color(net.md_5.bungee.api.ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 TextComponent.fromLegacyText(colorify("&fClick to join the plugin discord!"))))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL,
-                                "https://discord.gg/invite/gjV6BgKxFV"))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, EzChestShopConstants.DISCORD_LINK))
                         .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE)
-                        .color(net.md_5.bungee.api.ChatColor.RED).append("https://github.com/nouish/EzChestShop")
+                        .color(net.md_5.bungee.api.ChatColor.RED).append(EzChestShopConstants.GITHUB_LINK)
                         .color(net.md_5.bungee.api.ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                TextComponent.fromLegacyText(
-                                        colorify("&fClick to browse the GitHub repository!"))))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/nouish/EzChestShop"))
+                                TextComponent.fromLegacyText(colorify("&fClick to browse the GitHub repository!"))))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, EzChestShopConstants.GITHUB_LINK))
                         .create());
     }
 
@@ -920,30 +918,6 @@ public class Utils {
             dataContainer = state.getPersistentDataContainer();
         }
         return dataContainer;
-    }
-
-    public static String getDiscordLink() {
-        if (discordLink == null) {
-            try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                        "https://api.spiget.org/v2/resources/90411").openConnection();
-                connection.setRequestMethod("GET");
-                BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                while ((inputLine = br.readLine()) != null) {
-                    if (inputLine.contains("RGlzY29yZCBTZXJ2ZXI=")) {
-                        inputLine = inputLine.replace("\"RGlzY29yZCBTZXJ2ZXI=\": \"", "").replace("\"", "")
-                                .replace(",", "").trim();
-                        discordLink = inputLine;
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                discordLink = "https://discord.gg/rSfsqgCqBZ"; // Default discord Link if not found!
-            }
-        }
-        return discordLink;
-
     }
 
     public static void recognizeDatabase() {
