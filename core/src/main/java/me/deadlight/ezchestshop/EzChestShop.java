@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.OptionalInt;
 
@@ -235,7 +236,7 @@ public final class EzChestShop extends JavaPlugin {
             Map<String, Integer> result = new HashMap<>();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 //noinspection deprecation
-                String locale = player.getLocale();
+                String locale = player.getLocale().toLowerCase(Locale.ROOT);
                 result.merge(locale, 1, Integer::sum);
             }
             return result;
@@ -253,7 +254,7 @@ public final class EzChestShop extends JavaPlugin {
         metrics.addCustomChart(new AdvancedPie("rotation", () -> {
             Map<String, Integer> result = new HashMap<>();
             for (EzShop shop : ShopContainer.getShops()) {
-                String rotation = shop.getSettings().getRotation();
+                String rotation = shop.getSettings().getRotation().toLowerCase(Locale.ROOT);
                 result.merge(rotation, 1, Integer::sum);
             }
             return result;
