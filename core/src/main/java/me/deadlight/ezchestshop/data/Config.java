@@ -270,7 +270,7 @@ public class Config {
             Map<String, Object> buySellEmbed = new HashMap<>();
             buySellEmbed.put("title", "New chest shop transaction is made!");
             buySellEmbed.put("description", "Player %BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%.");
-            buySellEmbed.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            buySellEmbed.put("url", "https://github.com/nouish/EzChestShop");
             buySellEmbed.put("color", 16753454);
 
 // Fields for buy-sell embed
@@ -293,7 +293,7 @@ public class Config {
 // Author for buy-sell embed
             Map<String, Object> buySellAuthor = new HashMap<>();
             buySellAuthor.put("name", "EzChestShop");
-            buySellAuthor.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            buySellAuthor.put("url", "https://github.com/nouish/EzChestShop");
             buySellAuthor.put("icon_url", "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128");
             buySellEmbed.put("author", buySellAuthor);
 
@@ -313,7 +313,7 @@ public class Config {
             Map<String, Object> newShopEmbed = new HashMap<>();
             newShopEmbed.put("title", "New shop has been created!");
             newShopEmbed.put("description", "Player %OWNER% created a new shop for %ITEM_NAME%");
-            newShopEmbed.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            newShopEmbed.put("url", "https://github.com/nouish/EzChestShop");
             newShopEmbed.put("color", 16753454);
 
 // Fields for new-shop embed
@@ -336,7 +336,7 @@ public class Config {
 // Author for new-shop embed
             Map<String, Object> newShopAuthor = new HashMap<>();
             newShopAuthor.put("name", "EzChestShop");
-            newShopAuthor.put("url", "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/");
+            newShopAuthor.put("url", "https://github.com/nouish/EzChestShop");
             newShopAuthor.put("icon_url", "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128");
             newShopEmbed.put("author", newShopAuthor);
 

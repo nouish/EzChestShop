@@ -174,7 +174,7 @@ notification:
         embeds: #placeholders: %BUYER%, %SELLER%, %ITEM_NAME%, %PRICE%, %CURRENCY%, %SHOP_LOCATION%, %OWNER%, %COUNT%, %TIME%
           - title: "New chest shop transaction is made!"
             description: "Player %BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%."
-            url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+            url: "https://github.com/nouish/EzChestShop"
             color: 16753454
             fields:
               - name: "Shop Location:"
@@ -197,7 +197,7 @@ notification:
                 inline: true
             author:
               name: "EzChestShop"
-              url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+              url: "https://github.com/nouish/EzChestShop"
               icon_url: "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128"
             thumbnail:
               url: "https://user-images.githubusercontent.com/20891968/235449301-7a12b967-a837-4e64-8e0b-c871a53e854e.png"
@@ -210,7 +210,7 @@ notification:
         embeds: #placeholders: %OWNER%, %BUYING_PRICE%, %SELLING_PRICE%, %ITEM_NAME%, %MATERIAL%, %TIME%, %SHOP_LOCATION%
           - title: New shop has been created!
             description: "Player %OWNER% created a new shop for %ITEM_NAME%"
-            url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+            url: "https://github.com/nouish/EzChestShop"
             color: 16753454
             fields:
               - name: "Shop Location:"
@@ -233,7 +233,7 @@ notification:
                 inline: true
             author:
               name: "EzChestShop"
-              url: "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-19-x-mega-update.90411/"
+              url: "https://github.com/nouish/EzChestShop"
               icon_url: "https://cdn.discordapp.com/icons/902975048514678854/3f77b7a41dd80f018988d4a5d676273e.webp?size=128"
             thumbnail:
               url: "https://user-images.githubusercontent.com/20891968/235449309-ead31b66-7a06-4c1a-b79d-1c5cf2c41ed8.png"
