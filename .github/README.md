@@ -3,10 +3,11 @@
 ---
 
 [![Discord](https://img.shields.io/discord/1302627666007953559?label=Discord&color=blue)](https://discord.gg/invite/gjV6BgKxFV)
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nouish/EzChestShop/main.yml)](https://github.com/nouish/EzChestShop/actions/workflows/main.yml)
-[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/nouish/EzChestShop/total)](https://github.com/nouish/EzChestShop/releases/latest)
 [![GitHub Release](https://img.shields.io/github/v/release/nouish/EzChestShop?label=version)](https://github.com/nouish/EzChestShop/releases/latest)
 [![bStats Servers](https://img.shields.io/bstats/servers/23732)](https://bstats.org/plugin/bukkit/EzChestShopReborn/23732)
+[![bStats Players](https://img.shields.io/bstats/players/23732)](https://bstats.org/plugin/bukkit/EzChestShopReborn/23732)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/nouish/EzChestShop/main.yml)](https://github.com/nouish/EzChestShop/actions/workflows/main.yml)
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/nouish/EzChestShop/total)](https://github.com/nouish/EzChestShop/releases/latest)
 
 EzChestShopReborn is a fork from the [EzChestShop](https://github.com/ItzAmirreza/EzChestShop) plugin originally authored by [ItzAmirreza](https://github.com/ItzAmirreza).
 
