@@ -289,22 +289,6 @@ public final class LanguageManager {
         return Utils.colorify(getString("transactions.backToSettingsButton"));
     }
 
-    public String transactionPaperTitleBuy(String name) {
-        return Utils.colorify(getString("transactions.PaperTitleBuy").replace("%player%", name));
-    }
-
-    public String transactionPaperTitleSell(String name) {
-        return Utils.colorify(getString("transactions.PaperTitleSell").replace("%player%", name));
-    }
-
-    public List<String> transactionPaperLoreBuy(String price, int count, String time) {
-        return getList("transactions.PaperLoreBuy").stream().map(s -> Utils.colorify(s.replace("%price%", Utils.formatNumber(Double.parseDouble(price), Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time))).collect(Collectors.toList());
-    }
-
-    public List<String> transactionPaperLoreSell(String price, int count, String time) {
-        return getList("transactions.PaperLoreSell").stream().map(s -> Utils.colorify(s.replace("%price%", Utils.formatNumber(Double.parseDouble(price), Utils.FormatType.GUI)).replace("%currency%", Config.currency).replace("%count%", String.valueOf(count)).replace("%time%", time))).collect(Collectors.toList());
-    }
-
     public String lessthanminute() {
         return Utils.colorify(getString("transactions.lessthanminute"));
     }
@@ -967,11 +951,6 @@ public final class LanguageManager {
         return MineDown.parse(getList("checkprofits.join-notification").stream().map(Utils::colorify).collect(Collectors.joining("\n")));
     }
 
-    public String dependencyNbtapiMissing() {
-        return Utils.colorify(getString("checkprofits.dependency-nbtapi-missing"));
-    }
-
-
     //shulkershop-dropped-lore.
     public List<String> shulkerboxLore(String owner, String item, double buy, double sell) {
         return getList("shulkershop-dropped-lore").stream().map(s -> Utils.colorify(s).replace("%owner%", owner).replace("%item%", item).replace("%buy_price%", Utils.formatNumber(buy, Utils.FormatType.GUI)).replace("%sell_price%", Utils.formatNumber(sell, Utils.FormatType.GUI)).replace("%currency%", Config.currency)).collect(Collectors.toList());
@@ -1049,12 +1028,6 @@ public final class LanguageManager {
 
     public String noBreakingWhileShopOpen() {
         return Utils.colorify(getString("other.no-breaking-while-viewing"));
-    }
-
-
-    //other.
-    public BaseComponent[] updateNotification(String curV, String newV) {
-        return new ComponentBuilder("").append(TextComponent.fromLegacyText(Utils.colorify(getString("other.update-notifications").replace("%current_version%", curV).replace("%new_version%", newV)))).event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/ez-chest-shop-ecs-1-14-x-1-17-x.90411/")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(Utils.colorify("&cClick to check out the Spigot Page!")))).create();
     }
 
     public BaseComponent[] overflowingGuiItemsNotification(HashMap<GuiData.GuiType, Integer> requiredOverflowRows) {

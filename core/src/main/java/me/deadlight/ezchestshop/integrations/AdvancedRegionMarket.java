@@ -13,7 +13,6 @@ public class AdvancedRegionMarket implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void handleRegionUnsell(UnsellRegionEvent event) {
-
         WGRegion region = event.getRegion().getRegion();
 
         for (EzShop shop : ShopContainer.getShops()) {
@@ -21,12 +20,10 @@ public class AdvancedRegionMarket implements Listener {
                 ShopContainer.deleteShop(shop.getLocation());
             }
         }
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void handleRegionRestore(RestoreRegionEvent event) {
-
         WGRegion region = event.getRegion().getRegion();
 
         for (EzShop shop : ShopContainer.getShops()) {
@@ -34,7 +31,6 @@ public class AdvancedRegionMarket implements Listener {
                 ShopContainer.deleteShop(shop.getLocation());
             }
         }
-
     }
 
 }

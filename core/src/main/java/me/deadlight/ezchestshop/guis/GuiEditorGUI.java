@@ -37,7 +37,6 @@ public class GuiEditorGUI {
     public static HashMap<Player, String> guiItemMover = new HashMap<>();
 
     public void showGuiEditorOverview(Player player) {
-
         Gui gui = Gui.gui().rows(3).title(Component.text(ChatColor.AQUA + "Gui Editor")).create();
         gui.setDefaultClickAction(event -> event.setCancelled(true));
         gui.getFiller().fill(ContainerGui.getDefaultBackground());
@@ -71,7 +70,6 @@ public class GuiEditorGUI {
         });
 
         gui.open(player);
-
     }
 
     public void showGuiSettingsEditor(Player player, GuiData.GuiType type) {
@@ -493,25 +491,14 @@ public class GuiEditorGUI {
 
     public void showGuiItemAdder(Player player, GuiData.GuiType type, int row, int column) {
         String guiName = type.toString().replace("_", "-").toLowerCase(Locale.ENGLISH);
-
         FileConfiguration config = GuiData.getConfig();
-        ContainerGui container = GuiData.getViaType(type);
-
         PaginatedGui gui = Gui.paginated().rows(3).title(Component.text(ChatColor.AQUA + Utils.capitalizeFirstSplit(type.toString()) + "Item Adder")).create();
         gui.getFiller().fillBottom(ContainerGui.getDefaultBackground());
-
-        gui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
-
-        gui.setCloseGuiAction(event -> {
-            guiItemSelector.remove(player);
-        });
+        gui.setDefaultClickAction(event -> event.setCancelled(true));
+        gui.setCloseGuiAction(event -> guiItemSelector.remove(player));
 
         // Loop over all items from the internal guis.yml and see if they exist in the current gui:
-        FileConfiguration internalGuis = YamlConfiguration.loadConfiguration(
-                new InputStreamReader(EzChestShop.getPlugin().
-                        getResource("guis.yml")));
+        FileConfiguration internalGuis = YamlConfiguration.loadConfiguration(new InputStreamReader(EzChestShop.getPlugin().getResource("guis.yml")));
         List<String> internal = new ArrayList<>(internalGuis.getConfigurationSection(guiName + ".items").getKeys(false).stream().collect(Collectors.toList()));
         List<String> external = config.getConfigurationSection(guiName + ".items").getKeys(false).stream().collect(Collectors.toList());
         internal.removeAll(external);
@@ -557,7 +544,6 @@ public class GuiEditorGUI {
             }));
         });
 
-
         // Back:
         ItemStack back = new ItemStack(Material.DARK_OAK_DOOR);
         ItemMeta backMeta = back.getItemMeta();
@@ -587,9 +573,7 @@ public class GuiEditorGUI {
             event.setCancelled(true);
             gui.next();
         }));
-
         gui.open(player);
     }
-
 
 }

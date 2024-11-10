@@ -20,7 +20,6 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
