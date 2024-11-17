@@ -53,6 +53,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,6 +195,7 @@ public final class EzChestShop extends JavaPlugin {
 
         ShopContainer.queryShopsToMemory();
         ShopContainer.startSqlQueueTask();
+
         if (Config.check_for_removed_shops) {
             LoadedChunksTask.startTask();
         }
@@ -232,13 +235,18 @@ public final class EzChestShop extends JavaPlugin {
             return result;
         }));
 
-        metrics.addCustomChart(new AdvancedPie("language", () -> {
-            Map<String, Integer> result = new HashMap<>();
+        metrics.addCustomChart(new DrilldownPie("playerLanguage", () -> {
+            // Player language metrics are used to understand what translations would have the biggest impact.
+            Map<String, Map<String, Integer>> result = new HashMap<>();
+
             for (Player player : Bukkit.getOnlinePlayers()) {
-                //noinspection deprecation
-                String locale = player.getLocale().toLowerCase(Locale.ROOT);
-                result.merge(locale, 1, Integer::sum);
+                String localeString = player.getLocale().toLowerCase(Locale.ROOT);
+                Locale locale = parseLocale(localeString);
+                String language = locale != null ? locale.getDisplayLanguage(Locale.ENGLISH) : "<Unknown>";
+                Map<String, Integer> entry = result.computeIfAbsent(language, ignored -> new HashMap<>());
+                entry.merge(localeString, 1, Integer::sum);
             }
+
             return result;
         }));
 
@@ -306,6 +314,22 @@ public final class EzChestShop extends JavaPlugin {
         }));
     }
 
+    // This helper can be replaced by API methods in Paper when it is made the target platform.
+    @Nullable
+    private Locale parseLocale(final @NotNull String str) {
+        String[] parts = str.split("_", 3);
+        switch (parts.length) {
+            case 1:
+                return new Locale(parts[0]);
+            case 2:
+                return new Locale(parts[0], parts[1]);
+            case 3:
+                return new Locale(parts[0], parts[1], parts[2]);
+            default:
+                return null;
+        }
+    }
+
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new ChestOpeningListener(), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
@@ -329,7 +353,6 @@ public final class EzChestShop extends JavaPlugin {
         if (advancedregionmarket) {
             getServer().getPluginManager().registerEvents(new AdvancedRegionMarket(), this);
         }
-
     }
 
     private void registerCommands() {
@@ -364,7 +387,7 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         // Plugin shutdown logic
-        if(scheduler != null)
+        if (scheduler != null)
             scheduler.cancelTasks();
         logConsole("&c[&eEzChestShop&c] &bSaving remained sql cache...");
         ShopContainer.saveSqlQueueCache();
@@ -375,7 +398,6 @@ public final class EzChestShop extends JavaPlugin {
 
         try {
             for (Object object : Utils.onlinePackets) {
-
                 if (object instanceof ASHologram) {
                     ASHologram hologram = (ASHologram) object;
                     hologram.destroy();
@@ -385,10 +407,8 @@ public final class EzChestShop extends JavaPlugin {
                     FloatingItem floatingItem = (FloatingItem) object;
                     floatingItem.destroy();
                 }
-
             }
         } catch (Exception ignored) {
-
         }
 
         try {
@@ -398,9 +418,7 @@ public final class EzChestShop extends JavaPlugin {
 
             Utils.activeOutlines.clear();
             Utils.enabledOutlines.clear();
-
         } catch (Exception ignored) {
-
         }
 
         logConsole("&c[&eEzChestShop&c] &4Plugin is now disabled. ");
