@@ -168,7 +168,7 @@
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
-      <version>6.2.0</version>
+      <version>6.2.1</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
