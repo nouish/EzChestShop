@@ -18,6 +18,7 @@ public final class VersionUtil {
     private VersionUtil() {}
 
     public enum MinecraftVersion {
+        v1_21_4(4189, "1.21.4", "me.deadlight.ezchestshop.internal.v1_21_R3.NmsHandleImpl"),
         v1_21_3(4082, "1.21.3", "me.deadlight.ezchestshop.internal.v1_21_R2.NmsHandleImpl"),
         v1_21_2(4080, "1.21.2", "me.deadlight.ezchestshop.internal.v1_21_R2.NmsHandleImpl"),
         v1_21_1(3955, "1.21.1", "me.deadlight.ezchestshop.internal.v1_21_R1.NmsHandleImpl"),

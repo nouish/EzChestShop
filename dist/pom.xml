@@ -72,6 +72,11 @@
     </dependency>
     <dependency>
       <groupId>com.github.nouish.ezchestshop</groupId>
+      <artifactId>ezchestshop-craftbukkit_1_21_R3</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.nouish.ezchestshop</groupId>
       <artifactId>ezchestshop-craftbukkit_1_21_R1</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
