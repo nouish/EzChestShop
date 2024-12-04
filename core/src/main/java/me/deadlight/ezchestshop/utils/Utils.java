@@ -1,12 +1,8 @@
 package me.deadlight.ezchestshop.utils;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +31,6 @@ import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
-import me.deadlight.ezchestshop.utils.objects.TransactionLogObject;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -79,8 +74,6 @@ public class Utils {
     public static ConcurrentHashMap<Integer, BlockOutline> activeOutlines = new ConcurrentHashMap<>(); //player uuid, list of outlines
     public static List<UUID> enabledOutlines = new ArrayList<>();
     private static LanguageManager lm = new LanguageManager();
-
-    private static String discordLink;
 
     public static NmsHandle nmsHandle;
     public static DatabaseManager databaseManager;
@@ -240,10 +233,6 @@ public class Utils {
             }
             return finalList;
         }
-    }
-
-    public static List<TransactionLogObject> getListOfTransactions(Location containerBlock) {
-        return null;
     }
 
     public static String getFinalItemName(ItemStack item) {

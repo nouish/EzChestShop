@@ -1,10 +1,12 @@
 package me.deadlight.ezchestshop.listeners;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -14,35 +16,69 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.gui.ContainerGui;
 import me.deadlight.ezchestshop.data.gui.ContainerGuiItem;
 import me.deadlight.ezchestshop.data.gui.GuiData;
+import me.deadlight.ezchestshop.version.BuildInfo;
+import me.deadlight.ezchestshop.version.GitHubUtil;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class UpdateChecker implements Listener{
+public class UpdateChecker implements Listener {
 
     LanguageManager lm = new LanguageManager();
 
     private static boolean isGuiUpdateAvailable;
-
-    public static boolean isGuiUpdateAvailable() {
-        return isGuiUpdateAvailable;
-    }
 
     private static final HashMap<GuiData.GuiType, List<List<String>>> overlappingItems = new HashMap<>();
     private static final HashMap<GuiData.GuiType, Integer> requiredOverflowRows = new HashMap<>();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (event.getPlayer().isOp()) {
+        Player player = event.getPlayer();
+
+        if (player.isOp()) {
             if (isGuiUpdateAvailable) {
                 if (Config.notify_overflowing_gui_items && !requiredOverflowRows.isEmpty()) {
-                    EzChestShop.getScheduler().runTaskLater(
-                            () -> event.getPlayer().spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows)), 10L);
+                    EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows)), 10L);
                 }
                 if (Config.notify_overlapping_gui_items && !overlappingItems.isEmpty()) {
-                    EzChestShop.getScheduler().runTaskLater(
-                            () -> event.getPlayer().spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems)), 10L);
+                    EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems)), 10L);
                 }
+            }
+        }
+
+        if (Config.notify_updates && player.hasPermission("ecs.version.notify")) {
+            // Yes for now this is done on the main thread.
+            // To be improved upon soon; if it becomes a problem for you, disable update checking or remove the notification permission
+            // for all players to effectively disable.
+            checkForUpdate(player);
+        }
+    }
+
+    private void checkForUpdate(Player player) {
+        BuildInfo current = BuildInfo.CURRENT;
+        BuildInfo latest = null;
+        GitHubUtil.GitHubStatusLookup status;
+
+        try {
+            if (current.isStable()) {
+                latest = GitHubUtil.lookupLatestRelease();
+                status = GitHubUtil.compare(latest.getId(), current.getId());
+            } else {
+                status = GitHubUtil.compare(GitHubUtil.MAIN_BRANCH, current.getId());
+            }
+        } catch (IOException e) {
+            EzChestShop.logger().warn("Failed to determine the latest version!", e);
+            return;
+        }
+
+        if (status.isBehind()) {
+            if (current.isStable()) {
+                player.sendMessage("A newer version of EzChestShopReborn is available: " + latest.getId() + ".");
+                player.sendMessage("Download at: https://github.com/nouish/EzChestShop/releases/tag/" + latest.getId() + ".");
+            } else {
+                player.sendMessage("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is "
+                        + String.format(Locale.ROOT, "%,d", status.getDistance()) + " commits ahead.");
             }
         }
     }
@@ -97,7 +133,6 @@ public class UpdateChecker implements Listener{
                 } else {
                     items.put(item.getSlot(), Arrays.asList(key));
                 }
-
             });
 
             // Filter out all items that don't overlap

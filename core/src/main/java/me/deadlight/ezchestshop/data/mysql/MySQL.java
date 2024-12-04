@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
@@ -84,9 +83,9 @@ public class MySQL extends DatabaseManager {
             DatabaseMetaData meta = connection.getMetaData();
             String product = meta.getDatabaseProductName();
             String version = meta.getDatabaseProductVersion();
-            plugin.getLogger().info(String.format("Database: %s v%s.", product, version));
+            EzChestShop.logger().info("Database: {} v{}.", product, version);
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.WARNING, "Unable to determine database version.", e);
+            EzChestShop.logger().warn("Unable to determine database version.", e);
         }
 
         createTables();

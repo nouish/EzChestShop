@@ -42,6 +42,8 @@ import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
 import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
+import me.deadlight.ezchestshop.version.BuildInfo;
+import me.deadlight.ezchestshop.version.GitHubUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -78,6 +80,10 @@ public final class EzChestShop extends JavaPlugin {
         return scheduler;
     }
 
+    public static Logger logger() {
+        return LoggerFactory.getLogger(getPlugin().getLogger().getName());
+    }
+
     @Override
     public void onLoad() {
         // Adds Custom Flags to WorldGuard!
@@ -107,7 +113,7 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Logger logger = LoggerFactory.getLogger(getLogger().getName());
+        final Logger logger = logger();
         MinecraftVersion minecraftVersion = VersionUtil.getMinecraftVersion().orElse(null);
 
         if (minecraftVersion == null) {
@@ -205,14 +211,42 @@ public final class EzChestShop extends JavaPlugin {
 
         // TODO automatic version check
         if (Config.notify_updates) {
-            logger.warn("Automatic version check is enabled, but temporarily unavailable.");
-            logger.warn("Please follow either of these sources for up to date versions of EzChestShopReborn:");
-            logger.warn("GitHub: https://github.com/nouish/EzChestShop");
-            logger.warn("Discord: https://discord.gg/invite/gjV6BgKxFV");
+            checkForUpdates();
         }
 
         // The plugin started without encountering unrecoverable problems.
         started = true;
+    }
+
+    private void checkForUpdates() {
+        BuildInfo current = BuildInfo.CURRENT;
+        BuildInfo latest = null;
+        GitHubUtil.GitHubStatusLookup status;
+
+        try {
+            if (current.isStable()) {
+                latest = GitHubUtil.lookupLatestRelease();
+                status = GitHubUtil.compare(latest.getId(), current.getId());
+            } else {
+                status = GitHubUtil.compare(GitHubUtil.MAIN_BRANCH, current.getId());
+            }
+        } catch (IOException e) {
+            logger().warn("Failed to determine the latest version!", e);
+            return;
+        }
+
+        if (status.isBehind()) {
+            if (current.isStable()) {
+                logger().warn("A newer version of EzChestShopReborn is available: {}.", latest.getId());
+                logger().warn("Download at: https://github.com/nouish/EzChestShop/releases/tag/{}", latest.getId());
+            } else {
+                logger().warn("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is {} commits ahead.", status.getDistance());
+            }
+        } else if (status.isIdentical() || status.isAhead()) {
+            logger().info("You are running the latest version of EzChestShopReborn.");
+        } else {
+            logger().warn("EzChestShopReborn was unable to check for newer versions.");
+        }
     }
 
     private void registerMetrics() {

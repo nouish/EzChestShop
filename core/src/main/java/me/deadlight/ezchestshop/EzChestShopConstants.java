@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 public final class EzChestShopConstants {
     public static final int BSTATS_PROJECT_ID = 23732;
 
+    public static final String REPOSITORY = "nouish/EzChestShop";
     public static final String DISCORD_LINK = "https://discord.gg/invite/gjV6BgKxFV";
-    public static final String GITHUB_LINK = "https://github.com/nouish/EzChestShop";
-
+    public static final String GITHUB_LINK = "https://github.com/" + REPOSITORY;
 
     // Continue to use the old namespace to ensure existing shops work.
     private static final String NAMESPACE = "ezchestshop";

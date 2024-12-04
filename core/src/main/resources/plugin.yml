@@ -8,8 +8,8 @@ softdepend:
   - Vault
   - WildChests
   - WorldGuard
-  - Slimefun #in case just to load after the Slimefun
-  - Multiverse-Core #preventing null worlds
+  - Slimefun # In case just to load after the Slimefun
+  - Multiverse-Core # Preventing null worlds
   - CMI
   - PlaceholderAPI
   - Towny
@@ -19,6 +19,7 @@ authors:
   - ElitoGame
   - nouish
 description: '${project.description}'
+
 commands:
   ecs:
     description: create or delete a shop
@@ -33,3 +34,8 @@ commands:
     description: Check all your shop profits that you made offline!
     aliases:
       - cp
+
+permissions:
+  ecs.version.notify:
+    default: op
+    description: Toggles the notification about available version updates.
