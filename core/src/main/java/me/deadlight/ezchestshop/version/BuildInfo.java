@@ -69,7 +69,7 @@ public final class BuildInfo {
         Instant buildTime = Instant.parse(json.get("git.build.time").getAsString());
         // (1): <version core> "-" <pre-release>
         // (2): <version core> "+" <build>
-        boolean stable = name.indexOf('-') != -1 && name.indexOf('+') != -1;
+        boolean stable = name.indexOf('-') == -1 && name.indexOf('+') == -1;
 
         return new BuildInfo(id, name, buildTime, stable);
     }
