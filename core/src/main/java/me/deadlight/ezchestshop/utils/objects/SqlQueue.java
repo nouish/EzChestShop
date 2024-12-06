@@ -1,10 +1,10 @@
 package me.deadlight.ezchestshop.utils.objects;
 
-import me.deadlight.ezchestshop.enums.Changes;
-import org.bukkit.Location;
-
 import java.util.HashMap;
 import java.util.stream.Collectors;
+
+import me.deadlight.ezchestshop.enums.Changes;
+import org.bukkit.Location;
 
 public class SqlQueue {
 
@@ -13,8 +13,6 @@ public class SqlQueue {
     private ShopSettings settings;
     private EzShop shop;
 
-
-
     public SqlQueue(Location location, ShopSettings settings, EzShop shop) {
         this.location = location;
         this.settings = settings;
@@ -22,11 +20,12 @@ public class SqlQueue {
     }
 
     public boolean isChanged() {
-        return changesList.size() != 0;
+        return !changesList.isEmpty();
     }
 
     /**
      * setting changes are through this method
+     *
      * @param change the type of change
      * @param object the new value of changed option
      */
@@ -45,16 +44,16 @@ public class SqlQueue {
         this.settings = newSettings;
         this.shop = newShop;
     }
+
     public HashMap<Changes, Object> getChangesList() {
         return changesList;
     }
 
     /**
-     *
      * This function basically checks if the latest change is similar to the latest modified version in the shop settings,
      *
      * @param changes change enum
-     * @param object the modified change
+     * @param object  the modified change
      * @return whether if it is the same with last modified version or not/ if true, then no need to change and we simply remove it from the map
      */
     private boolean validateChange(Changes changes, Object object) {
@@ -92,15 +91,15 @@ public class SqlQueue {
             return settings.isAdminshop() == bool;
         } else if (changes == Changes.CUSTOM_MESSAGES) {
             String str = (String) object;
-            return settings.getCustomMessages().stream().collect(Collectors.joining("#,#")).equalsIgnoreCase(str);
+            return String.join("#,#", settings.getCustomMessages()).equalsIgnoreCase(str);
         } else {
             //alright, we will have only SHOP_CREATE & SHOP_REMOVE which should not be given in SqlQueue object but I'll think about it seperately
             return false;
         }
     }
+
     public Location getLocation() {
         return this.location;
     }
-
 
 }

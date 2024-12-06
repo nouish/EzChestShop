@@ -1,14 +1,18 @@
 package me.deadlight.ezchestshop.utils.objects;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.enums.Changes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ShopSettings {
 
@@ -160,37 +164,17 @@ public class ShopSettings {
     }
 
     public static Map<Location, String> getAllCustomMessages(String owner) {
-
-        Player player = Bukkit.getPlayer(UUID.fromString(owner));
-
-        List<EzShop> ezShops = ShopContainer.getShopFromOwner(UUID.fromString(owner)).stream().filter(
-                ezShop -> !ezShop.getSettings().customMessages.isEmpty()
-        ).collect(Collectors.toList());
+        List<EzShop> ezShops = ShopContainer.getShopFromOwner(UUID.fromString(owner)).stream()
+                .filter(ezShop -> !ezShop.getSettings().customMessages.isEmpty())
+                .collect(Collectors.toList());
 
         Map<Location, String> stringMap = new HashMap<>();
 
         for (EzShop ezShop : ezShops) {
-            stringMap.put(ezShop.getLocation(),ezShop.getSettings().customMessages.get(0));
+            stringMap.put(ezShop.getLocation(), ezShop.getSettings().customMessages.get(0));
         }
 
         return stringMap;
-
-        /*if (!customMessagesInitialChecked.contains(owner)) {
-
-                DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-
-                Map<String, String> data = db.getKeysWithValueByExpresion("location", "customMessages", "owner", "shopdata",
-                        "IS \"" + owner + "\" AND customMessages IS NOT NULL AND TRIM(customMessages, \" \") IS NOT \"\"");
-                Map<Location, String> converted = data.entrySet().stream()
-                        .collect(Collectors.toMap(e -> Utils.StringtoLocation(e.getKey()), e -> e.getValue()));
-
-                customMessagesInitialChecked.add(owner);
-                customMessagesTotal.put(UUID.fromString(owner), converted);
-                return converted;
-            }
-            return customMessagesTotal.get(UUID.fromString(owner));*/
-
-
     }
 
     private static Map<Location, String> fetchAllCustomMessages(String owner) {

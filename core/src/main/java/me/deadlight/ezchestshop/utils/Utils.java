@@ -928,13 +928,13 @@ public class Utils {
         }
     }
 
-    public static void addItemIfEnoughSlots (Gui gui,int slot, GuiItem item){
+    public static void addItemIfEnoughSlots(Gui gui,int slot, GuiItem item) {
         if ((gui.getRows() * 9) > slot) {
             gui.setItem(slot, item);
         }
     }
 
-    public static void addItemIfEnoughSlots (PaginatedGui gui,int slot, GuiItem item){
+    public static void addItemIfEnoughSlots(PaginatedGui gui,int slot, GuiItem item) {
         if ((gui.getRows() * 9) > slot) {
             gui.setItem(slot, item);
         }

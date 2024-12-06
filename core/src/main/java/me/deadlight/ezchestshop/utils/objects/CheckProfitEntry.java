@@ -5,7 +5,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class CheckProfitEntry {
 
-
     public static String itemSpacer = "#&#";
     public static String itemInlineSpacer = "#,#";
 

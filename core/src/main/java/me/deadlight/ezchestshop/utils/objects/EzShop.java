@@ -21,8 +21,6 @@ public class EzShop {
     private List<String> shopViewers = new ArrayList<>();
     private List<String> shopLoaders = new ArrayList<>();
 
-
-
     public EzShop(Location location, OfflinePlayer owner, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
         this.location = location;
         this.owner = owner;
@@ -50,6 +48,7 @@ public class EzShop {
     public Location getLocation() {
         return location;
     }
+
     public ShopSettings getSettings() {
         return settings;
     }
@@ -61,32 +60,41 @@ public class EzShop {
     public List<String> getShopViewers() {
         return shopViewers;
     }
+
     public List<String> getShopLoaders() {
         return shopLoaders;
     }
+
     public void setLocation(Location location) {
         this.location = location;
     }
+
     public void setSettings(ShopSettings settings) {
         this.settings = settings;
     }
+
     public void setShopViewers(List<String> shopViewers) {
         this.shopViewers = shopViewers;
     }
+
     public void addShopViewer(String str) {
         if (this.shopViewers.contains(str)) return;
         this.shopViewers.add(str);
     }
+
     public void removeShopViewer(String str) {
         this.shopViewers.remove(str);
     }
+
     public void setShopLoaders(List<String> shopLoaders) {
         this.shopLoaders = shopLoaders;
     }
+
     public void addShopLoader(String str) {
         if (this.shopLoaders.contains(str)) return;
         this.shopLoaders.add(str);
     }
+
     public void removeShopLoader(String str) {
         this.shopLoaders.remove(str);
     }
@@ -94,13 +102,18 @@ public class EzShop {
     public UUID getOwnerID() {
         return owner.getUniqueId();
     }
+
     public SqlQueue getSqlQueue() {
         return sqlQueue;
     }
+
     public void createSqlQueue() {
         this.sqlQueue = new SqlQueue(this.getLocation(), getSettings(), this);
     }
-    public void setOwner(OfflinePlayer owner) {this.owner = owner;}
+
+    public void setOwner(OfflinePlayer owner) {
+        this.owner = owner;
+    }
 
     public double getBuyPrice() {
         return buyPrice;

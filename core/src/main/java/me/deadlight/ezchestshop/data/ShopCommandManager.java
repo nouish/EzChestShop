@@ -426,11 +426,10 @@ public class ShopCommandManager {
         final String finalOption = option; // required for the lambda expression below.
         List<ShopCommandManager.ShopCommandEntry> entries = cmdsAtLoc.entries.stream().filter(entry -> action == entry.action &&
                 (finalOption == null || finalOption.equals(entry.option))).collect(Collectors.toList());
-        if (entries.size() > 0) {
+        if (!entries.isEmpty()) {
             int size = entries.get(0).commands.size();
             for (int i = 0; i < size; i++) {
                 String command = entries.get(0).commands.get(i);
-
                 compb.append(" " + (i + 1) + ".", ComponentBuilder.FormatRetention.NONE).color(ChatColor.GOLD);
 
                 if (size > 1) {
@@ -470,20 +469,16 @@ public class ShopCommandManager {
                         "/ecsadmin shop-commands " + Utils.LocationRoundedtoString(location, 0) + (option == null ? "" : " " + action.name())));
 
         player.spigot().sendMessage(compb.create());
-
     }
 
     public void moveCommandIndex(Player player, Location location, ShopAction action, String option, int index, boolean up) {
-
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
         cmds.getEntry(action, option).commands = Utils.moveListElement(cmds.getEntry(action, option).commands, index, up);
         setCommandsOfShop(location, cmds);
-
         showCommandEditor(player, location, action, option);
     }
 
     public void addCommand(Player player, Location location, ShopAction action, String option, String command) {
-
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
         ShopCommandEntry entry =  cmds.getEntry(action, option);
         if (entry == null) {
@@ -497,7 +492,6 @@ public class ShopCommandManager {
     }
 
     public void removeCommand(Player player, Location location, ShopAction action, String option, int index) {
-
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
         cmds.getEntry(action, option).commands.remove(index);
         if (cmds.getEntry(action, option).commands.size() == 0) {
@@ -509,7 +503,6 @@ public class ShopCommandManager {
     }
 
     public void editCommand(Player player, Location location, ShopAction action, String option, int index, String command) {
-
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
         ShopCommandEntry entry = cmds.getEntry(action, option);
         if (entry == null) {
@@ -523,8 +516,6 @@ public class ShopCommandManager {
             entry.commands.set(index, command);
         }
         setCommandsOfShop(location, cmds);
-
-
         showCommandEditor(player, location, action, option);
     }
 

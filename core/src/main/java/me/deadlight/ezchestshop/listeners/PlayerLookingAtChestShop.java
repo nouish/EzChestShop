@@ -21,8 +21,8 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -145,8 +145,7 @@ public class PlayerLookingAtChestShop implements Listener {
         List<FloatingItem> holoItemList = new ArrayList<>();
 
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
-        String itemname = "Error";
-        itemname = Utils.getFinalItemName(thatItem);
+        String itemname = Utils.getFinalItemName(thatItem);
         List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                 Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
                         .get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))), player.getInventory().getStorageContents(),
@@ -164,7 +163,6 @@ public class PlayerLookingAtChestShop implements Listener {
                 holoItemList.add(floatingItem);
                 lineLocation.add(0, 0.35 * Config.holo_linespacing, 0);
             } else {
-
                 String line = Utils.colorify(element.replace("%item%", itemname).replace("%buy%", Utils.formatNumber(buy, Utils.FormatType.HOLOGRAM)).
                         replace("%sell%", Utils.formatNumber(sell, Utils.FormatType.HOLOGRAM)).replace("%currency%", Config.currency)
                         .replace("%owner%", shop_owner).replace("%maxbuy%", possibleCounts.get(0)).replace("%maxsell%", possibleCounts.get(1))
@@ -197,7 +195,7 @@ public class PlayerLookingAtChestShop implements Listener {
                 if (line.startsWith("<itemdata")) {
                     if (player.isSneaking()) {
                         ItemStack item = ShopContainer.getShop(shopLocation).getShopItem();
-                        if (item.getType().name().contains("SHULKER_BOX") || item.getEnchantments().size() > 0) {
+                        if (Tag.SHULKER_BOXES.isTagged(item.getType()) || !item.getEnchantments().isEmpty()) {
                             try {
                                 int lineNum = Integer.parseInt(line.replaceAll("\\D", ""));
                                 line = BlockBoundHologram.getHologramItemData(lineNum, item, lines);
@@ -226,7 +224,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         continue;
                     }
                 }
-                if (line.trim().equals(""))
+                if (line.trim().isEmpty())
                     continue;
                 if (!line.equals("<empty/>")) {
                     ASHologram hologram = new ASHologram(player, line, lineLocation);

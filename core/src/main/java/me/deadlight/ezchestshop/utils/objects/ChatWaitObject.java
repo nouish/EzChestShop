@@ -17,21 +17,17 @@ public class ChatWaitObject {
     public PersistentDataContainer dataContainer;
 
     public ChatWaitObject(String answer, String type, Block containerBlock) {
-
         this.answer = answer;
         this.type = type;
         this.containerBlock = containerBlock;
         this.dataContainer = getDataContainer(containerBlock.getState(), containerBlock.getType());
-
     }
 
     public ChatWaitObject(String answer, String type, Block containerBlock, PersistentDataContainer dataContainer) {
-
         this.answer = answer;
         this.type = type;
         this.containerBlock = containerBlock;
         this.dataContainer = dataContainer;
-
     }
 
     private PersistentDataContainer getDataContainer(BlockState state, Material type) {
