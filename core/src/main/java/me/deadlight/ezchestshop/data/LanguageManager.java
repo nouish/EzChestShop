@@ -634,7 +634,6 @@ public final class LanguageManager {
 
     //customMessageManager.buttons.shopEntry.
     public String customMessageManagerShopEntryTitle(ItemStack item) {
-        ;
         return Utils.colorify(getString("customMessageManager.buttons.shopEntry.Title").replace("%shopitem%", Utils.getFinalItemName(item)));
     }
 
@@ -882,14 +881,18 @@ public final class LanguageManager {
         return Utils.colorify(getString("command-messages.emptyShopHightLighted.enabled").replace("%emptyCount%", "" + shopCount));
     }
 
-
     //checkprofits.
     public BaseComponent[] checkProfitsLandingpage(Player player, double buyCost, int buyAmount, double sellCost, int sellAmount) {
-
         double balance = Config.useXP ? XPEconomy.getXP(player) : (EzChestShop.getEconomy() == null ? 0.0 : EzChestShop.getEconomy().getBalance(player));
-
-
-        return MineDown.parse(getList("checkprofits.landing-menu").stream().map(Utils::colorify).collect(Collectors.joining("\n")).replace("%currency%", Config.currency).replace("%balance%", Utils.formatNumber(balance, Utils.FormatType.CHAT)).replace("%income%", "" + buyCost).replace("%sales%", "" + buyAmount).replace("%cost%", "" + sellCost).replace("%purchases%", "" + sellAmount).replace("%total%", "" + (buyCost - sellCost)));
+        double total = buyCost - sellCost;
+        return MineDown.parse(getList("checkprofits.landing-menu").stream().map(Utils::colorify).collect(Collectors.joining("\n"))
+                .replace("%currency%", Config.currency)
+                .replace("%balance%", Utils.formatNumber(balance, Utils.FormatType.CHAT))
+                .replace("%income%", Utils.formatNumber(buyCost, Utils.FormatType.CHAT))
+                .replace("%sales%", Utils.formatNumber(buyAmount, Utils.FormatType.CHAT))
+                .replace("%cost%", Utils.formatNumber(sellCost, Utils.FormatType.CHAT))
+                .replace("%purchases%", Utils.formatNumber(sellAmount, Utils.FormatType.CHAT))
+                .replace("%total%", Utils.formatNumber(total, Utils.FormatType.CHAT)));
     }
 
     public BaseComponent[] checkProfitsDetailpage(Player player, List<CheckProfitEntry> checkProfitEntries, int page, int pages) {
@@ -953,7 +956,12 @@ public final class LanguageManager {
 
     //shulkershop-dropped-lore.
     public List<String> shulkerboxLore(String owner, String item, double buy, double sell) {
-        return getList("shulkershop-dropped-lore").stream().map(s -> Utils.colorify(s).replace("%owner%", owner).replace("%item%", item).replace("%buy_price%", Utils.formatNumber(buy, Utils.FormatType.GUI)).replace("%sell_price%", Utils.formatNumber(sell, Utils.FormatType.GUI)).replace("%currency%", Config.currency)).collect(Collectors.toList());
+        return getList("shulkershop-dropped-lore").stream().map(s -> Utils.colorify(s)
+                .replace("%owner%", owner)
+                .replace("%item%", item)
+                .replace("%buy_price%", Utils.formatNumber(buy, Utils.FormatType.GUI))
+                .replace("%sell_price%", Utils.formatNumber(sell, Utils.FormatType.GUI))
+                .replace("%currency%", Config.currency)).collect(Collectors.toList());
     }
 
     //hologram.
@@ -981,7 +989,7 @@ public final class LanguageManager {
         msg = msg.replace("%level%", "" + level);
         // Convert %level-roman% to a roman number for level 1-10, then just use the level.
         if (msg.contains("%level-roman%")) {
-            String roman = "";
+            String roman;
             switch (level) {
                 case 1:
                     roman = "I";
@@ -1047,17 +1055,12 @@ public final class LanguageManager {
 
     public BaseComponent[] overlappingItemsNotification(HashMap<GuiData.GuiType, List<List<String>>> overlappingItems) {
         String[] messages = getString("other.overlapping-gui-items-notification").split("%overlap%");
-
         ComponentBuilder compb = new ComponentBuilder("");
-
         compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[0])));
         overlappingItems.entrySet().forEach(entry -> {
             compb.append(TextComponent.fromLegacyText(Utils.colorify("\n&e" + Utils.capitalizeFirstSplit(entry.getKey().toString()) + "&c: \n  &c>> ")));
             compb.append(TextComponent.fromLegacyText(Utils.colorify("&7" + entry.getValue().stream().map(list -> Utils.colorify(list.stream().collect(Collectors.joining(Utils.colorify("&e, &7"))))).collect(Collectors.joining(Utils.colorify("\n  &c>> &7"))))));
         });
-//        compb.append(TextComponent.fromLegacyText("\n" + overlappingItems.entrySet().stream().map(entry ->
-//                Utils.colorify(Utils.capitalizeFirstSplit(entry.getKey().toString()) + ": " + entry.getValue().stream().map(list -> list.stream().collect(Collectors.joining(", "))).collect(Collectors.joining(" and "))))
-//                .collect(Collectors.joining(",\n"))));
         if (messages.length > 1) {
             compb.append(TextComponent.fromLegacyText(Utils.colorify(messages[1])));
         }
