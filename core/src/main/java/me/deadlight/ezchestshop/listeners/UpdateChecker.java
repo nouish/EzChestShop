@@ -48,16 +48,13 @@ public class UpdateChecker implements Listener {
         }
 
         if (Config.notify_updates && player.hasPermission("ecs.version.notify")) {
-            // Yes for now this is done on the main thread.
-            // To be improved upon soon; if it becomes a problem for you, disable update checking or remove the notification permission
-            // for all players to effectively disable.
-            checkForUpdate(player);
+            EzChestShop.getScheduler().runTaskAsynchronously(() -> checkForUpdate(player));
         }
     }
 
     private void checkForUpdate(Player player) {
         BuildInfo current = BuildInfo.CURRENT;
-        BuildInfo latest = null;
+        BuildInfo latest;
         GitHubUtil.GitHubStatusLookup status;
 
         try {
@@ -65,6 +62,7 @@ public class UpdateChecker implements Listener {
                 latest = GitHubUtil.lookupLatestRelease();
                 status = GitHubUtil.compare(latest.getId(), current.getId());
             } else {
+                latest = null; // Not a named release
                 status = GitHubUtil.compare(GitHubUtil.MAIN_BRANCH, current.getId());
             }
         } catch (IOException e) {
@@ -72,15 +70,17 @@ public class UpdateChecker implements Listener {
             return;
         }
 
-        if (status.isBehind()) {
-            if (current.isStable()) {
-                player.sendMessage("A newer version of EzChestShopReborn is available: " + latest.getId() + ".");
-                player.sendMessage("Download at: https://github.com/nouish/EzChestShop/releases/tag/" + latest.getId() + ".");
-            } else {
-                player.sendMessage("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is "
-                        + String.format(Locale.ROOT, "%,d", status.getDistance()) + " commits ahead.");
+        EzChestShop.getScheduler().runTask(player, () -> {
+            if (status.isBehind()) {
+                if (current.isStable()) {
+                    player.sendMessage("A newer version of EzChestShopReborn is available: " + latest.getId() + ".");
+                    player.sendMessage("Download at: https://github.com/nouish/EzChestShop/releases/tag/" + latest.getId() + ".");
+                } else {
+                    player.sendMessage("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is "
+                            + String.format(Locale.ROOT, "%,d", status.getDistance()) + " commits ahead.");
+                }
             }
-        }
+        });
     }
 
     public void resetGuiCheck() {
