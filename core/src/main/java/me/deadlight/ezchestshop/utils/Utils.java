@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
+import de.tr7zw.changeme.nbtapi.NBT;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
@@ -152,7 +153,7 @@ public class Utils {
      * @category ItemUtils
      */
     public static String ItemToTextCompoundString(ItemStack itemStack) {
-        return nmsHandle.ItemToTextCompoundString(itemStack);
+        return NBT.itemStackToNBT(itemStack).toString();
     }
 
     /**

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import io.netty.channel.Channel;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.internal.nbtapi.NBT;
 import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
 import me.deadlight.ezchestshop.utils.NmsHandle;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
@@ -44,11 +43,6 @@ public class NmsHandleImpl extends NmsHandle {
     @Override
     public ImprovedOfflinePlayer getImprovedOfflinePlayer() {
         return ImprovedOfflinePlayerImpl.INSTANCE;
-    }
-
-    @Override
-    public String ItemToTextCompoundString(ItemStack itemStack) {
-        return NBT.itemStackToNBT(itemStack).toString();
     }
 
     @Override

@@ -9,8 +9,6 @@ public abstract class NmsHandle {
 
     public abstract ImprovedOfflinePlayer getImprovedOfflinePlayer();
 
-    public abstract String ItemToTextCompoundString(ItemStack itemStack);
-
     public abstract void destroyEntity(Player player, int entityID);
 
     public abstract void spawnHologram(Player player, Location location, String line, int ID);
