@@ -54,7 +54,7 @@ Please follow the existing code style of the project.
 
 ### Build instructions
 
-With Java 21+ installed, run this Maven Wrapper command:
+Build with Apache Maven:
 
 ```shell
 ./mvnw clean package
@@ -65,6 +65,7 @@ If you have trouble with this, see the prerequisites below first, and refer to t
 ### Prerequisites 
 
 * Java 21 or later
+* Apache Maven 3.9.9 or later
 * You must build targeted Spigot versions [Spigots BuildTools](https://www.spigotmc.org/wiki/buildtools/).
 * Use of BuildTools may require the use of older Java versions, depending on what Java version Minecraft used at the time of release. Consider [SDKMAN!](https://sdkman.io) to manage your local Java environment.
 
