@@ -129,6 +129,14 @@ public final class EzChestShop extends JavaPlugin {
 
         logger().info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
 
+        if (minecraftVersion.getDataVersion() < MinecraftVersion.v1_21_0.getDataVersion()) {
+            logger().warn("Future versions of EzChestShopReborn will no longer support Minecraft {}.", minecraftVersion.getVersion());
+        }
+
+        if (Bukkit.getName().equalsIgnoreCase("Spigot")) {
+            logger().warn("Future versions of EzChestShopReborn will no longer run on the Spigot platform. Consider using Paper instead.");
+        }
+
         if (!NBT.preloadApi()) {
             logger().warn("The bundled NBT API is not compatible with this Minecraft version, though this only (potentially) impacts use of the /checkprofits command.");
         }
