@@ -131,7 +131,7 @@
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
       <!-- Bundled with Minecraft. Keep version in sync. -->
-      <version>2.24.1</version>
+      <version>2.24.3</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
