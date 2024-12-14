@@ -31,49 +31,11 @@ jobs:
           cd ~/spigot-buildtools
           wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 
-      - name: Setup JDK 8
-        uses: actions/setup-java@v4
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        with:
-          java-version: 8
-          distribution: temurin
-
-      - name: Install Spigot 1.16.5
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.16.5-R0.1-SNAPSHOT/spigot-1.16.5-R0.1-SNAPSHOT.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.16.5; fi
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        with:
-          java-version: 17
-          distribution: temurin
-
-      - name: Install Spigot 1.17.1
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.17.1-R0.1-SNAPSHOT/spigot-1.17.1-R0.1-SNAPSHOT.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.17.1; fi
-
-      - name: Install Spigot 1.18.2
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.18.2-R0.1-SNAPSHOT/spigot-1.18.2-R0.1-SNAPSHOT.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.18.2; fi
-
-      - name: Install Spigot 1.19.4
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.19.4-R0.1-SNAPSHOT/spigot-1.19.4-R0.1-SNAPSHOT.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.19.4; fi
-
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: temurin
-
-      - name: Install Spigot 1.20.4
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.20.4-R0.1-SNAPSHOT/spigot-1.20.4-R0.1-SNAPSHOT-remapped-mojang.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.20.4 --remapped; fi
-
-      - name: Install Spigot 1.20.6
-        if: steps.cache-maven.outputs.cache-hit != 'true'
-        run: if [ ! -f "~/.m2/repository/org/spigotmc/spigot/1.20.6-R0.1-SNAPSHOT/spigot-1.20.6-R0.1-SNAPSHOT-remapped-mojang.jar" ]; then cd ~/spigot-buildtools && java -jar BuildTools.jar --rev 1.20.6 --remapped; fi
 
       - name: Install Spigot 1.21.1
         if: steps.cache-maven.outputs.cache-hit != 'true'

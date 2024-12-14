@@ -22,13 +22,7 @@ public final class VersionUtil {
         v1_21_3(4082, "1.21.3", "me.deadlight.ezchestshop.internal.v1_21_R2.NmsHandleImpl"),
         v1_21_2(4080, "1.21.2", "me.deadlight.ezchestshop.internal.v1_21_R2.NmsHandleImpl"),
         v1_21_1(3955, "1.21.1", "me.deadlight.ezchestshop.internal.v1_21_R1.NmsHandleImpl"),
-        v1_21_0(3953, "1.21",   "me.deadlight.ezchestshop.internal.v1_21_R1.NmsHandleImpl"),
-        v1_20_6(3839, "1.20.6", "me.deadlight.ezchestshop.internal.v1_20_R4.NmsHandleImpl"),
-        v1_20_4(3700, "1.20.4", "me.deadlight.ezchestshop.internal.v1_20_R3.NmsHandleImpl"),
-        v1_19_4(3337, "1.19.4", "me.deadlight.ezchestshop.internal.v1_19_R3.NmsHandleImpl"),
-        v1_18_2(2975, "1.18.2", "me.deadlight.ezchestshop.internal.v1_18_R2.NmsHandleImpl"),
-        v1_17_1(2730, "1.17.1", "me.deadlight.ezchestshop.internal.v1_17_R1.NmsHandleImpl"),
-        v1_16_5(2586, "1.16.5", "me.deadlight.ezchestshop.internal.v1_16_R3.NmsHandleImpl");
+        v1_21_0(3953, "1.21",   "me.deadlight.ezchestshop.internal.v1_21_R1.NmsHandleImpl");
 
         private static final Int2ObjectMap<MinecraftVersion> SUPPORTED_VERSIONS = new Int2ObjectOpenHashMap<>();
 

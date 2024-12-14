@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.logging.Level;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
@@ -44,6 +45,7 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.version.BuildInfo;
 import me.deadlight.ezchestshop.version.GitHubUtil;
+import net.kyori.adventure.translation.Translator;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -55,8 +57,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +81,7 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     public static Logger logger() {
-        return LoggerFactory.getLogger(getPlugin().getLogger().getName());
+        return getPlugin().getSLF4JLogger();
     }
 
     @Override
@@ -113,6 +113,22 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (Bukkit.getName().equalsIgnoreCase("Spigot")) {
+            // Use JUL logger because Spigot doesn't have getSLF4JLogger().
+            getLogger().log(Level.SEVERE,
+                    """
+
+
+                    *** Spigot is not a supported platform for EzChestShopReborn! ***
+                    *** Please consider using Paper. Download Paper from https://papermc.io/downloads/paper ***
+
+                    The server will continue to load with EzChestShopReborn disabled.
+                    """
+            );
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         MinecraftVersion minecraftVersion = VersionUtil.getMinecraftVersion().orElse(null);
 
         if (minecraftVersion == null) {
@@ -128,14 +144,6 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         logger().info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
-
-        if (minecraftVersion.getDataVersion() < MinecraftVersion.v1_21_0.getDataVersion()) {
-            logger().warn("Future versions of EzChestShopReborn will no longer support Minecraft {}.", minecraftVersion.getVersion());
-        }
-
-        if (Bukkit.getName().equalsIgnoreCase("Spigot")) {
-            logger().warn("Future versions of EzChestShopReborn will no longer run on the Spigot platform. Consider using Paper instead.");
-        }
 
         if (!NBT.preloadApi()) {
             logger().warn("The bundled NBT API is not compatible with this Minecraft version, though this only (potentially) impacts use of the /checkprofits command.");
@@ -277,7 +285,7 @@ public final class EzChestShop extends JavaPlugin {
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 String localeString = player.getLocale().toLowerCase(Locale.ROOT);
-                Locale locale = parseLocale(localeString);
+                Locale locale = Translator.parseLocale(localeString);
                 String language = locale != null ? locale.getDisplayLanguage(Locale.ENGLISH) : "<Unknown>";
                 Map<String, Integer> entry = result.computeIfAbsent(language, ignored -> new HashMap<>());
                 entry.merge(localeString, 1, Integer::sum);
@@ -348,22 +356,6 @@ public final class EzChestShop extends JavaPlugin {
             }
             return result;
         }));
-    }
-
-    // This helper can be replaced by API methods in Paper when it is made the target platform.
-    @Nullable
-    private Locale parseLocale(final @NotNull String str) {
-        String[] parts = str.split("_", 3);
-        switch (parts.length) {
-            case 1:
-                return new Locale(parts[0]);
-            case 2:
-                return new Locale(parts[0], parts[1]);
-            case 3:
-                return new Locale(parts[0], parts[1], parts[2]);
-            default:
-                return null;
-        }
     }
 
     private void registerListeners() {

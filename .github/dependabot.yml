@@ -5,6 +5,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+      time: "12:00"
+      timezone: "Europe/Oslo"
     groups:
       maven-plugin:
         patterns:
@@ -22,6 +24,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      time: "12:00"
+      timezone: "Europe/Oslo"
     groups:
       github-actions:
         update-types:

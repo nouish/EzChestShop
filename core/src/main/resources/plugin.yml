@@ -1,7 +1,7 @@
 name: 'EzChestShopReborn'
 version: '${project.version}'
 main: 'me.deadlight.ezchestshop.EzChestShop'
-api-version: '1.16'
+api-version: '1.21'
 folia-supported: true
 website: 'https://github.com/nouish/EzChestShop'
 softdepend:

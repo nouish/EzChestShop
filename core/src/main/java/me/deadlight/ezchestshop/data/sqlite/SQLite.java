@@ -30,7 +30,6 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.Location;
-import org.sqlite.JDBC;
 
 public class SQLite extends DatabaseManager {
     private final String dbname;
@@ -50,7 +49,7 @@ public class SQLite extends DatabaseManager {
         File databaseFile = new File(plugin.getDataFolder(), dbname + ".db");
         HikariConfig config = new HikariConfig();
         config.setDataSourceClassName("org.sqlite.SQLiteDataSource");
-        config.addDataSourceProperty("url", JDBC.PREFIX + databaseFile.getAbsolutePath());
+        config.addDataSourceProperty("url", "jdbc:sqlite:" + databaseFile.getAbsolutePath());
         config.addDataSourceProperty("encoding", "UTF-8");
         config.addDataSourceProperty("enforceForeignKeys", "true");
         config.addDataSourceProperty("synchronous", "NORMAL");

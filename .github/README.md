@@ -36,12 +36,6 @@ This is a full list of Minecraft versions supported by EzChestShopReborn:
 | Minecraft 1.21.2  | ✅ |                                                      |
 | Minecraft 1.21.1  | ✅ |                                                      |
 | Minecraft 1.21    | ✅ |                                                      |
-| Minecraft 1.20.6  | ⚠️ | Future releases will no longer support this version. |
-| Minecraft 1.20.4  | ⚠️ | Future releases will no longer support this version. |
-| Minecraft 1.19.4  | ⚠️ | Future releases will no longer support this version. |
-| Minecraft 1.18.2  | ⚠️ | Future releases will no longer support this version. |
-| Minecraft 1.17.1  | ⚠️️ | Future releases will no longer support this version. |
-| Minecraft 1.16.5  | ⚠️ | Future releases will no longer support this version. |
 
 ## Contribute
 

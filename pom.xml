@@ -19,12 +19,6 @@
 
   <modules>
     <module>core</module>
-    <module>craftbukkit_1_16_R3</module>
-    <module>craftbukkit_1_17_R1</module>
-    <module>craftbukkit_1_18_R2</module>
-    <module>craftbukkit_1_19_R3</module>
-    <module>craftbukkit_1_20_R3</module>
-    <module>craftbukkit_1_20_R4</module>
     <module>craftbukkit_1_21_R1</module>
     <module>craftbukkit_1_21_R2</module>
     <module>craftbukkit_1_21_R3</module>
@@ -38,6 +32,13 @@
       <snapshots>
         <enabled>false</enabled>
         <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
+      <snapshots>
+        <enabled>true</enabled>
       </snapshots>
     </repository>
     <repository>
