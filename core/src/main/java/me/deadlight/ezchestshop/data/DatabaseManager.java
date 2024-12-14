@@ -1,10 +1,11 @@
 package me.deadlight.ezchestshop.data;
-import me.deadlight.ezchestshop.utils.objects.EzShop;
-import org.bukkit.Location;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import me.deadlight.ezchestshop.utils.objects.EzShop;
+import org.bukkit.Location;
 
 public abstract class DatabaseManager {
 

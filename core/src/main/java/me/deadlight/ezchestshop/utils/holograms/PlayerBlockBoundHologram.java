@@ -1,25 +1,27 @@
 package me.deadlight.ezchestshop.utils.holograms;
 
-import me.deadlight.ezchestshop.EzChestShop;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
  * This class is used to manage the hologram for a player for a specific shop. It is used to
- * show and hide the hologram, as well as update the contents of the hologram. 
+ * show and hide the hologram, as well as update the contents of the hologram.
  * <br>
- * While the primary task is to manage this single Hologram, some settings like the hologram position 
- * are shared with all other players that are viewing the hologram, so the BlockBoundHologram class 
+ * While the primary task is to manage this single Hologram, some settings like the hologram position
+ * are shared with all other players that are viewing the hologram, so the BlockBoundHologram class
  * is called to update all viewer holograms.
  */
 public class PlayerBlockBoundHologram {

@@ -31,7 +31,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Note;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;

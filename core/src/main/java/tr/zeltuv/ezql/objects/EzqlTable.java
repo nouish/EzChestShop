@@ -1,10 +1,14 @@
 package tr.zeltuv.ezql.objects;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.Sets;
 import tr.zeltuv.ezql.exception.EzqlColumnOrderException;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class EzqlTable {
 

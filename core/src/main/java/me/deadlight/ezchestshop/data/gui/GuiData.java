@@ -1,14 +1,14 @@
 package me.deadlight.ezchestshop.data.gui;
 
-import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.listeners.UpdateChecker;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.listeners.UpdateChecker;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class GuiData {
 

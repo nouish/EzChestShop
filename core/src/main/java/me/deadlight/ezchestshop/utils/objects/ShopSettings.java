@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.enums.Changes;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 public class ShopSettings {
 

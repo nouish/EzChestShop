@@ -1,5 +1,9 @@
 package me.deadlight.ezchestshop.internal.v1_16_R3;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
 import me.deadlight.ezchestshop.utils.XPEconomy;
 import net.minecraft.server.v1_16_R3.NBTCompressedStreamTools;
@@ -7,10 +11,6 @@ import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 public class ImprovedOfflinePlayerImpl extends ImprovedOfflinePlayer {
     public static final ImprovedOfflinePlayer INSTANCE = new ImprovedOfflinePlayerImpl();

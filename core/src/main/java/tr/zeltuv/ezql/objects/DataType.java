@@ -1,7 +1,5 @@
 package tr.zeltuv.ezql.objects;
 
-import java.sql.PreparedStatement;
-
 public enum DataType {
 
     //Integer

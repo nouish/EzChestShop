@@ -1,15 +1,15 @@
 package me.deadlight.ezchestshop.data.gui;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ContainerGui {
     private int rows;

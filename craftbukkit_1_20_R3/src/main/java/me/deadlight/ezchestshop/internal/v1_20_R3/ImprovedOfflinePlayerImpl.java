@@ -1,17 +1,17 @@
 package me.deadlight.ezchestshop.internal.v1_20_R3;
 
-import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
-import me.deadlight.ezchestshop.utils.XPEconomy;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.CompoundTag;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
+import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
+import me.deadlight.ezchestshop.utils.XPEconomy;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 
 public class ImprovedOfflinePlayerImpl extends ImprovedOfflinePlayer {
     public static final ImprovedOfflinePlayer INSTANCE = new ImprovedOfflinePlayerImpl();

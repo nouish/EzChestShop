@@ -4,10 +4,10 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import net.alex9849.arm.adapters.WGRegion;
 import net.alex9849.arm.events.RestoreRegionEvent;
+import net.alex9849.arm.events.UnsellRegionEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import net.alex9849.arm.events.UnsellRegionEvent;
 
 public class AdvancedRegionMarket implements Listener {
 

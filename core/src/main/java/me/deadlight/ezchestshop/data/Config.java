@@ -1,15 +1,21 @@
 package me.deadlight.ezchestshop.data;
 
-import me.deadlight.ezchestshop.enums.Database;
-import me.deadlight.ezchestshop.EzChestShop;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.Normalizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.enums.Database;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Config {
 

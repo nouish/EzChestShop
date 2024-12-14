@@ -1,7 +1,6 @@
 package me.deadlight.ezchestshop.utils.objects;
 
 import java.util.HashMap;
-import java.util.stream.Collectors;
 
 import me.deadlight.ezchestshop.enums.Changes;
 import org.bukkit.Location;
