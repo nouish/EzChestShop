@@ -860,7 +860,9 @@ public class Utils {
                 result = decimalFormat.format(number);
                 break;
         }
-        EzChestShop.logDebug("Formatted number " + number + " to " + result);
+        if (Config.debug_logging) {
+            EzChestShop.logger().info("Formatted number '{}' to: {}.", number, result);
+        }
         return result;
     }
 
@@ -911,18 +913,13 @@ public class Utils {
 
     public static void recognizeDatabase() {
         if (Config.database_type == Database.SQLITE) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing SQLite database...");
             //initialize SQLite
             databaseManager = new SQLite(EzChestShop.getPlugin());
             databaseManager.load();
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &aSQLite &7database initialized!");
-
         } else if (Config.database_type == Database.MYSQL) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &eInitializing MySQL database...");
             //initialize MySQL
             databaseManager = new MySQL(EzChestShop.getPlugin());
             databaseManager.load();
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &aMySQL &7database initialized!");
         } else {
             //shouldn't happen technically
         }
@@ -941,7 +938,6 @@ public class Utils {
     }
 
     public static EzShop isPartOfTheChestShop(Location location) {
-
         Block block = location.getBlock();
         if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
             Chest chest = (Chest) block.getState();

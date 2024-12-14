@@ -113,25 +113,24 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        final Logger logger = logger();
         MinecraftVersion minecraftVersion = VersionUtil.getMinecraftVersion().orElse(null);
 
         if (minecraftVersion == null) {
             OptionalInt dataVersion = VersionUtil.getDataVersion();
             String dataVersionInfo = dataVersion.isPresent() ? String.valueOf(dataVersion.getAsInt()) : "Unknown";
-            logger.error("Unsupported version: {} (Data version: {})", Bukkit.getVersion(), dataVersionInfo);
-            logger.error("Supported versions: {}", VersionUtil.getSupportedVersions());
-            logger.error("The server will continue to load, but EzChestShop will be disabled. "
+            logger().error("Unsupported version: {} (Data version: {})", Bukkit.getVersion(), dataVersionInfo);
+            logger().error("Supported versions: {}", VersionUtil.getSupportedVersions());
+            logger().error("The server will continue to load, but EzChestShop will be disabled. "
                     + "Be advised that this results in existing chest shops being unprotected, "
                     + "unless within the protected area of a separate plugin running.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        logger.info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
+        logger().info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
 
         if (!NBT.preloadApi()) {
-            logger.warn("The bundled NBT API is not compatible with this Minecraft version.");
+            logger().warn("The bundled NBT API is not compatible with this Minecraft version, though this only (potentially) impacts use of the /checkprofits command.");
         }
 
         scheduler = UniversalScheduler.getScheduler(this);
@@ -140,7 +139,7 @@ public final class EzChestShop extends JavaPlugin {
         try {
             Config.checkForConfigYMLupdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger().warn("Uncaught exception checking for config updates", e);
         }
         Config.loadConfig();
 
@@ -148,8 +147,7 @@ public final class EzChestShop extends JavaPlugin {
         if (Config.database_type != null) {
             Utils.recognizeDatabase();
         } else {
-            logConsole(
-                    "&c[&eEzChestShop&c] &cDatabase type not specified/or is wrong in config.yml! Disabling plugin...");
+            logger().error("Database type not specified/or is wrong in config.yml! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -157,47 +155,43 @@ public final class EzChestShop extends JavaPlugin {
         economyPluginFound = setupEconomy();
         if (!economyPluginFound) {
             Config.useXP = true;
-            logConsole(
-            "&c[&eEzChestShop&c] &4Cannot find vault or economy plugin. Switching to XP based economy... " +
-                "&ePlease note that you need vault and at least one economy plugin installed to use a money based system.");
-//            Bukkit.getPluginManager().disablePlugin(this);
-//            return;
+            logger().warn("Cannot find vault or economy plugin. Switching to XP based economy... Please note that you need vault and at least one economy plugin installed to use a money based system.");
+            logger().warn("This fallback feature (XP based economy) will be removed in future versions of EzChestShopReborn!");
         }
 
         LanguageManager.loadLanguages();
         try {
             LanguageManager.checkForLanguagesYMLupdate();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger().warn("Uncaught IO exception during language update", e);
         }
 
         GuiData.loadGuiData();
         try {
             GuiData.checkForGuiDataYMLupdate();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger().warn("Uncaught IO exception during GUI update", e);
         }
 
-        //check if plugin "AdvancedRegionMarket" is installed
         if (getServer().getPluginManager().getPlugin("AdvancedRegionMarket") != null) {
             advancedregionmarket = true;
-            logConsole("&c[&eEzChestShop&c] &eAdvancedRegionMarket integration initialized.");
+            logger().info("AdvancedRegionMarket integration enabled.");
+        }
+
+        if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
+            slimefun = true;
+            logger().info("Slimefun integration enabled.");
+        }
+
+        if (getServer().getPluginManager().getPlugin("Towny") != null) {
+            towny = true;
+            logger().info("Towny integration enabled.");
         }
 
         registerListeners();
         registerCommands();
         registerTabCompleters();
         registerMetrics();
-
-        if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
-            slimefun = true;
-            logConsole("&c[&eEzChestShop&c] &eSlimefun integration initialized.");
-        }
-
-        if (getServer().getPluginManager().getPlugin("Towny") != null) {
-            towny = true;
-            logConsole("&c[&eEzChestShop&c] &eTowny integration initialized.");
-        }
 
         ShopContainer.queryShopsToMemory();
         ShopContainer.startSqlQueueTask();
@@ -401,7 +395,7 @@ public final class EzChestShop extends JavaPlugin {
                 register.registerCommandAlias(ecsadmin, "adminshop");
             }
         } catch (CommandFetchException e) {
-            e.printStackTrace();
+            logger().warn("Uncaught exception registering commands", e);
         }
         ecs.setExecutor(new MainCommands());
         ecsadmin.setExecutor(new EcsAdmin());
@@ -423,12 +417,11 @@ public final class EzChestShop extends JavaPlugin {
         // Plugin shutdown logic
         if (scheduler != null)
             scheduler.cancelTasks();
-        logConsole("&c[&eEzChestShop&c] &bSaving remained sql cache...");
+
+        logger().info("Saving remaining items in SQL cache...");
         ShopContainer.saveSqlQueueCache();
-
         getDatabase().disconnect();
-
-        logConsole("&c[&eEzChestShop&c] &aCompleted. ");
+        logger().info("Save completed.");
 
         try {
             for (Object object : Utils.onlinePackets) {
@@ -454,21 +447,10 @@ public final class EzChestShop extends JavaPlugin {
             Utils.enabledOutlines.clear();
         } catch (Exception ignored) {
         }
-
-        logConsole("&c[&eEzChestShop&c] &4Plugin is now disabled. ");
     }
 
     public static EzChestShop getPlugin() {
         return getPlugin(EzChestShop.class);
-    }
-
-    public static void logConsole(String str) {
-        EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage(Utils.colorify(str));
-    }
-
-    public static void logDebug(String str) {
-        if (Config.debug_logging)
-            EzChestShop.getPlugin().getServer().getConsoleSender().sendMessage("[Ecs-Debug] " + Utils.colorify(str));
     }
 
     private boolean setupEconomy() {

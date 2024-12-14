@@ -58,14 +58,13 @@ public final class LanguageManager {
         for (String locale : LanguageManager.getSupportedLanguages()) {
             File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder() + File.separator + "translations", locale + ".yml");
             if (!customConfigFile.exists()) {
-                EzChestShop.logConsole("&c[&eEzChestShop&c] &eGenerating " + locale + " file...");
+                EzChestShop.logger().info("Generating language file '{}'.", locale);
                 customConfigFile.getParentFile().mkdirs();
                 EzChestShop.getPlugin().saveResource("translations/" + locale + ".yml", false);
             }
         }
         File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder() + File.separator + "translations", Config.language + ".yml");
         languageConfig = YamlConfiguration.loadConfiguration(customConfigFile);
-        EzChestShop.logConsole("&c[&eEzChestShop&c] &e" + Config.language + " successfully loaded");
     }
 
     public static void reloadLanguages() {
@@ -95,7 +94,7 @@ public final class LanguageManager {
         }
         if (changes) {
             reloadLanguages();
-            EzChestShop.logConsole("&c[&eEzChestShop&c]&r &bUpdated Local files.");
+            EzChestShop.logger().info("Successfully updated language files.");
         }
     }
 

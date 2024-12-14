@@ -155,7 +155,7 @@ public class ShopCommandManager {
         File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(),
                 "shopCommands.yml");
         if (!customConfigFile.exists()) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &eGenerating shopCommands file...");
+            EzChestShop.logger().info("Generating shopCommands.yml file.");
             customConfigFile.getParentFile().mkdirs();
             EzChestShop.getPlugin().saveResource("shopCommands.yml", false);
         }

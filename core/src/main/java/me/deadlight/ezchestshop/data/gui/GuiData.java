@@ -29,7 +29,7 @@ public class GuiData {
     public static void loadGuiData() {
         File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml");
         if (!customConfigFile.exists()) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &eGenerating guis.yml file...");
+            EzChestShop.logger().info("Generating guis.yml file");
             customConfigFile.getParentFile().mkdirs();
             EzChestShop.getPlugin().saveResource("guis.yml", false);
             customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml");
@@ -88,7 +88,7 @@ public class GuiData {
 //        }
 
         if (changed) {
-            EzChestShop.logConsole("&c[&eEzChestShop&c] &eUpdating guis.yml file...");
+            EzChestShop.logger().info("Updating guis.yml file");
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml"));
             loadGuiData();
         }

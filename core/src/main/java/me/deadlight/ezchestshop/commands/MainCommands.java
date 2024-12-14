@@ -131,7 +131,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 sendHelp(player);
             }
         } else {
-            EzChestShop.logConsole(lm.consoleNotAllowed());
+            sender.sendMessage(lm.consoleNotAllowed());
         }
 
         return false;

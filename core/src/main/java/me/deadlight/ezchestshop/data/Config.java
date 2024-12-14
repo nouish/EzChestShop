@@ -159,14 +159,15 @@ public class Config {
         language = config.getString("language");
         if (!LanguageManager.getSupportedLanguages().contains(language)) {
             if (LanguageManager.getFoundlanguages().contains(language + ".yml")) {
-                EzChestShop.logConsole("&c[&eEzChestShop&c]&e Using externally created language: " + language + ".");
+                EzChestShop.logger().info("Using external language: {}.", language);
             } else {
-                EzChestShop.logConsole("&c[&eEzChestShop&c] Error. Non supported language: " + language + ". Switching to Locale_EN.");
+                String oldLanguage = language;
                 language = "Locale_EN";
+                EzChestShop.logger().warn("Unsupported language '{}'. Using default language instead: '{}'.", oldLanguage, language);
             }
         }
-        debug_logging = config.getBoolean("debug.logging");
 
+        debug_logging = config.getBoolean("debug.logging");
         notify_updates = config.getBoolean("other.notify-op-of-updates");
         notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
         notify_overflowing_gui_items = config.getBoolean("other.notify-op-of-overflowing-gui-items");
