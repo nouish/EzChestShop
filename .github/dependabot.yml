@@ -16,8 +16,8 @@ updates:
           - "org.junit.jupiter:*"
           - "org.mockito:*"
     ignore:
-      # Gson is bundled with Minecraft. Keep in sync.
-      - dependency-name: "com.google.code.gson:gson"
+      # Bundled with Minecraft. Keep version in sync.
+      - dependency-name: "org.apache.logging.log4j:log4j-core"
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"
