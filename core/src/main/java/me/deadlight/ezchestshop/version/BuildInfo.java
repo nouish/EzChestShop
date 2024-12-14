@@ -62,7 +62,7 @@ public final class BuildInfo {
     }
 
     private static BuildInfo parseBuildInfo(BufferedReader reader) {
-        JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+        JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
 
         String id = json.get("git.commit.id.abbrev").getAsString();
         String name = json.get("git.build.version").getAsString();

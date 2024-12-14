@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -31,7 +32,7 @@ public final class GitHubUtil {
     }
 
     public static BuildInfo lookupLatestRelease() throws IOException {
-        URL url = new URL(API_LATEST_RELEASE);
+        URL url = URI.create(API_LATEST_RELEASE).toURL();
         HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
         final int responseCode = https.getResponseCode();
 
@@ -46,14 +47,14 @@ public final class GitHubUtil {
     }
 
     private static BuildInfo parseBuildInfo(BufferedReader reader) {
-        JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+        JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
         String id = json.get("tag_name").getAsString();
         Instant buildTime = Instant.parse(json.get("published_at").getAsString());
         return new BuildInfo(id, id, buildTime, true);
     }
 
     public static GitHubStatusLookup compare(@NotNull String base, @NotNull String head) throws IOException {
-        URL url = new URL(String.format(API_COMPARE, base, head));
+        URL url = URI.create(String.format(API_COMPARE, base, head)).toURL();
         HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
         final int responseCode = https.getResponseCode();
 
@@ -70,7 +71,7 @@ public final class GitHubUtil {
     }
 
     private static GitHubStatusLookup parseComparison(@NotNull BufferedReader reader) {
-        JsonObject json = new JsonParser().parse(reader).getAsJsonObject();
+        JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
         GitHubStatus status = GitHubStatus.fromString(json.get("status").getAsString());
         int aheadBy = json.get("ahead_by").getAsInt();
         int behindBy = json.get("behind_by").getAsInt();
