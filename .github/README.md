@@ -13,8 +13,9 @@ EzChestShopReborn is a fork from the [EzChestShop](https://github.com/ItzAmirrez
 
 This fork was created to support Minecraft 1.21, on request from the [Torrent SMP](https://www.torrentsmp.com/) server.
 
-As of October 27th 2024 the original EzChestShop plugin is not actively maintained and offers no support for Minecraft versions beyond 1.20.4.
+As of October 27th 2024 the original EzChestShop plugin is no longer actively maintained and offers no support for Minecraft versions beyond 1.20.4.
 
+If you use EzChestShopReborn, please don't ask questions in the upstream channels. Instead, join the [Discord](https://discord.gg/invite/gjV6BgKxFV) for this project.
 
 ## Download
 
@@ -22,6 +23,8 @@ You can find the most recent version for download [here](https://github.com/noui
 
 
 ## Support
+
+This plugin is built for the [Paper platform](https://papermc.io/).
 
 If you need help or need to report an issue, please [open a new issue here](https://github.com/nouish/EzChestShop/issues/new/choose).
 
@@ -51,7 +54,7 @@ Please follow the existing code style of the project.
 Build with Apache Maven:
 
 ```shell
-./mvnw clean package
+mvn clean package
 ```
 
 If you have trouble with this, see the prerequisites below first, and refer to the [GitHub Actions configuration](workflows/main.yml) for a working example of building this plugin from the ground up.
@@ -60,9 +63,7 @@ If you have trouble with this, see the prerequisites below first, and refer to t
 
 * Java 21 or later
 * Apache Maven 3.9.9 or later
-* You must build targeted Spigot versions [Spigots BuildTools](https://www.spigotmc.org/wiki/buildtools/).
-* Use of BuildTools may require the use of older Java versions, depending on what Java version Minecraft used at the time of release. Consider [SDKMAN!](https://sdkman.io) to manage your local Java environment.
-
+* You must build targeted Spigot versions [Spigots BuildTools](https://www.spigotmc.org/wiki/buildtools/). This will change to Paperweight in the future.
 
 ## License
 
@@ -72,6 +73,6 @@ GNU General Public License (GPLv3)
 
 EzChestShopReborn is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html), inherited from [Bukkit](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/LICENCE.txt).
 
-The forked version of EzChestShop was mislabeled as [MIT](https://github.com/nouish/EzChestShop/commit/0adc3d64f647f47ec0aa4151244a8b3e12f7a491), which conflicts with the license of Bukkit.
+The forked version of EzChestShop was mislabeled as [MIT](https://github.com/nouish/EzChestShop/commit/0adc3d64f647f47ec0aa4151244a8b3e12f7a491), which conflicts with the GPL 3.0.
 
 On October 27th 2024, EzChestShop moved to the GNU Affero General Public License for future releases ([commit](https://github.com/ItzAmirreza/EzChestShop/commit/d2a786a33be11be8f4a6c2cbbfeaf7ef6974da2d)).
