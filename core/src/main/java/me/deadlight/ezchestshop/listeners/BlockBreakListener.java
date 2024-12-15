@@ -42,8 +42,7 @@ public class BlockBreakListener implements Listener {
             Collection<Entity> entityList = event.getBlock().getLocation().getWorld().getNearbyEntities(event.getBlock().getLocation(), 2, 2 ,2);
 
             for (Entity en : entityList) {
-                if (en instanceof Item) {
-                    Item item = (Item) en;
+                if (en instanceof Item item) {
                     if (item.getItemStack().getType() == Material.CHEST || item.getItemStack().getType() == Material.TRAPPED_CHEST) {
                         en.remove();
                     }

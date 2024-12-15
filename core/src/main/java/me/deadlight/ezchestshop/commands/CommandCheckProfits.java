@@ -120,10 +120,10 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
         PlayerContainer pc = PlayerContainer.get(p);
         List<CheckProfitEntry> checkprofits = pc.getProfits().values().stream()
                 .filter(x -> x.getItem() != null)
-                .collect(Collectors.toList());
+                .toList();
         if (checkprofits.isEmpty())
             return;
-        else if (checkprofits.get(0).getItem() == null)
+        else if (checkprofits.getFirst().getItem() == null)
             return;
         EzChestShop.getScheduler().runTaskLater(() -> p.spigot().sendMessage(lm.joinProfitNotification()), 4L);
     }
@@ -132,9 +132,7 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         List<String> s1 = Arrays.asList("clear", "p");
         List<String> fList = Lists.newArrayList();
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-
+        if (sender instanceof Player p) {
             if (args.length == 1) {
                 for (String s : s1) {
                     if (s.startsWith(args[0]))
@@ -148,11 +146,11 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                     PlayerContainer pc = PlayerContainer.get(p);
                     List<CheckProfitEntry> checkprofits = pc.getProfits().values().stream()
                             .filter(x -> x.getItem() != null)
-                            .collect(Collectors.toList());
+                            .toList();
                     int pages = (int) Math.floor(checkprofits.size() / 4.0) + 1;
                     List<String> range = IntStream.range(1, pages + 1).boxed()
                             .map(Object::toString)
-                            .collect(Collectors.toList());
+                            .toList();
                     for (String s : range) {
                         if (s.startsWith(args[1]))
                             fList.add(s);

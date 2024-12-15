@@ -412,13 +412,11 @@ public final class EzChestShop extends JavaPlugin {
 
         try {
             for (Object object : Utils.onlinePackets) {
-                if (object instanceof ASHologram) {
-                    ASHologram hologram = (ASHologram) object;
+                if (object instanceof ASHologram hologram) {
                     hologram.destroy();
                     continue;
                 }
-                if (object instanceof FloatingItem) {
-                    FloatingItem floatingItem = (FloatingItem) object;
+                if (object instanceof FloatingItem floatingItem) {
                     floatingItem.destroy();
                 }
             }
