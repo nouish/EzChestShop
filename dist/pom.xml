@@ -48,7 +48,7 @@
                 <filter>
                   <artifact>*:*</artifact>
                   <excludes>
-                    <exclude>META-INF/MANIFEST.MF</exclude>
+                    <exclude>META-INF/**</exclude>
                   </excludes>
                 </filter>
               </filters>
