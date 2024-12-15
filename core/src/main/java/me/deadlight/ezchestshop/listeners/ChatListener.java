@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -11,6 +12,7 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.guis.SettingsGUI;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -18,7 +20,6 @@ import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -32,8 +33,9 @@ public class ChatListener implements Listener {
     }
 
     @EventHandler
-    public void onAsyncChat(AsyncPlayerChatEvent event) {
+    public void onAsyncChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
+        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         if (chatmap.containsKey(player.getUniqueId())) {
             //waiting for the answer
             event.setCancelled(true);
@@ -41,7 +43,7 @@ public class ChatListener implements Listener {
             Block waitChest = waitObject.containerBlock;
             if (waitChest == null) return;
             String owneruuid = waitObject.dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-            if (event.getMessage().equalsIgnoreCase(player.getName())) {
+            if (message.equalsIgnoreCase(player.getName())) {
                 OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(UUID.fromString(owneruuid));
                 if (player.getName().equalsIgnoreCase(ofplayer.getName())) {
                     chatmap.remove(player.getUniqueId());
@@ -52,20 +54,20 @@ public class ChatListener implements Listener {
 
             String type = chatmap.get(player.getUniqueId()).type;
             Block chest = chatmap.get(player.getUniqueId()).containerBlock;
-            chatmap.put(player.getUniqueId(), new ChatWaitObject(event.getMessage(), type, chest, waitObject.dataContainer));
+            chatmap.put(player.getUniqueId(), new ChatWaitObject(message, type, chest, waitObject.dataContainer));
             SettingsGUI guiInstance = new SettingsGUI();
 
-            if (checkIfPlayerExists(event.getMessage())) {
+            if (checkIfPlayerExists(message)) {
                 if (type.equalsIgnoreCase("add")) {
                     chatmap.remove(player.getUniqueId());
-                    EzChestShop.getScheduler().runTask(() -> {
-                        addThePlayer(event.getMessage(), chest, player);
+                    EzChestShop.getScheduler().runTask(player, () -> {
+                        addThePlayer(message, chest, player);
                         guiInstance.showGUI(player, chest, false);
                     });
                 } else {
                     chatmap.remove(player.getUniqueId());
-                    EzChestShop.getScheduler().runTask(() -> {
-                        removeThePlayer(event.getMessage(), chest, player);
+                    EzChestShop.getScheduler().runTask(player, () -> {
+                        removeThePlayer(message, chest, player);
                         guiInstance.showGUI(player, chest, false);
                     });
                 }
@@ -78,7 +80,6 @@ public class ChatListener implements Listener {
 
 
     // We are taking user input here, and are checking if the player played before.
-    @SuppressWarnings("deprecation")
     public boolean checkIfPlayerExists(String name) {
         Player player = Bukkit.getPlayer(name);
 
@@ -111,7 +112,6 @@ public class ChatListener implements Listener {
             player.sendMessage(lm.alreadyAdmin());
         }
     }
-
 
     public void removeThePlayer(String answer, Block chest, Player player) {
         UUID answerUUID = Bukkit.getOfflinePlayer(answer).getUniqueId();
