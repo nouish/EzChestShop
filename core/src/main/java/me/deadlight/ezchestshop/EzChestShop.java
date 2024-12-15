@@ -35,12 +35,10 @@ import me.deadlight.ezchestshop.listeners.UpdateChecker;
 import me.deadlight.ezchestshop.tasks.LoadedChunksTask;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.BlockOutline;
-import me.deadlight.ezchestshop.utils.CommandRegister;
 import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.VersionUtil;
 import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
-import me.deadlight.ezchestshop.utils.exceptions.CommandFetchException;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.version.BuildInfo;
@@ -386,17 +384,6 @@ public final class EzChestShop extends JavaPlugin {
     private void registerCommands() {
         PluginCommand ecs = getCommand("ecs");
         PluginCommand ecsadmin = getCommand("ecsadmin");
-        CommandRegister register = new CommandRegister();
-        try {
-            if (Config.command_shop_alias) {
-                register.registerCommandAlias(ecs, "shop");
-            }
-            if (Config.command_adminshop_alias) {
-                register.registerCommandAlias(ecsadmin, "adminshop");
-            }
-        } catch (CommandFetchException e) {
-            logger().warn("Uncaught exception registering commands", e);
-        }
         ecs.setExecutor(new MainCommands());
         ecsadmin.setExecutor(new EcsAdmin());
         getCommand("checkprofits").setExecutor(new CommandCheckProfits());

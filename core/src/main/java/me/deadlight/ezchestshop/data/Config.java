@@ -58,8 +58,6 @@ public class Config {
     public static int settings_hologram_message_line_count_default;
     public static boolean settings_hologram_message_show_empty_shop_always;
 
-    public static boolean command_shop_alias;
-    public static boolean command_adminshop_alias;
     public static int command_checkprofit_lines_pp;
 
     public static boolean permissions_create_shop_enabled;
@@ -152,8 +150,14 @@ public class Config {
         settings_hologram_message_line_count_default = config.getInt("shops.settings.hologram-messages.line-count-default");
         settings_hologram_message_show_empty_shop_always = config.getBoolean("shops.settings.hologram-messages.show-empty-shop-always");
 
-        command_shop_alias = config.getBoolean("commands.alias.ecs-shop");
-        command_adminshop_alias = config.getBoolean("commands.alias.ecsadmin-adminshop");
+        if (config.contains("commands.alias.ecs-shop") && config.getBoolean("commands.alias.ecs-shop")) {
+            EzChestShop.logger().warn("*** The config option 'commands.alias.ecs-shop' has been removed ***");
+        }
+
+        if (config.contains("commands.alias.ecsadmin-adminshop") && config.getBoolean("commands.alias.ecsadmin-adminshop")) {
+            EzChestShop.logger().warn("*** The config option 'commands.alias.ecsadmin-adminshop' has been removed ***");
+        }
+
         command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
 
         permissions_create_shop_enabled = config.getBoolean("permissions.create-shops");
@@ -169,7 +173,7 @@ public class Config {
             } else {
                 String oldLanguage = language;
                 language = "Locale_EN";
-                EzChestShop.logger().warn("Unsupported language '{}'. Using default language instead: '{}'.", oldLanguage, language);
+                EzChestShop.logger().warn("*** Unsupported language '{}'. Using default language instead: '{}' ***", oldLanguage, language);
             }
         }
 
