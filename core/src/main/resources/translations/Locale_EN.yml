@@ -44,6 +44,7 @@ transactions:
   daysago: "&e%days% days ago"
   player-inform-buy: "&7[&aECS&7] &b%player% &7has bought &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
   player-inform-sell: "&7[&aECS&7] &b%player% &7has sold &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
+  player-inform-max-shops-cancelation: "&7[&aECS&7] &b%player% &7has exceeded their store limit and is unable to process the transaction."
 #settings gui section
 settings:
   GuiTitle: "&b&lSettings"

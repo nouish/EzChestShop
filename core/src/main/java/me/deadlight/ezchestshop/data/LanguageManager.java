@@ -312,6 +312,10 @@ public final class LanguageManager {
         return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player).replace("%amount%", String.valueOf(amount)).replace("%item%", item).replace("%price%", Utils.formatNumber(price, Utils.FormatType.CHAT)).replace("%currency%", Config.currency));
     }
 
+    public String transactionMaxShopsCancelation(String player) {
+        return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player));
+    }
+
     //settings.
     public String settingsGuiTitle() {
         return Utils.colorify(getString("settings.GuiTitle"));

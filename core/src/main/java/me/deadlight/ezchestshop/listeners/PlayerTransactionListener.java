@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.listeners;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
@@ -9,6 +10,7 @@ import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
+import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.WebhookSender;
@@ -31,6 +33,37 @@ public class PlayerTransactionListener implements Listener {
 
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
+        // Comprobar si la funcionalidad de limitación de permisos está habilitada
+        boolean isAdminShop = event.getAdminsUUID().contains(event.getOwner().getUniqueId());
+
+        // Si es una tienda admin, no hacemos los cálculos de límite de permisos
+        if (!isAdminShop) {
+            // Comprobar si la funcionalidad de limitación de permisos está habilitada
+            if (Config.permissions_create_shop_enabled) {
+                int maxShopsWorld = Utils.getMaxPermission(Objects.requireNonNull(event.getOwner().getPlayer()),
+                        "ecs.shops.limit." + event.getContainerBlock().getWorld().getName() + ".", -2);
+                int maxShops;
+
+                if (maxShopsWorld == -2) {
+                    maxShops = Utils.getMaxPermission(Objects.requireNonNull(event.getOwner().getPlayer()), "ecs.shops.limit.", 0);
+                } else {
+                    maxShops = maxShopsWorld;
+                }
+
+                maxShops = maxShops == -1 ? 10000 : maxShops; // Si tiene permisos ilimitados, se define un valor alto.
+
+                int shops = ShopContainer.getShopCount(event.getOwner().getPlayer()); // Número de tiendas actuales del jugador.
+
+                // Si el jugador ha superado el límite
+                if (shops > maxShops) {
+                    Player customer = event.getCustomer().getPlayer();
+                    if (customer != null) {
+                        customer.sendMessage(lm.transactionMaxShopsCancelation(event.getOwner().getName()));
+                    }
+                    return; // Cancelamos la ejecución del resto del evento.
+                }
+            }
+        }
         logProfits(event);
         sendDiscordWebhook(event);
         if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
