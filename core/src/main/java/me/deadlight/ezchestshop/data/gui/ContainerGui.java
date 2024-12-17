@@ -80,6 +80,7 @@ public class ContainerGui {
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
         glassmeta.setDisplayName(Utils.colorify("&d"));
+        glassmeta.setHideTooltip(true);
         glassis.setItemMeta(glassmeta);
         return new GuiItem(glassis, event -> event.setCancelled(true));
     }
