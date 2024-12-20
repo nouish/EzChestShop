@@ -10,7 +10,6 @@ import java.util.logging.Level;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
-import de.tr7zw.changeme.nbtapi.NBT;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
@@ -142,10 +141,6 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         logger().info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
-
-        if (!NBT.preloadApi()) {
-            logger().warn("The bundled NBT API is not compatible with this Minecraft version, though this only (potentially) impacts use of the /checkprofits command.");
-        }
 
         scheduler = UniversalScheduler.getScheduler(this);
         saveDefaultConfig();

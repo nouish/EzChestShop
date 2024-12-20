@@ -18,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
-import de.tr7zw.changeme.nbtapi.NBT;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
@@ -39,6 +38,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Keyed;
@@ -155,8 +155,18 @@ public class Utils {
      * @return
      * @category ItemUtils
      */
-    public static String ItemToTextCompoundString(ItemStack itemStack) {
-        return NBT.itemStackToNBT(itemStack).toString();
+    public static String itemStackToSnbt(@NotNull ItemStack itemStack) {
+        // This implementation is temporary before moving to Adventure API, and is simply to avoid
+        // using libraries to handle this.
+        String components;
+        if (itemStack.hasItemMeta()) {
+            components = Validate.notNull(itemStack.getItemMeta(), "ItemMeta must not be null").getAsString();
+        } else {
+            components = "{}";
+        }
+
+        return String.format(Locale.ROOT, "{components:%s,count:%d,id:\"%s\"}",
+                components, itemStack.getAmount(), itemStack.getType().getKey());
     }
 
     /**

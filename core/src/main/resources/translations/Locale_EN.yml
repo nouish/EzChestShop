@@ -327,8 +327,6 @@ checkprofits:
   confirm-clear-success: "&cYou've cleared all profit data!"
   join-notification:
     - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
-  dependency-nbtapi-missing:
-    - "&cFor this command to work, the NBTAPI by tr7zw must be installed on the server."
 shulkershop-dropped-lore:
   - "&eShulkerbox Shop:"
   - " &7Owner: &6%owner%"

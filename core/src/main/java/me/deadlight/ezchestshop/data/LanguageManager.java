@@ -907,7 +907,7 @@ public final class LanguageManager {
             for (int j = 0; j < details.length; j++) {
                 compb.append(MineDown.parse(details[j].replace("%currency%", Config.currency).replace("%income%", "" + checkProfitEntry.getBuyPrice()).replace("%sales%", "" + checkProfitEntry.getBuyAmount()).replace("%unit_income%", "" + checkProfitEntry.getBuyUnitPrice()).replace("%cost%", "" + checkProfitEntry.getSellPrice()).replace("%purchases%", "" + checkProfitEntry.getSellAmount()).replace("%unit_cost%", "" + checkProfitEntry.getSellUnitPrice())), ComponentBuilder.FormatRetention.NONE);
                 if (details.length - 1 != j) {
-                    compb.append(TextComponent.fromLegacyText(Utils.getFinalItemName(checkProfitEntry.getItem()))).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(Utils.ItemToTextCompoundString(checkProfitEntry.getItem()))}));
+                    compb.append(TextComponent.fromLegacyText(Utils.getFinalItemName(checkProfitEntry.getItem()))).event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(Utils.itemStackToSnbt(checkProfitEntry.getItem()))}));
                 } else {
                     compb.append("\n");
                 }
