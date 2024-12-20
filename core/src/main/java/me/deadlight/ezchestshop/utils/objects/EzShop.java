@@ -1,7 +1,5 @@
 package me.deadlight.ezchestshop.utils.objects;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -18,8 +16,6 @@ public class EzShop {
     private double buyPrice;
     private double sellPrice;
     private SqlQueue sqlQueue;
-    private List<String> shopViewers = new ArrayList<>();
-    private List<String> shopLoaders = new ArrayList<>();
 
     public EzShop(Location location, OfflinePlayer owner, ItemStack shopItem, double buyPrice, double sellPrice, ShopSettings settings) {
         this.location = location;
@@ -57,46 +53,12 @@ public class EzShop {
         return shopItem.clone();
     }
 
-    public List<String> getShopViewers() {
-        return shopViewers;
-    }
-
-    public List<String> getShopLoaders() {
-        return shopLoaders;
-    }
-
     public void setLocation(Location location) {
         this.location = location;
     }
 
     public void setSettings(ShopSettings settings) {
         this.settings = settings;
-    }
-
-    public void setShopViewers(List<String> shopViewers) {
-        this.shopViewers = shopViewers;
-    }
-
-    public void addShopViewer(String str) {
-        if (this.shopViewers.contains(str)) return;
-        this.shopViewers.add(str);
-    }
-
-    public void removeShopViewer(String str) {
-        this.shopViewers.remove(str);
-    }
-
-    public void setShopLoaders(List<String> shopLoaders) {
-        this.shopLoaders = shopLoaders;
-    }
-
-    public void addShopLoader(String str) {
-        if (this.shopLoaders.contains(str)) return;
-        this.shopLoaders.add(str);
-    }
-
-    public void removeShopLoader(String str) {
-        this.shopLoaders.remove(str);
     }
 
     public UUID getOwnerID() {

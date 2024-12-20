@@ -32,6 +32,8 @@ import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -58,6 +60,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -239,16 +242,17 @@ public class Utils {
     public static String getFinalItemName(ItemStack item) {
         String itemname;
         if (item.hasItemMeta()) {
-            if (item.getItemMeta().hasDisplayName()) {
-                itemname = colorify(item.getItemMeta().getDisplayName());
+            final ItemMeta meta = item.getItemMeta();
+            if (meta.hasCustomName()) {
+                Component customName = Validate.notNull(meta.customName());
+                itemname = LegacyComponentSerializer.legacyAmpersand().serialize(customName);
             } else if (item.getType() == Material.ENCHANTED_BOOK
-                    && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() == 1) {
-                EnchantmentStorageMeta emeta = (EnchantmentStorageMeta) item.getItemMeta();
-
-                Map.Entry<Enchantment,Integer> entry = emeta.getStoredEnchants().entrySet().iterator().next();
+                    && meta instanceof EnchantmentStorageMeta enchMeta
+                    && enchMeta.getStoredEnchants().size() == 1) {
+                Map.Entry<Enchantment, Integer> entry = enchMeta.getStoredEnchants().entrySet().iterator().next();
                 itemname = lm.itemEnchantHologram(entry.getKey(), entry.getValue());
-            } else if (item.getItemMeta().hasLocalizedName()) {
-                itemname = item.getItemMeta().getLocalizedName();
+            } else if (meta.hasLocalizedName()) {
+                itemname = meta.getLocalizedName();
             } else {
                 itemname = Utils.capitalizeFirstSplit(item.getType().toString());
             }
