@@ -16,13 +16,12 @@ shop-gui:
     buyX-title: "&aBuy %amount%x"
     buyX-lore:
       - "&7Buy for &e%price% %currency%"
-    adminview: "&c&lAdmin View"
+    adminview: "&cAdmin View"
     storage: "&e&lStorage"
-    settings: "&b&lSettings"
+    settings: "&bSettings"
     disabled-title: "&cDisabled"
     disabled-lore:
-      - "&7This option is disabled by "
-      - " &7the shop owner."
+      - "&7This option is disabled by the shop owner."
 transactions:
   transactionButtonTitle: "&aTransaction logs"
   backToSettingsButton: "&eBack to settings"
@@ -46,7 +45,7 @@ transactions:
   player-inform-sell: "&7[&aECS&7] &b%player% &7has sold &e%amount%x &7of &d%item%&7 with the worth of &a%price%%currency%"
 #settings gui section
 settings:
-  GuiTitle: "&b&lSettings"
+  GuiTitle: "&cSettings"
   statusOn: "&aOn"
   statusOff: "&cOff"
   buttons:
@@ -309,8 +308,8 @@ checkprofits:
     - '&7Total buy cost: &6%currency%%cost% &7from &6%purchases% &7purchase(s).'
     - '&7Total: &6%currency%%total%'
     - '&7Balance: &6%currency%%balance%'
-    - '&7Click [&b&lHERE](Click for details! run_command=/checkprofits p 1) &7for a detailed report!'
-    - '&7Click to clear the report [&c&l[X]](Click to clear! run_command=/checkprofits clear)'
+    - '[&bClick here](Click for details! run_command=/checkprofits p 1) &7for a detailed report!'
+    - '&7Click to clear the report [&c[X]](Click to clear! run_command=/checkprofits clear)'
   details-menu:
     header:
       - "&e----- &6Shop Profits Report &e-----"
@@ -326,7 +325,7 @@ checkprofits:
     - "&eDo you really want to clear all profit data? [&2&l[✔]](Click to confirm clear! run_command=/checkprofits clear -confirm)"
   confirm-clear-success: "&cYou've cleared all profit data!"
   join-notification:
-    - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
+    - "[&bClick here](Click to show profits run_command=/checkprofits) &eto check profits from your shops."
 shulkershop-dropped-lore:
   - "&eShulkerbox Shop:"
   - " &7Owner: &6%owner%"

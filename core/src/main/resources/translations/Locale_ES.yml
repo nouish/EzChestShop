@@ -326,7 +326,7 @@ checkprofits:
     - "&eDo you really want to clear all profit data? [&2&l[✔]](Click to confirm clear! run_command=/checkprofits clear -confirm)"
   confirm-clear-success: "&cYou've cleared all profit data!"
   join-notification:
-    - "&eCheck your Shop profits [&b&lHERE](Click to show run_command=/checkprofits)"
+    - "[&bClick here](Click to show profits run_command=/checkprofits) &eto check profits from your shops."
 shulkershop-dropped-lore:
   - "&eShulkerbox Shop:"
   - " &7Owner: &6%owner%"
