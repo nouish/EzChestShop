@@ -23,6 +23,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.event.ClickEvent.openUrl;
+import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+
 public class UpdateChecker implements Listener {
 
     LanguageManager lm = new LanguageManager();
@@ -48,7 +53,7 @@ public class UpdateChecker implements Listener {
         }
 
         if (Config.notify_updates && player.hasPermission("ecs.version.notify")) {
-            EzChestShop.getScheduler().runTaskAsynchronously(() -> checkForUpdate(player));
+            EzChestShop.getScheduler().runTaskLaterAsynchronously(() -> checkForUpdate(player), 10);
         }
     }
 
@@ -73,11 +78,34 @@ public class UpdateChecker implements Listener {
         EzChestShop.getScheduler().runTask(player, () -> {
             if (status.isBehind()) {
                 if (current.isStable()) {
-                    player.sendMessage("A newer version of EzChestShopReborn is available: " + latest.getId() + ".");
-                    player.sendMessage("Download at: https://github.com/nouish/EzChestShop/releases/tag/" + latest.getId() + ".");
+                    String link = "https://github.com/nouish/EzChestShop/releases/tag/" + latest.getId();
+                    player.sendMessage(text()
+                            .append(text("You are using an outdated version of ", RED))
+                            .append(text("EzChestShopReborn", GOLD))
+                            .append(text("!", RED))
+                            .appendNewline()
+                            .append(text("Download version ", RED))
+                            .append(text(latest.getId(), GOLD))
+                            .append(text(" from GitHub: ", RED))
+                            .append(text(link, GOLD)
+                                    .hoverEvent(text("Click here to read more.", GOLD))
+                                    .clickEvent(openUrl(link)))
+                            .append(text(".", RED))
+                            .build());
                 } else {
-                    player.sendMessage("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is "
-                            + String.format(Locale.ROOT, "%,d", status.getDistance()) + " commits ahead.");
+                    String link = String.format(Locale.ROOT, "https://github.com/nouish/EzChestShop/compare/%s...%s", current.getId(), GitHubUtil.MAIN_BRANCH);
+                    int behindBy = status.getDistance();
+                    player.sendMessage(text()
+                            .append(text("You are using an outdated snapshot of ", RED))
+                            .append(text("EzChestShopReborn", GOLD))
+                            .append(text("!", RED))
+                            .appendNewline()
+                            .append(text("The latest build is ", RED))
+                            .append(text(String.format(Locale.ROOT, "%,d commit%s", behindBy, behindBy > 1 ? "s" : ""), GOLD)
+                                    .hoverEvent(text("Click here to compare changes.", GOLD))
+                                    .clickEvent(openUrl(link)))
+                            .append(text(" ahead.", RED))
+                            .build());
                 }
             }
         });
