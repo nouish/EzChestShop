@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
@@ -121,32 +122,42 @@ public class BlockBreakListener implements Listener {
     }
 
     private void preventShopBreak(BlockBreakEvent event) {
-        EzShop shop = Utils.isPartOfTheChestShop(event.getBlock().getLocation());
-
-        if (shop == null) {
-            return;
-        }
-
         Player player = event.getPlayer();
-        if (EzChestShop.worldguard) {
-            if (shop.getSettings().isAdminshop()) {
-                if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
-                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
-                    event.setCancelled(true);
-                }
-            } else if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
-                event.setCancelled(true);
-            }
+        Block block = event.getBlock();
+        Location loc = block.getLocation();
+        EzShop partOfTheChestShop = Utils.isPartOfTheChestShop(loc);
+
+        if (partOfTheChestShop != null) {
+            loc = partOfTheChestShop.getLocation();
         }
 
-        //shop protection section
-        if (Config.shopProtection
-                && !shop.getOwnerID().equals(event.getPlayer().getUniqueId())
-                && !player.hasPermission("ecs.admin")) {
-            //check if player is owner of shop
-            event.setCancelled(true);
-            event.getPlayer().sendMessage(lm.cannotDestroyShop());
+        if (ShopContainer.isShop(loc) || partOfTheChestShop != null) {
+            boolean adminshop = ShopContainer.getShop(loc).getSettings().isAdminshop();
+            if (EzChestShop.worldguard) {
+                if (adminshop) {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
+                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                        event.setCancelled(true);
+                    }
+                } else {
+                    if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
+                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                        event.setCancelled(true);
+                    }
+                }
+            }
+
+            //shop protection section
+            if (Config.shopProtection) {
+                if (!player.hasPermission("ecs.admin")) {
+                    //check if player is owner of shop
+                    EzShop shop = ShopContainer.getShop(loc);
+                    if (!shop.getOwnerID().equals(player.getUniqueId())) {
+                        event.setCancelled(true);
+                        player.sendMessage(lm.cannotDestroyShop());
+                    }
+                }
+            }
         }
     }
 
