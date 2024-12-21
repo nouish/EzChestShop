@@ -36,6 +36,34 @@ commands:
       - cp
 
 permissions:
-  ecs.version.notify:
+  ecs.admin:
+    description: Helper permission node to grant full shop admin access.
+    children:
+      ecs.admin.remove: true
+      ecs.admin.reload: true
+      ecs.admin.create: true
+      ecs.admin.transfer: true
+      ecs.admin.view: true
+      ecs.checkprofits: true
+      ecs.version.notify: true
+  ecs.admin.remove:
+    description: Controls access to remove others shops.
     default: op
-    description: Toggles the notification about available version updates.
+  ecs.admin.reload:
+    description: Controls access to reload plugin configuration.
+    default: op
+  ecs.admin.create:
+    description: Controls access to create admin shop with infinite stock.
+    default: op
+  ecs.admin.transfer:
+    description: Controls access to transfer ownership of a shop.
+    default: op
+  ecs.admin.view:
+    description: Controls access to view shop stock as admin.
+    default: op
+  ecs.checkprofits:
+    description: Controls access to check profits from your own shops.
+    default: op
+  ecs.version.notify:
+    description: Toggle notification about plugin updates.
+    default: op
