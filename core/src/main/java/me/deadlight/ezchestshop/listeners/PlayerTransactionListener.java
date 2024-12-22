@@ -66,35 +66,35 @@ public class PlayerTransactionListener implements Listener {
                     if (customer != null) {
                         customer.sendMessage(lm.transactionMaxShopsCancelation(event.getOwner().getName()));
                     }
-                    return; // Cancelamos la ejecución del resto del evento.
-                }
-            }
-        }
-        logProfits(event);
-        sendDiscordWebhook(event);
-        if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
-            OfflinePlayer owner = event.getOwner();
-            List<UUID> getters = event.getAdminsUUID();
-            getters.add(owner.getUniqueId());
+                }else{
+                    logProfits(event);
+                    sendDiscordWebhook(event);
+                    if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
+                        OfflinePlayer owner = event.getOwner();
+                        List<UUID> getters = event.getAdminsUUID();
+                        getters.add(owner.getUniqueId());
 
-            if (event.isBuy()) {
-                for (UUID adminUUID : getters) {
-                    Player admin = Bukkit.getPlayer(adminUUID);
-                    if (admin != null) {
-                        if (admin.isOnline()) {
-                            admin.getPlayer().sendMessage(lm.transactionBuyInform(event.getCustomer().getName(), event.getCount(),
-                                    event.getItemName(), event.getPrice()));
-                        }
-                    }
-                }
-            } else {
-                for (UUID adminUUID : getters) {
-                    Player admin = Bukkit.getPlayer(adminUUID);
-                    if (admin != null) {
-                        if (admin.isOnline()) {
-                            if (admin.isOnline()) {
-                                admin.getPlayer().sendMessage(lm.transactionSellInform(event.getCustomer().getName(), event.getCount(),
-                                        event.getItemName(), event.getPrice()));
+                        if (event.isBuy()) {
+                            for (UUID adminUUID : getters) {
+                                Player admin = Bukkit.getPlayer(adminUUID);
+                                if (admin != null) {
+                                    if (admin.isOnline()) {
+                                        admin.getPlayer().sendMessage(lm.transactionBuyInform(event.getCustomer().getName(), event.getCount(),
+                                                event.getItemName(), event.getPrice()));
+                                    }
+                                }
+                            }
+                        } else {
+                            for (UUID adminUUID : getters) {
+                                Player admin = Bukkit.getPlayer(adminUUID);
+                                if (admin != null) {
+                                    if (admin.isOnline()) {
+                                        if (admin.isOnline()) {
+                                            admin.getPlayer().sendMessage(lm.transactionSellInform(event.getCustomer().getName(), event.getCount(),
+                                                    event.getItemName(), event.getPrice()));
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
