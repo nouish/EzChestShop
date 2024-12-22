@@ -313,7 +313,7 @@ public final class LanguageManager {
     }
 
     public String transactionMaxShopsCancelation(String player) {
-        return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player));
+        return Utils.colorify(getString("transactions.player-inform-max-shops-cancelation").replace("%player%", player));
     }
 
     //settings.
