@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -141,14 +142,10 @@ public class ChestOpeningListener implements Listener {
                     //not owner show default
                     if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
                         ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
-                    } else {
-                        System.out.println("isAdminShop: " + isAdminShop);
-
-                        // Si es una tienda admin, no hacemos los cálculos de límite de permisos
-                        System.out.println("No es una tienda admin");
-                        // Comprobar si la funcionalidad de limitación de permisos está habilitada
+                    } else {System.out.println("isAdminShop: " + isAdminShop);
+// If it is an admin shop, we do not perform the permission limit calculations
+// Check if the permission limitation functionality is enabled
                         if (Config.permissions_create_shop_enabled) {
-                            System.out.println("Limitación de permisos está habilitada");
                             int maxShopsWorld = Utils.getMaxPermission(Objects.requireNonNull(player),
                                     "ecs.shops.limit." + chestblock.getWorld().getName() + ".", -2);
                             int maxShops;
@@ -159,21 +156,17 @@ public class ChestOpeningListener implements Listener {
                                 maxShops = maxShopsWorld;
                             }
 
-                            maxShops = maxShops == -1 ? 10000 : maxShops; // Si tiene permisos ilimitados, se define un valor alto.
-                            System.out.println("maxShops: " + maxShops);
-
-                            int shops = ShopContainer.getShopCount(player); // Número de tiendas actuales del jugador.
-                            System.out.println("Número de tiendas actuales del jugador: " + shops);
-
-                            // Si el jugador ha superado el límite
+                            maxShops = maxShops == -1 ? 10000 : maxShops; // If the player has unlimited permissions, set a high value.
+                            int shops = ShopContainer.getShopCount(player); // Current number of shops owned by the player.
+                            // If the player has exceeded the limit
                             if (shops > maxShops) {
-                                System.out.println("El jugador ha superado el límite de tiendas");
                                 Player customer = event.getPlayer();
                                 String rawId = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
                                 Preconditions.checkNotNull(rawId);
                                 OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
                                 customer.sendMessage(lm.shopOwnerExceedsPermission(offlinePlayerOwner.getName()));
-                                return; // Cancelamos la ejecución del resto del evento.
+                                customer.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
+                                return;
                             }
                         }
                         nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
