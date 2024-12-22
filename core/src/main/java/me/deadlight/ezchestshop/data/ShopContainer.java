@@ -270,6 +270,7 @@ public class ShopContainer {
                     }
                     //For the transaction event
                     thatItem.setAmount(count);
+                    EzChestShop.getPlugin().tellCoreProtectToTrackChangesAt(player, containerBlock.getLocation());
                     Utils.removeItem(Utils.getBlockInventory(containerBlock), thatItem);
                     getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
                     sharedIncomeCheck(data, price);

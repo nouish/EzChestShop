@@ -73,6 +73,7 @@ public class Config {
     public static boolean notify_overlapping_gui_items;
     public static boolean notify_overflowing_gui_items;
 
+    public static boolean coreprotect_integration;
     public static boolean worldguard_integration;
     public static boolean towny_integration_shops_only_in_shop_plots;
     public static Database database_type;
@@ -181,6 +182,7 @@ public class Config {
         notify_updates = config.getBoolean("other.notify-op-of-updates");
         notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
         notify_overflowing_gui_items = config.getBoolean("other.notify-op-of-overflowing-gui-items");
+        coreprotect_integration = config.getBoolean("integration.coreprotect", true);
         worldguard_integration = config.getBoolean("integration.worldguard");
         towny_integration_shops_only_in_shop_plots = config.getBoolean("integration.towny.shops-only-in-shop-plots");
         database_type = Database.valueOf(

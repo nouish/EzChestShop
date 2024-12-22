@@ -98,6 +98,15 @@
       </snapshots>
     </repository>
     <repository>
+      <!-- Provides CoreProtect -->
+      <id>playpro-repo</id>
+      <url>https://maven.playpro.com</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
       <snapshots>

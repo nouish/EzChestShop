@@ -143,6 +143,7 @@ database:
     max-pool: 10
     ssl: false
 integration:
+  coreprotect: true
   worldguard: true
   towny:
     shops-only-in-shop-plots: true

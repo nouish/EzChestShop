@@ -6,6 +6,7 @@ folia-supported: true
 website: 'https://github.com/nouish/EzChestShop'
 softdepend:
   - Vault
+  - CoreProtect
   - WildChests
   - WorldGuard
   - Slimefun # In case just to load after the Slimefun
