@@ -33,7 +33,7 @@ public class PlayerTransactionListener implements Listener {
 
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
-        // Comprobar si la funcionalidad de limitación de permisos está habilitada
+
         boolean isAdminShop = event.getAdminsUUID().contains(event.getOwner().getUniqueId());
 
         // Si es una tienda admin, no hacemos los cálculos de límite de permisos
