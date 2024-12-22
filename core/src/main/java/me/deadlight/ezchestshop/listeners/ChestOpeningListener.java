@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.google.common.base.Preconditions;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
+import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.guis.AdminShopGUI;
@@ -19,8 +21,10 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -42,7 +46,7 @@ public class ChestOpeningListener implements Listener {
     private final NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
     private final OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
     private final AdminShopGUI adminShopGUI = new AdminShopGUI();
-
+    LanguageManager lm = new LanguageManager();
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChestOpening(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null || event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
@@ -165,9 +169,10 @@ public class ChestOpeningListener implements Listener {
                             if (shops > maxShops) {
                                 System.out.println("El jugador ha superado el límite de tiendas");
                                 Player customer = event.getPlayer();
-                                if (customer != null) {
-                                    customer.sendMessage("Has superado el límite de tiendas permitidas.");
-                                }
+                                String rawId = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+                                Preconditions.checkNotNull(rawId);
+                                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
+                                customer.sendMessage(lm.shopOwnerExceedsPermission(offlinePlayerOwner.getName()));
                                 return; // Cancelamos la ejecución del resto del evento.
                             }
                         }
