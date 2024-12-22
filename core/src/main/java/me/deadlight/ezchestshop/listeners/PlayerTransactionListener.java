@@ -33,68 +33,31 @@ public class PlayerTransactionListener implements Listener {
 
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
+        logProfits(event);
+        sendDiscordWebhook(event);
+        if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
+            OfflinePlayer owner = event.getOwner();
+            List<UUID> getters = event.getAdminsUUID();
+            getters.add(owner.getUniqueId());
 
-        boolean isAdminShop = event.getAdminsUUID().contains(event.getOwner().getUniqueId());
-        System.out.println("isAdminShop: " + isAdminShop);
-
-// Si es una tienda admin, no hacemos los cálculos de límite de permisos
-        if (!isAdminShop) {
-            System.out.println("No es una tienda admin");
-            // Comprobar si la funcionalidad de limitación de permisos está habilitada
-            if (Config.permissions_create_shop_enabled) {
-                System.out.println("Limitación de permisos está habilitada");
-                int maxShopsWorld = Utils.getMaxPermission(Objects.requireNonNull(event.getOwner().getPlayer()),
-                        "ecs.shops.limit." + event.getContainerBlock().getWorld().getName() + ".", -2);
-                int maxShops;
-
-                if (maxShopsWorld == -2) {
-                    maxShops = Utils.getMaxPermission(Objects.requireNonNull(event.getOwner().getPlayer()), "ecs.shops.limit.", 0);
-                } else {
-                    maxShops = maxShopsWorld;
-                }
-
-                maxShops = maxShops == -1 ? 10000 : maxShops; // Si tiene permisos ilimitados, se define un valor alto.
-                System.out.println("maxShops: " + maxShops);
-
-                int shops = ShopContainer.getShopCount(event.getOwner().getPlayer()); // Número de tiendas actuales del jugador.
-                System.out.println("Número de tiendas actuales del jugador: " + shops);
-
-                // Si el jugador ha superado el límite
-                if (shops > maxShops) {
-                    System.out.println("El jugador ha superado el límite de tiendas");
-                    Player customer = event.getCustomer().getPlayer();
-                    if (customer != null) {
-                        customer.sendMessage(lm.transactionMaxShopsCancelation(event.getOwner().getName()));
+            if (event.isBuy()) {
+                for (UUID adminUUID : getters) {
+                    Player admin = Bukkit.getPlayer(adminUUID);
+                    if (admin != null) {
+                        if (admin.isOnline()) {
+                            admin.getPlayer().sendMessage(lm.transactionBuyInform(event.getCustomer().getName(), event.getCount(),
+                                    event.getItemName(), event.getPrice()));
+                        }
                     }
-                }else{
-                    logProfits(event);
-                    sendDiscordWebhook(event);
-                    if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
-                        OfflinePlayer owner = event.getOwner();
-                        List<UUID> getters = event.getAdminsUUID();
-                        getters.add(owner.getUniqueId());
-
-                        if (event.isBuy()) {
-                            for (UUID adminUUID : getters) {
-                                Player admin = Bukkit.getPlayer(adminUUID);
-                                if (admin != null) {
-                                    if (admin.isOnline()) {
-                                        admin.getPlayer().sendMessage(lm.transactionBuyInform(event.getCustomer().getName(), event.getCount(),
-                                                event.getItemName(), event.getPrice()));
-                                    }
-                                }
-                            }
-                        } else {
-                            for (UUID adminUUID : getters) {
-                                Player admin = Bukkit.getPlayer(adminUUID);
-                                if (admin != null) {
-                                    if (admin.isOnline()) {
-                                        if (admin.isOnline()) {
-                                            admin.getPlayer().sendMessage(lm.transactionSellInform(event.getCustomer().getName(), event.getCount(),
-                                                    event.getItemName(), event.getPrice()));
-                                        }
-                                    }
-                                }
+                }
+            } else {
+                for (UUID adminUUID : getters) {
+                    Player admin = Bukkit.getPlayer(adminUUID);
+                    if (admin != null) {
+                        if (admin.isOnline()) {
+                            if (admin.isOnline()) {
+                                admin.getPlayer().sendMessage(lm.transactionSellInform(event.getCustomer().getName(), event.getCount(),
+                                        event.getItemName(), event.getPrice()));
                             }
                         }
                     }

@@ -312,8 +312,8 @@ public final class LanguageManager {
         return Utils.colorify(getString("transactions.player-inform-sell").replace("%player%", player).replace("%amount%", String.valueOf(amount)).replace("%item%", item).replace("%price%", Utils.formatNumber(price, Utils.FormatType.CHAT)).replace("%currency%", Config.currency));
     }
 
-    public String transactionMaxShopsCancelation(String player) {
-        return Utils.colorify(getString("transactions.player-inform-max-shops-cancelation").replace("%player%", player));
+    public String shopOwnerExceedsPermission(String player) {
+        return Utils.colorify(getString("shop-messages.shopOwnerExceedsPermission").replace("%player%", player));
     }
 
     //settings.

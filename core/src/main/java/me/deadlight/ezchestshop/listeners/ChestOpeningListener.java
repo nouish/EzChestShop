@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
@@ -134,7 +135,44 @@ public class ChestOpeningListener implements Listener {
                     ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
                 } else {
                     //not owner show default
-                    nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
+                    if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
+                        ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
+                    } else {
+                        System.out.println("isAdminShop: " + isAdminShop);
+
+                        // Si es una tienda admin, no hacemos los cálculos de límite de permisos
+                        System.out.println("No es una tienda admin");
+                        // Comprobar si la funcionalidad de limitación de permisos está habilitada
+                        if (Config.permissions_create_shop_enabled) {
+                            System.out.println("Limitación de permisos está habilitada");
+                            int maxShopsWorld = Utils.getMaxPermission(Objects.requireNonNull(player),
+                                    "ecs.shops.limit." + chestblock.getWorld().getName() + ".", -2);
+                            int maxShops;
+
+                            if (maxShopsWorld == -2) {
+                                maxShops = Utils.getMaxPermission(Objects.requireNonNull(player), "ecs.shops.limit.", 0);
+                            } else {
+                                maxShops = maxShopsWorld;
+                            }
+
+                            maxShops = maxShops == -1 ? 10000 : maxShops; // Si tiene permisos ilimitados, se define un valor alto.
+                            System.out.println("maxShops: " + maxShops);
+
+                            int shops = ShopContainer.getShopCount(player); // Número de tiendas actuales del jugador.
+                            System.out.println("Número de tiendas actuales del jugador: " + shops);
+
+                            // Si el jugador ha superado el límite
+                            if (shops > maxShops) {
+                                System.out.println("El jugador ha superado el límite de tiendas");
+                                Player customer = event.getPlayer();
+                                if (customer != null) {
+                                    customer.sendMessage("Has superado el límite de tiendas permitidas.");
+                                }
+                                return; // Cancelamos la ejecución del resto del evento.
+                            }
+                        }
+                        nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
+                    }
                 }
             }
         }
