@@ -35,11 +35,14 @@ public class PlayerTransactionListener implements Listener {
     public void onTransaction(PlayerTransactEvent event) {
 
         boolean isAdminShop = event.getAdminsUUID().contains(event.getOwner().getUniqueId());
+        System.out.println("isAdminShop: " + isAdminShop);
 
-        // Si es una tienda admin, no hacemos los cálculos de límite de permisos
+// Si es una tienda admin, no hacemos los cálculos de límite de permisos
         if (!isAdminShop) {
+            System.out.println("No es una tienda admin");
             // Comprobar si la funcionalidad de limitación de permisos está habilitada
             if (Config.permissions_create_shop_enabled) {
+                System.out.println("Limitación de permisos está habilitada");
                 int maxShopsWorld = Utils.getMaxPermission(Objects.requireNonNull(event.getOwner().getPlayer()),
                         "ecs.shops.limit." + event.getContainerBlock().getWorld().getName() + ".", -2);
                 int maxShops;
@@ -51,11 +54,14 @@ public class PlayerTransactionListener implements Listener {
                 }
 
                 maxShops = maxShops == -1 ? 10000 : maxShops; // Si tiene permisos ilimitados, se define un valor alto.
+                System.out.println("maxShops: " + maxShops);
 
                 int shops = ShopContainer.getShopCount(event.getOwner().getPlayer()); // Número de tiendas actuales del jugador.
+                System.out.println("Número de tiendas actuales del jugador: " + shops);
 
                 // Si el jugador ha superado el límite
                 if (shops > maxShops) {
+                    System.out.println("El jugador ha superado el límite de tiendas");
                     Player customer = event.getCustomer().getPlayer();
                     if (customer != null) {
                         customer.sendMessage(lm.transactionMaxShopsCancelation(event.getOwner().getName()));
