@@ -143,11 +143,9 @@ public class ChestOpeningListener implements Listener {
                     if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
                         ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
                     } else {
-                        System.out.println("isAdminShop: " + isAdminShop);
-// If it is an admin shop, we do not perform the permission limit calculations
-// Check if the permission limitation functionality is enabled
+                        // If it is an admin shop, we do not perform the permission limit calculations
+                        // Check if the permission limitation functionality is enabled
                         if (Config.permissions_create_shop_enabled) {
-                            System.out.println("Permission limitation functionality is enabled.");
                             int maxShopsWorld = Utils.getMaxPermission(Objects.requireNonNull(player),
                                     "ecs.shops.limit." + chestblock.getWorld().getName() + ".", -2);
                             int maxShops;
@@ -159,15 +157,12 @@ public class ChestOpeningListener implements Listener {
                             }
 
                             maxShops = maxShops == -1 ? 10000 : maxShops; // If the player has unlimited permissions, set a high value.
-                            System.out.println("Max shops allowed: " + maxShops);
                             String rawId = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
                             Preconditions.checkNotNull(rawId);
                             OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
                             int shops = ShopContainer.getShopCount(Objects.requireNonNull(offlinePlayerOwner.getPlayer())); // Current number of shops owned by the player.
-                            System.out.println("Current number of shops owned by the player: " + shops);
                             // If the player has exceeded the limit
                             if (shops > maxShops) {
-                                System.out.println("Player has exceeded the shop limit.");
                                 Player customer = event.getPlayer();
 
                                 customer.sendMessage(lm.shopOwnerExceedsPermission(offlinePlayerOwner.getName()));
