@@ -253,9 +253,8 @@ public class Utils {
         String itemname;
         if (item.hasItemMeta()) {
             final ItemMeta meta = item.getItemMeta();
-            if (meta.hasCustomName()) {
-                Component customName = Validate.notNull(meta.customName());
-                itemname = LegacyComponentSerializer.legacyAmpersand().serialize(customName);
+            if (meta.hasDisplayName()) {
+                itemname = colorify(meta.getDisplayName());
             } else if (item.getType() == Material.ENCHANTED_BOOK
                     && meta instanceof EnchantmentStorageMeta enchMeta
                     && enchMeta.getStoredEnchants().size() == 1) {
