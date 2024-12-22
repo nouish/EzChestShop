@@ -160,15 +160,16 @@ public class ChestOpeningListener implements Listener {
 
                             maxShops = maxShops == -1 ? 10000 : maxShops; // If the player has unlimited permissions, set a high value.
                             System.out.println("Max shops allowed: " + maxShops);
-                            int shops = ShopContainer.getShopCount(player); // Current number of shops owned by the player.
+                            String rawId = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+                            Preconditions.checkNotNull(rawId);
+                            OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
+                            int shops = ShopContainer.getShopCount(Objects.requireNonNull(offlinePlayerOwner.getPlayer())); // Current number of shops owned by the player.
                             System.out.println("Current number of shops owned by the player: " + shops);
                             // If the player has exceeded the limit
                             if (shops > maxShops) {
                                 System.out.println("Player has exceeded the shop limit.");
                                 Player customer = event.getPlayer();
-                                String rawId = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-                                Preconditions.checkNotNull(rawId);
-                                OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
+
                                 customer.sendMessage(lm.shopOwnerExceedsPermission(offlinePlayerOwner.getName()));
                                 customer.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
                                 return;
