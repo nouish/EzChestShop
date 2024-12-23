@@ -18,6 +18,8 @@ updates:
     ignore:
       # Bundled with Minecraft. Keep version in sync.
       - dependency-name: "org.apache.logging.log4j:log4j-core"
+      # The Paper API for core will remain at the lowest supported version.
+      - dependency-name: "io.papermc.paper:paper-api"
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"
