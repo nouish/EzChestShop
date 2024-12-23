@@ -308,6 +308,7 @@ public class ShopContainer {
                         } else {
                             thatItem.setAmount(max_size);
                         }
+                        EzChestShop.getPlugin().tellCoreProtectToTrackChangesAt(player, containerBlock.getLocation());
                         Utils.getBlockInventory(containerBlock).addItem(thatItem);
                     }
                     //For the transaction event
