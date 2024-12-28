@@ -178,9 +178,7 @@ settings:
         West: "&aOeste"
         Down: "&aAbajo"
     protection:
-      cannotDestroyShop: "&cYou cannot destroy this shop!"
-protection:
-  cannotDestroyShop: "&cNo puedes destruir esta tienda!"
+      cannotDestroyShop: "&cNo puedes destruir esta tienda!"
 # Custom Messages Manager GUI section
 customMessageManager:
   GuiTitle: "&b&lGestor de Mensajes del Holograma"
