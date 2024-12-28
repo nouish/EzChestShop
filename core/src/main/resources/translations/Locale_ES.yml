@@ -12,10 +12,10 @@ shop-gui:
   buttons:
     sellX-title: "&cVender %amount%x"
     sellX-lore:
-      -  "&7Vender por &e%price% $"
+      - "&7Vender por &e%price% $"
     buyX-title: "&aComprar %amount%x"
     buyX-lore:
-      -  "&7Comprar por &e%price% $"
+      - "&7Comprar por &e%price% $"
     adminview: "&c&lVista de Admin"
     storage: "&e&lAlmacenamiento"
     settings: "&b&lAjustes"
@@ -29,12 +29,12 @@ transactions:
   PaperTitleBuy: "&aCompra | %player%"
   PaperTitleSell: "&cVenta | %player%"
   PaperLoreBuy:
-    -  "&7Precio Total: %price% "
+    - "&7Precio Total: %price% "
     - " &7Cantidad: %count% "
     - " &7Tipo de Transacción: &aComprado de ti "
     - " &e%time%"
   PaperLoreSell:
-    -  "&7Precio Total: %price% "
+    - "&7Precio Total: %price% "
     - " &7Cantidad: %count% "
     - " &7Tipo de Transacción: &cVendido a ti "
     - " &e%time%"
@@ -53,44 +53,44 @@ settings:
     toggleTransactions:
       Title: "&eActivar/Desactivar Mensaje de Transacción"
       Lore:
-      - "&7Estado actual: %status% "
-      - " &7Si mantiene esta opción activada, "
-      - " &7recibirás mensaje de "
-      - " &7transacción en el chat cada vez que alguien "
-      - " &7compre / venda algo en esta tienda"
+        - "&7Estado actual: %status% "
+        - " &7Si mantiene esta opción activada, "
+        - " &7recibirás mensaje de "
+        - " &7transacción en el chat cada vez que alguien "
+        - " &7compre / venda algo en esta tienda"
     disableBuying:
       Title: "&eDesactivar la Compra"
       Lore:
-      - "&7Estado actual: %status% "
-      - " &7Si mantiene esta opción activada, "
-      - " &7la tienda no dejará que nadie compre "
-      - " &7de tu tienda."
+        - "&7Estado actual: %status% "
+        - " &7Si mantiene esta opción activada, "
+        - " &7la tienda no dejará que nadie compre "
+        - " &7de tu tienda."
     disableSelling:
       Title: "&eDesactivar la venta"
       Lore:
-      - "&7Estado actual: %status% "
-      - " &7Si mantiene esta opción activada, "
-      - " &7la tienda no dejará que nadie venda "
-      - " &7nada a tu tienda."
+        - "&7Estado actual: %status% "
+        - " &7Si mantiene esta opción activada, "
+        - " &7la tienda no dejará que nadie venda "
+        - " &7nada a tu tienda."
     shopAdmins:
       Title: "&eAdministradores de la tienda"
       nobodyStatusAdmins: "&aNadie"
       Lore:
-      - "&7Puede agregar/ eliminar administradores de "
-      - " &7tu tienda. Los administradores son capaces de "
-      - " &7acceder al almacenamiento de la tienda y acceder a ciertos "
-      - " &7ajustes (todo excepto compartir ingresos "
-      - " &7y agregar/eliminar administradores). "
-      - " &aClick Izquierdo &7para agregar un administrador "
-      - " &cClick Derecho &7para eliminar un administrador "
-      - " &7Administrador actuales: %admins%"
+        - "&7Puede agregar/ eliminar administradores de "
+        - " &7tu tienda. Los administradores son capaces de "
+        - " &7acceder al almacenamiento de la tienda y acceder a ciertos "
+        - " &7ajustes (todo excepto compartir ingresos "
+        - " &7y agregar/eliminar administradores). "
+        - " &aClick Izquierdo &7para agregar un administrador "
+        - " &cClick Derecho &7para eliminar un administrador "
+        - " &7Administrador actuales: %admins%"
     sharedIncome:
       Title: "&eIngresos compartidos"
       Lore:
-      - "&7Estado actual: %status% "
-      - " &7Si mantiene esta opción activada, "
-      - " &7ÚNICAMENTE el beneficio de ventas, será "
-      - " &7compartido con los administradores también."
+        - "&7Estado actual: %status% "
+        - " &7Si mantiene esta opción activada, "
+        - " &7ÚNICAMENTE el beneficio de ventas, será "
+        - " &7compartido con los administradores también."
     hologramRotation:
       Title: "&eRotación de Holograma"
       Lore:
@@ -266,13 +266,13 @@ command-messages:
   notenoughargs: "&cNo has proporcionado suficientes argumentos! \n &cUso correcto: /ecs create (Precio de compra) (Precio de venta)"
   consolenotallowed: "&cNo puedes ejecutar ningún comando desde la consola."
   help:
-  - "&bEz&cChestShop &7Plugin Por Dead_Light & ElitoGame©"
-  - "&7- &c/ecs create (Precio de compra) (Precio de venta) &7| Crea una tienda en cofre mirando un cofre y teniendo el item que quieres vender en tu mano. "
-  - " &7- &c/ecs remove &7| Elimina la tienda del cofre al que estás mirando. "
-  - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle ajustes relacionados de la tienda del cofre "
-  - "&eAjustes: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
-  - "&7- &c/ecs emptyshops &7| Muestra las tiendas vacías cercanas que TÚ posees."
-  - "&7 Fácil verdad? :)"
+    - "&bEz&cChestShop &7Plugin Por Dead_Light & ElitoGame©"
+    - "&7- &c/ecs create (Precio de compra) (Precio de venta) &7| Crea una tienda en cofre mirando un cofre y teniendo el item que quieres vender en tu mano. "
+    - " &7- &c/ecs remove &7| Elimina la tienda del cofre al que estás mirando. "
+    - "&7- &c/ecs settings (setting) &7| Copy/Paste/Toggle ajustes relacionados de la tienda del cofre "
+    - "&eAjustes: &7[copy, paste, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation] "
+    - "&7- &c/ecs emptyshops &7| Muestra las tiendas vacías cercanas que TÚ posees."
+    - "&7 Fácil verdad? :)"
   help-admin-view-addition:
     - "&cAyuda de admin: "
     - "&7- &c/ecsadmin"

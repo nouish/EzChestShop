@@ -62,7 +62,7 @@ settings:
         - "&7Durum: %status% "
     disableBuying:
       Title: "&7Marketten Ürün Satın Alma"
-      Lore: 
+      Lore:
         - ""
         - " &7Bu seçeneği açarsanız eğer marketinizden"
         - " &7diğer oyuncular ürün satın alamayacaktır."

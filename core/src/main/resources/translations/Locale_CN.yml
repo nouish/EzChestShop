@@ -81,9 +81,9 @@ settings:
     sharedIncome:
       Title: "&分享收益"
       Lore:
-      - "&7目前狀態: %status% "
-      - " &7若您開啟此選項， "
-      - " &7收益將會分享給所有主人."
+        - "&7目前狀態: %status% "
+        - " &7若您開啟此選項， "
+        - " &7收益將會分享給所有主人."
     hologramRotation:
       Title: "&eHologram Rotation"
       Lore:

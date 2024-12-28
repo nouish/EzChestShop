@@ -56,7 +56,7 @@ settings:
   buttons:
     toggleTransactions:
       Title: "&eTransaktionsnachreicht ein/aus schalten"
-      Lore: 
+      Lore:
         - "&7Momentaner Status: %status% "
         - " &7Falls du diese Nachricht an lässt, "
         - " &7wirst du Benachrichtigugnen "
@@ -64,14 +64,14 @@ settings:
         - " &7an deinen Shop kauft oder verkauft"
     disableBuying:
       Title: "&eDeaktiviere Kaufoption"
-      Lore: 
+      Lore:
         - "&7Momentaner Status: %status% "
         - " &7Falls du diese Option EIN lässt, "
         - " &7wird der Shop niemandem von deinem "
         - " &7Shop kaufen lassen."
     disableSelling:
       Title: "&eDeaktiviere Verkaufoption"
-      Lore: 
+      Lore:
         - "&7Momentaner Status: %status% "
         - " &7Falls du diese Option EIN lässt, "
         - " &7wird der Shop niemandem an deinen "
@@ -79,7 +79,7 @@ settings:
     shopAdmins:
       Title: "&eShop Admins"
       nobodyStatusAdmins: "&aNiemand"
-      Lore: 
+      Lore:
         - "&7Du kannst Admins zu deinem "
         - " &7Shop hinzufügen/entfernen. Admins haben Zugriff auf "
         - " &7das Lager des Shops und einige "
@@ -90,7 +90,7 @@ settings:
         - " &7Momentane Admins: %admins%"
     sharedIncome:
       Title: "&eGeteiltes Einkommen"
-      Lore: 
+      Lore:
         - "&7Momentaner Status: %status% "
         - " &7Falls du diese Option EIN lässt, "
         - " &7wird der Profit der VERKÄUFE "
