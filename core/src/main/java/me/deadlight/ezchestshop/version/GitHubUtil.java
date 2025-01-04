@@ -18,7 +18,7 @@ import me.deadlight.ezchestshop.EzChestShopConstants;
 import org.jetbrains.annotations.NotNull;
 
 public final class GitHubUtil {
-    public static final String MAIN_BRANCH = "main";
+    private static final String MAIN_BRANCH = "main";
 
     private static final String API_BASE = "https://api.github.com/repos/";
 
@@ -50,7 +50,7 @@ public final class GitHubUtil {
         JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
         String id = json.get("tag_name").getAsString();
         Instant buildTime = Instant.parse(json.get("published_at").getAsString());
-        return new BuildInfo(id, id, buildTime, true);
+        return new BuildInfo(id, id, GitHubUtil.MAIN_BRANCH, buildTime, true);
     }
 
     public static GitHubStatusLookup compare(@NotNull String base, @NotNull String head) throws IOException {

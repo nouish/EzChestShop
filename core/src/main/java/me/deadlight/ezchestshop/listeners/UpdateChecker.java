@@ -68,7 +68,7 @@ public class UpdateChecker implements Listener {
                 status = GitHubUtil.compare(latest.getId(), current.getId());
             } else {
                 latest = null; // Not a named release
-                status = GitHubUtil.compare(GitHubUtil.MAIN_BRANCH, current.getId());
+                status = GitHubUtil.compare(current.getBranch(), current.getId());
             }
         } catch (IOException e) {
             EzChestShop.logger().warn("Failed to determine the latest version!", e);
@@ -93,7 +93,7 @@ public class UpdateChecker implements Listener {
                             .append(text(".", RED))
                             .build());
                 } else {
-                    String link = String.format(Locale.ROOT, "https://github.com/nouish/EzChestShop/compare/%s...%s", current.getId(), GitHubUtil.MAIN_BRANCH);
+                    String link = String.format(Locale.ROOT, "https://github.com/nouish/EzChestShop/compare/%s...%s", current.getId(), current.getBranch());
                     int behindBy = status.getDistance();
                     player.sendMessage(text()
                             .append(text("You are using an outdated snapshot of ", RED))
