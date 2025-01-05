@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import io.netty.channel.Channel;
@@ -173,20 +174,42 @@ public class NmsHandleImpl extends NmsHandle {
         MenuOpener.openMenu(menu, player);
     }
 
-    @Override
-    public void injectConnection(Player player) throws IllegalAccessException, NoSuchFieldException {
-        Field field = ((CraftPlayer) player).getHandle().connection.getClass().getSuperclass().getDeclaredField("e");
+    private Connection getConnection(Player player) {
+        Objects.requireNonNull(player, "player");
+
+        ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        Class<?> cls = nmsPlayer.connection.getClass().getSuperclass();
+        Field field;
+
+        try {
+            field = cls.getDeclaredField("e");
+        } catch (NoSuchFieldException e1) {
+            try {
+                field = cls.getDeclaredField("connection");
+            } catch (NoSuchFieldException e2) {
+                e2.addSuppressed(e1);
+                EzChestShop.logger().error("Unable to locate connection field of {}", cls.getName(), e2);
+                throw new AssertionError("Unable to inject connection!");
+            }
+        }
+
         field.setAccessible(true);
-        Connection netManager = (Connection) field.get(((CraftPlayer) player).getHandle().connection);
-        netManager.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+
+        try {
+            return (Connection) field.get(nmsPlayer.connection);
+        } catch (IllegalAccessException e) {
+            throw new AssertionError("Unable to get Connection from ServerGamePacketListenerImpl", e);
+        }
     }
 
     @Override
-    public void ejectConnection(Player player) throws NoSuchFieldException, IllegalAccessException {
-        Field field = ((CraftPlayer) player).getHandle().connection.getClass().getSuperclass().getDeclaredField("e");
-        field.setAccessible(true);
-        Connection netManager = (Connection) field.get(((CraftPlayer) player).getHandle().connection);
-        Channel channel = netManager.channel;
+    public void injectConnection(Player player) {
+        getConnection(player).channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+    }
+
+    @Override
+    public void ejectConnection(Player player) {
+        Channel channel = getConnection(player).channel;
         channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
 
