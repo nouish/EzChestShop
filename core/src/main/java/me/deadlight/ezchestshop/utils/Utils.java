@@ -840,15 +840,15 @@ public class Utils {
         final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
         final char COLOR_CHAR = ChatColor.COLOR_CHAR;
         Matcher matcher = hexPattern.matcher(message);
-        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        StringBuilder builder = new StringBuilder(message.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
-            matcher.appendReplacement(buffer, COLOR_CHAR + "x"
+            matcher.appendReplacement(builder, COLOR_CHAR + "x"
                     + COLOR_CHAR + group.charAt(0) + COLOR_CHAR + group.charAt(1)
                     + COLOR_CHAR + group.charAt(2) + COLOR_CHAR + group.charAt(3)
                     + COLOR_CHAR + group.charAt(4) + COLOR_CHAR + group.charAt(5));
         }
-        return matcher.appendTail(buffer).toString();
+        return matcher.appendTail(builder).toString();
     }
 
     public enum FormatType {
