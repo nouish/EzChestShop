@@ -6,12 +6,14 @@ import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class ChestShopBreakPrevention implements Listener {
 
@@ -64,13 +66,9 @@ public class ChestShopBreakPrevention implements Listener {
         }
     }
 
-    @EventHandler
-    public void onInventoryMoveItem(InventoryMoveItemEvent event) {
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onInventoryMoveItem(@NotNull InventoryMoveItemEvent event) {
         if (!Config.shopProtection) {
-            return;
-        }
-
-        if (event == null || event.getSource() == null) {
             return;
         }
 
@@ -84,5 +82,4 @@ public class ChestShopBreakPrevention implements Listener {
             event.setCancelled(true);
         }
     }
-
 }

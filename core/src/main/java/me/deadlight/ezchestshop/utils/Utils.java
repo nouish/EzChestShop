@@ -5,12 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,8 +31,6 @@ import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -72,12 +70,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class Utils {
     public static List<Object> onlinePackets = new ArrayList<>();
-    public static List<String> rotations = Arrays.asList("up", "north", "east", "south", "west", "down");
+    public static final List<String> rotations = List.of("up", "north", "east", "south", "west", "down");
 
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
     public static ConcurrentHashMap<Integer, BlockOutline> activeOutlines = new ConcurrentHashMap<>(); //player uuid, list of outlines
     public static List<UUID> enabledOutlines = new ArrayList<>();
-    private static LanguageManager lm = new LanguageManager();
+    private static final LanguageManager lm = new LanguageManager();
 
     public static NmsHandle nmsHandle;
     public static DatabaseManager databaseManager;
@@ -953,28 +951,23 @@ public class Utils {
 
     public static EzShop isPartOfTheChestShop(Location location) {
         Block block = location.getBlock();
-        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
-            Chest chest = (Chest) block.getState();
-            if (chest.getInventory().getHolder() instanceof DoubleChest) {
-                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
-                Chest left = (Chest) doubleChest.getLeftSide();
-                Chest right = (Chest) doubleChest.getRightSide();
-                //check if either of the chests is a shop
-                if (ShopContainer.isShop(left.getLocation()) || ShopContainer.isShop(right.getLocation())) {
-                    //return the part that is a shop
-                    if (ShopContainer.isShop(left.getLocation())) {
-                        return ShopContainer.getShop(left.getLocation());
-                    } else {
-                        return ShopContainer.getShop(right.getLocation());
-                    }
-                }
+
+        if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) {
+            return null;
+        }
+
+        if (block.getState() instanceof Chest chest && chest.getInventory().getHolder(false) instanceof DoubleChest doubleChest) {
+            Chest left = (Chest) Objects.requireNonNull(doubleChest.getLeftSide(), "doubleChest.getLeftSide()");
+            EzShop leftShop = ShopContainer.getShop(left.getLocation());
+            if (leftShop != null) {
+                return leftShop;
             } else {
-                return null;
+                Chest right = (Chest) Objects.requireNonNull(doubleChest.getRightSide(), "doubleChest.getRightSide()");
+                return ShopContainer.getShop(right.getLocation());
             }
         }
         return null;
     }
-
 
     public static List<UUID> getAdminsForShop(EzShop shop) {
         List<UUID> admins = new ArrayList<>();
