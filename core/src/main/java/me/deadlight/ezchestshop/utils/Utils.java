@@ -58,7 +58,6 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -456,13 +455,9 @@ public final class Utils {
         for (ItemStack content : player.getInventory().getStorageContents()) {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
-            } else {
-                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
-
-                    int remaining = content.getMaxStackSize() - content.getAmount();
-                    emptySlots += remaining;
-
-                }
+            } else if (item.isSimilar(content) && !(content.getAmount() >= content.getMaxStackSize())) {
+                int remaining = content.getMaxStackSize() - content.getAmount();
+                emptySlots += remaining;
             }
         }
 
@@ -475,8 +470,7 @@ public final class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
-
+                if (item.isSimilar(content) && !(content.getAmount() >= content.getMaxStackSize())) {
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
                 }
@@ -495,8 +489,7 @@ public final class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
-
+                if (item.isSimilar(content) && !(content.getAmount() >= content.getMaxStackSize())) {
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
                 }
@@ -515,7 +508,7 @@ public final class Utils {
             if (item == null || item.getType() == Material.AIR) {
                 continue;
             }
-            if (isSimilar(item, mainItem)) {
+            if (mainItem.isSimilar(item)) {
                 amount += item.getAmount();
             }
 
@@ -529,8 +522,7 @@ public final class Utils {
             if (content == null || content.getType() == Material.AIR) {
                 emptySlots += item.getMaxStackSize();
             } else {
-                if (isSimilar(content, item) && !(content.getAmount() >= content.getMaxStackSize())) {
-
+                if (item.isSimilar(content) && !(content.getAmount() >= content.getMaxStackSize())) {
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
                 }
@@ -630,20 +622,23 @@ public final class Utils {
     }
 
     public static boolean containsAtLeast(Inventory inventory, ItemStack item, int amount) {
-        if (item.getType() == Material.FIREWORK_ROCKET) {
-            int count = 0;
-            for (ItemStack content : inventory.getStorageContents()) {
-                if (content == null || content.getType() == Material.AIR) {
-                    continue;
-                }
-                if (isSimilar(content, item)) {
-                    count += content.getAmount();
+        return countOf(inventory, item) >= amount;
+    }
+
+    private static int countOf(@NotNull Inventory inventory, @NotNull ItemStack target) {
+        int count = 0;
+        for (@Nullable ItemStack item : inventory.getContents()) {
+            if (item == null)
+                continue;
+            if (target.isSimilar(item)) {
+                try {
+                    count = Math.addExact(count, item.getAmount());
+                } catch (ArithmeticException ignored) {
+                    return Integer.MAX_VALUE;
                 }
             }
-            return count >= amount;
-        } else {
-            return inventory.containsAtLeast(item, amount);
         }
+        return count;
     }
 
     /*
@@ -659,7 +654,7 @@ public final class Utils {
         HashMap<Integer, ItemStack> leftover = new HashMap<>();
         for (int i = 0; i < stacks.length; i++) {
             ItemStack stack = stacks[i];
-            if (stack == null || stack.getType() == Material.AIR) {
+            if (stack.getType() == Material.AIR) {
                 continue;
             }
             if (stack.getType() == Material.FIREWORK_ROCKET) {
@@ -669,7 +664,7 @@ public final class Utils {
                     if (item == null || item.getType() == Material.AIR) {
                         continue;
                     }
-                    if (isSimilar(item, stack)) {
+                    if (item.isSimilar(stack)) {
                         int newAmount = item.getAmount() - amount;
                         if (newAmount > 0) {
                             item.setAmount(newAmount);
@@ -692,81 +687,6 @@ public final class Utils {
             }
         }
         return leftover;
-    }
-
-    public static boolean isSimilar(@Nullable ItemStack stack1, @Nullable ItemStack stack2) {
-        if (stack1 == null || stack2 == null) {
-            return false;
-        } else if (stack1 == stack2) {
-            return true;
-        } else {
-            if (stack1.getType() == Material.FIREWORK_ROCKET && stack2.getType() == Material.FIREWORK_ROCKET) {
-                FireworkMeta meta1 = (FireworkMeta) stack1.getItemMeta();
-                FireworkMeta meta2 = (FireworkMeta) stack2.getItemMeta();
-                if (meta1 != null && meta2 != null) {
-                    if (meta1.getEffects().size() != meta2.getEffects().size()) {
-                        return false;
-                    }
-                    if (meta1.getPower() != meta2.getPower()) {
-                        return false;
-                    }
-                    for (int i = 0; i < meta1.getEffects().size(); i++) {
-                        if (!meta1.getEffects().get(i).equals(meta2.getEffects().get(i))) {
-                            return false;
-                        }
-                    }
-                    if (meta1.hasDisplayName() != meta2.hasDisplayName()) {
-                        return false;
-                    } else if (meta1.hasDisplayName()) {
-                        if (!meta1.getDisplayName().equals(meta2.getDisplayName())) {
-                            return false;
-                        }
-                    }
-
-                    if (meta1.hasLore() != meta2.hasLore()) {
-                        return false;
-                    } else if (meta1.hasLore()) {
-                        if (!meta1.getLore().equals(meta2.getLore())) {
-                            return false;
-                        }
-                    }
-
-                    if (meta1.hasCustomModelData() != meta2.hasCustomModelData()) {
-                        return false;
-                    } else if (meta1.hasCustomModelData()) {
-                        if (meta1.getCustomModelData() != meta2.getCustomModelData()) {
-                            return false;
-                        }
-                    }
-
-                    if (meta1.hasEnchants() != meta2.hasEnchants()) {
-                        return false;
-                    } else if (meta1.hasEnchants()) {
-                        if (!meta1.getEnchants().equals(meta2.getEnchants())) {
-                            return false;
-                        }
-                    }
-
-                    if (!meta1.getItemFlags().equals(meta2.getItemFlags())) {
-                        return false;
-                    }
-                    if (meta1.getAttributeModifiers() != null) {
-                        if (!meta1.getAttributeModifiers().equals(meta2.getAttributeModifiers())) {
-                            return false;
-                        }
-                    } else if (meta2.getAttributeModifiers() != null) {
-                        return false;
-                    }
-
-                    if (meta1.isUnbreakable() != meta2.isUnbreakable()) {
-                        return false;
-                    }
-                }
-            } else if (!stack1.isSimilar(stack2)) {
-                return false;
-            }
-            return true;
-        }
     }
 
     public static OptionalInt tryParseInt(@Nullable String str) {
