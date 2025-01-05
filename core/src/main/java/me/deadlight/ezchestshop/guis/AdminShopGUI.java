@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.guis;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
@@ -103,7 +104,7 @@ public class AdminShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException ignored) {}
                 }
 
                 ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
@@ -157,7 +158,6 @@ public class AdminShopGUI {
 
                 Utils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
             } else if (key.startsWith("decorative-")) {
-
                 ContainerGuiItem decorativeItemStack = container.getItem(key).setName(Utils.colorify("&d"));
 
                 GuiItem buyItem = new GuiItem(decorativeItemStack.getItem(), event -> {
@@ -227,15 +227,16 @@ public class AdminShopGUI {
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                     SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
-                            .reopenIfFail(false).response((thatplayer, strings) -> {
+                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.getFirst())).reopenIfFail(false).response((thatplayer, strings) ->
+                            {
                                 try {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
+                                    OptionalInt optionalAmount = Utils.tryParseInt(strings[0]);
+                                    if (optionalAmount.isPresent()) {
+                                        int amount = optionalAmount.getAsInt();
+                                        if (amount < 1) {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
@@ -243,17 +244,13 @@ public class AdminShopGUI {
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
-
                                 } catch (Exception e) {
-
                                     return false;
                                 }
                                 return true;
                             });
                     menu.open(player);
                     player.sendMessage(lm.enterTheAmount());
-
-
                 } else if (event.isLeftClick()) {
                     //sell
                     if (disabledSell) {
@@ -263,15 +260,16 @@ public class AdminShopGUI {
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                     SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
-                            .reopenIfFail(false).response((thatplayer, strings) -> {
+                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1))).reopenIfFail(false).response((thatplayer, strings) ->
+                            {
                                 try {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
+                                    OptionalInt optionalAmount = Utils.tryParseInt(strings[0]);
+                                    if (optionalAmount.isPresent()) {
+                                        int amount = optionalAmount.getAsInt();
+                                        if (amount < 1) {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
@@ -287,11 +285,8 @@ public class AdminShopGUI {
                             });
                     menu.open(player);
                     player.sendMessage(lm.enterTheAmount());
-
-
                 }
             });
-
 
             if (Config.settings_custom_amout_transactions) {
                 //sign item
@@ -302,8 +297,8 @@ public class AdminShopGUI {
         gui.open(player);
     }
 
-    private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        if (disabling) {
+    private ItemStack disablingCheck(ItemStack mainItem, boolean disabled) {
+        if (disabled) {
             //disabled Item
             LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());

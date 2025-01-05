@@ -2,6 +2,7 @@ package me.deadlight.ezchestshop.guis;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
@@ -195,15 +196,16 @@ public class ServerShopGUI {
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                     SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.get(0)))
-                            .reopenIfFail(false).response((thatplayer, strings) -> {
+                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiBuy(possibleCounts.getFirst())).reopenIfFail(false).response((thatplayer, strings) ->
+                            {
                                 try {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
+                                    OptionalInt optionalAmount = Utils.tryParseInt(strings[0]);
+                                    if (optionalAmount.isPresent()) {
+                                        int amount = optionalAmount.getAsInt();
+                                        if (amount < 1) {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }
@@ -211,7 +213,6 @@ public class ServerShopGUI {
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
-
                                 } catch (Exception e) {
                                     return false;
                                 }
@@ -219,8 +220,6 @@ public class ServerShopGUI {
                             });
                     menu.open(player);
                     player.sendMessage(lm.enterTheAmount());
-
-
                 } else if (event.isLeftClick()) {
                     //sell
                     if (disabledSell) {
@@ -230,15 +229,16 @@ public class ServerShopGUI {
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
                     SignMenuFactory signMenuFactory = new SignMenuFactory(EzChestShop.getPlugin());
-                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1)))
-                            .reopenIfFail(false).response((thatplayer, strings) -> {
+                    SignMenuFactory.Menu menu = signMenuFactory.newMenu(lm.signEditorGuiSell(possibleCounts.get(1))).reopenIfFail(false).response((thatplayer, strings) ->
+                            {
                                 try {
                                     if (strings[0].equalsIgnoreCase("")) {
                                         return false;
                                     }
-                                    if (Utils.isInteger(strings[0])) {
-                                        int amount = Integer.parseInt(strings[0]);
-                                        if (!Utils.amountCheck(amount)) {
+                                    OptionalInt optionalAmount = Utils.tryParseInt(strings[0]);
+                                    if (optionalAmount.isPresent()) {
+                                        int amount = optionalAmount.getAsInt();
+                                        if (amount < 1) {
                                             player.sendMessage(lm.unsupportedInteger());
                                             return false;
                                         }

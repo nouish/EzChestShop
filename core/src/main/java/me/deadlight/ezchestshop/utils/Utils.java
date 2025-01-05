@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -68,7 +69,9 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Utils {
+public final class Utils {
+    private Utils() {}
+
     public static List<Object> onlinePackets = new ArrayList<>();
     public static final List<String> rotations = List.of("up", "north", "east", "south", "west", "down");
 
@@ -476,7 +479,6 @@ public class Utils {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
-
                 }
             }
         }
@@ -484,7 +486,6 @@ public class Utils {
     }
 
     public static int containerEmptyCount(ItemStack[] storageContents, ItemStack item) {
-
         if (storageContents == null) {
             return Integer.MAX_VALUE;
         }
@@ -498,7 +499,6 @@ public class Utils {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
-
                 }
             }
         }
@@ -506,7 +506,6 @@ public class Utils {
     }
 
     public static int howManyOfItemExists(ItemStack[] itemStacks, ItemStack mainItem) {
-
         if (itemStacks == null) {
             return Integer.MAX_VALUE;
         }
@@ -522,7 +521,6 @@ public class Utils {
 
         }
         return amount;
-
     }
 
     public static boolean containerHasEnoughSpace(Inventory container, int amount, ItemStack item) {
@@ -535,7 +533,6 @@ public class Utils {
 
                     int remaining = content.getMaxStackSize() - content.getAmount();
                     emptySlots += remaining;
-
                 }
             }
         }
@@ -543,28 +540,12 @@ public class Utils {
         return emptySlots >= amount;
     }
 
-    public static boolean amountCheck(int amount) {
-        if (amount == 0) {
-            return false;
-        }
-
-        if (amount < 0) {
-            return false;
-        }
-        return true;
-    }
-
     public static List<String> calculatePossibleAmount(OfflinePlayer offlineCustomer, OfflinePlayer offlineSeller,
                                                        ItemStack[] playerInventory, ItemStack[] storageInventory, double eachBuyPrice, double eachSellPrice,
                                                        ItemStack itemStack) {
-
         List<String> results = new ArrayList<>();
-
-        String buyCount = calculateBuyPossibleAmount(offlineCustomer, playerInventory, storageInventory, eachBuyPrice,
-                itemStack);
-        String sellCount = calculateSellPossibleAmount(offlineSeller, playerInventory, storageInventory, eachSellPrice,
-                itemStack);
-
+        String buyCount = calculateBuyPossibleAmount(offlineCustomer, playerInventory, storageInventory, eachBuyPrice, itemStack);
+        String sellCount = calculateSellPossibleAmount(offlineSeller, playerInventory, storageInventory, eachSellPrice, itemStack);
         results.add(buyCount);
         results.add(sellCount);
         return results;
@@ -620,9 +601,9 @@ public class Utils {
             buyerBalance = Double.MAX_VALUE;
         } else {
             if (hasPlayedBefore(offlinePlayer)) {
-                buyerBalance = Config.useXP ?
-                            XPEconomy.getXP(offlinePlayer) :
-                            EzChestShop.getEconomy().getBalance(offlinePlayer);
+                buyerBalance = Config.useXP
+                        ? XPEconomy.getXP(offlinePlayer)
+                        : EzChestShop.getEconomy().getBalance(offlinePlayer);
             } else {
                 buyerBalance = 0;
             }
@@ -788,29 +769,29 @@ public class Utils {
         }
     }
 
-    public static boolean isInteger(String str) {
+    public static OptionalInt tryParseInt(@Nullable String str) {
         try {
-            int num = Integer.parseInt(str);
-            return true;
-        } catch (Exception e) {
-            return false;
+            // Integer.parseInt(String) will throw NumberFormatException for null.
+            //noinspection DataFlowIssue
+            int value = Integer.parseInt(str);
+            return OptionalInt.of(value);
+        } catch (NumberFormatException ignored) {
+            return OptionalInt.empty();
         }
     }
 
     public static String getNextRotation(String current) {
         if (current == null)
             current = Config.settings_defaults_rotation;
-        int i = rotations.indexOf(current);
-        String result = i == rotations.size() - 1 ? rotations.get(0) : rotations.get(i + 1);
-        return result;
+        int index = rotations.indexOf(current);
+        return index == rotations.size() - 1 ? rotations.getFirst() : rotations.get(index + 1);
     }
 
     public static String getPreviousRotation(String current) {
         if (current == null)
             current = Config.settings_defaults_rotation;
-        int i = rotations.indexOf(current);
-        String result = i == 0 ? rotations.get(rotations.size() - 1) : rotations.get(i - 1);
-        return result;
+        int index = rotations.indexOf(current);
+        return index == 0 ? rotations.getLast() : rotations.get(index - 1);
     }
 
     /**
@@ -1079,5 +1060,4 @@ public class Utils {
         container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, shop.getSettings().getRotation());
         return true;
     }
-
 }
