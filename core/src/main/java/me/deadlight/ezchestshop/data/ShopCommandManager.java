@@ -42,9 +42,9 @@ public class ShopCommandManager {
         OPEN
     }
 
-    private List<ShopAction> actionsWithOption = Arrays.asList(ShopAction.BUY, ShopAction.SELL);
-    private List<ShopCommandEntry> shopCommandEntries;
-    private HashMap<Location, ShopCommandsAtLocation> shopCommandEntryHashMap = new HashMap<>();
+    private final List<ShopAction> actionsWithOption = Arrays.asList(ShopAction.BUY, ShopAction.SELL);
+    private final List<ShopCommandEntry> shopCommandEntries = new ArrayList<>();
+    private final HashMap<Location, ShopCommandsAtLocation> shopCommandEntryHashMap = new HashMap<>();
 
     /**
      * Runs all commands at a specific shop & location.
@@ -127,7 +127,7 @@ public class ShopCommandManager {
     }
 
     private void loadConfigCommands() {
-        shopCommandEntries = new ArrayList<>();
+        shopCommandEntries.clear();
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
         for (ShopType type : ShopType.values()) {
             for (ShopAction action: ShopAction.values()) {
@@ -493,12 +493,12 @@ public class ShopCommandManager {
 
     public void removeCommand(Player player, Location location, ShopAction action, String option, int index) {
         ShopCommandManager.ShopCommandsAtLocation cmds = getCommandsOfShop(location);
-        cmds.getEntry(action, option).commands.remove(index);
-        if (cmds.getEntry(action, option).commands.size() == 0) {
-            cmds.getEntry(action, option).commands = null;
+        ShopCommandEntry entry = cmds.getEntry(action, option);
+        entry.commands.remove(index);
+        if (entry.commands.isEmpty()) {
+            entry.commands = null;
         }
         setCommandsOfShop(location, cmds);
-
         showCommandEditor(player, location, action, option);
     }
 
