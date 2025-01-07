@@ -246,36 +246,20 @@ public class BlockBoundHologram {
      * @return The location for the hologram to be displayed at.
      */
     public Location getHoloLoc(Block containerBlock) {
-        Location holoLoc;
         Inventory inventory = Utils.getBlockInventory(containerBlock);
-
         // get the rotation via memory as it updates faster
         String rotation = ShopContainer.getShop(containerBlock.getLocation()).getSettings().getRotation();
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
 
         // Add rotation checks
-        switch (rotation) {
-            case "north":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
-                break;
-            case "east":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
-                break;
-            case "south":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
-                break;
-            case "west":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
-                break;
-            case "down":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -0.75, 0));
-                break;
-            default:
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
-                break;
-        }
-
-        return holoLoc;
+        return switch (rotation) {
+            case "north" -> getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
+            case "east" -> getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
+            case "south" -> getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
+            case "west" -> getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
+            case "down" -> getCentralLocation(containerBlock, inventory, new Vector(0, -0.75, 0));
+            default -> getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+        };
     }
 
     /**
@@ -295,8 +279,10 @@ public class BlockBoundHologram {
             Chest leftchest = (Chest) doubleChest.getLeftSide();
             Chest rightchest = (Chest) doubleChest.getRightSide();
             // Get the center of the double chest
-            holoLoc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D)
-                    .add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5);
+            holoLoc = leftchest.getLocation().clone()
+                    .add(0.5D, 0, 0.5D)
+                    .add(rightchest.getLocation().add(0.5D, 0, 0.5D))
+                    .multiply(0.5);
             if (direction.getY() == 0) {
                 // if the direction is not up or down, we may need to offset the hologram a bit more.
                 Location lloc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D);
@@ -316,7 +302,6 @@ public class BlockBoundHologram {
             } else {
                 holoLoc.add(direction);
             }
-
         } else {
             holoLoc = containerBlock.getLocation().clone().add(0.5D, 0, 0.5D).add(direction);
         }
@@ -330,21 +315,17 @@ public class BlockBoundHologram {
      * @return The shop container location. If not found, the location of the block.
      */
     public static Location getShopChestLocation(@NotNull Block target) {
-        if (target.getState() instanceof Container) {
-            Container container = (Container) target.getState();
+        if (target.getState() instanceof Container container
+                && container.getInventory().getHolder() instanceof DoubleChest doubleChest) {
+            Chest leftChest = (Chest) doubleChest.getLeftSide();
+            Chest rightChest = (Chest) doubleChest.getRightSide();
 
-            if (container.getInventory().getHolder() instanceof DoubleChest) {
-                DoubleChest doubleChest = (DoubleChest) container.getInventory().getHolder();
-                Chest leftChest = (Chest) doubleChest.getLeftSide();
-                Chest rightChest = (Chest) doubleChest.getRightSide();
+            if (leftChest != null && leftChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                return leftChest.getLocation();
+            }
 
-                if (leftChest != null && leftChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
-                    return leftChest.getLocation();
-                }
-
-                if (rightChest != null && rightChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
-                    return rightChest.getLocation();
-                }
+            if (rightChest != null && rightChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                return rightChest.getLocation();
             }
         }
         return target.getLocation();
@@ -369,36 +350,28 @@ public class BlockBoundHologram {
         String itemData = "";
         if (Tag.SHULKER_BOXES.isTagged(item.getType())) {
             // Get the shulker box inventory
-            if (item.getItemMeta() instanceof BlockStateMeta) {
-                BlockStateMeta shulkerBlockStateMeta = (BlockStateMeta)item.getItemMeta();
-                if (shulkerBlockStateMeta.getBlockState() instanceof ShulkerBox) {
-                    ShulkerBox shulker = (ShulkerBox) shulkerBlockStateMeta.getBlockState();
-                    Inventory inv = Bukkit.createInventory(null, 27, "Shulker Box");
-                    inv.setContents(shulker.getInventory().getContents());
+            if (item.getItemMeta() instanceof BlockStateMeta shulkerBlockStateMeta
+                    && shulkerBlockStateMeta.getBlockState() instanceof ShulkerBox shulker) {
+                Inventory inv = Bukkit.createInventory(null, 27, "Shulker Box");
+                inv.setContents(shulker.getInventory().getContents());
 
-                    // Collect all the item counts into a map and sort them by count
-                    Map<String, Integer> itemCounts = new HashMap<>();
-                    for (ItemStack itemStack : inv.getContents()) {
-                        if (itemStack != null) {
-                            String itemName = Utils.getFinalItemName(itemStack);
-                            if (itemCounts.containsKey(itemName)) {
-                                itemCounts.put(itemName, itemCounts.get(itemName) + itemStack.getAmount());
-                            } else {
-                                itemCounts.put(itemName, itemStack.getAmount());
-                            }
-                        }
+                // Collect all the item counts into a map and sort them by count
+                Map<String, Integer> itemCounts = new HashMap<>();
+                for (ItemStack itemStack : inv.getContents()) {
+                    if (itemStack != null) {
+                        itemCounts.merge(Utils.getFinalItemName(itemStack), itemStack.getAmount(), Math::addExact);
                     }
-                    List<Map.Entry<String, Integer>> sortedItems = new ArrayList<>(itemCounts.entrySet());
-                    sortedItems.sort(Map.Entry.comparingByValue());
-                    Collections.reverse(sortedItems);
+                }
+                List<Map.Entry<String, Integer>> sortedItems = new ArrayList<>(itemCounts.entrySet());
+                sortedItems.sort(Map.Entry.comparingByValue());
+                Collections.reverse(sortedItems);
 
-                    if (lineNum == -1 && sortedItems.size() - lines > 0) {
-                        itemData = lm.shulkerboxItemHologramMore(sortedItems.size() - lines);
-                    } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedItems.size()) {
-                        itemData = lm.shulkerboxItemHologram(sortedItems.get(lineNum - 1).getKey(), sortedItems.get(lineNum - 1).getValue());
-                    } else {
-                        itemData = "";
-                    }
+                if (lineNum == -1 && sortedItems.size() - lines > 0) {
+                    itemData = lm.shulkerboxItemHologramMore(sortedItems.size() - lines);
+                } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedItems.size()) {
+                    itemData = lm.shulkerboxItemHologram(sortedItems.get(lineNum - 1).getKey(), sortedItems.get(lineNum - 1).getValue());
+                } else {
+                    itemData = "";
                 }
             }
         } else if (item.getType() == Material.ENCHANTED_BOOK) {
@@ -412,8 +385,7 @@ public class BlockBoundHologram {
             if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
                 itemData = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
             } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
-                itemData = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(),
-                        sortedEnchants.get(lineNum - 1).getValue());
+                itemData = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(), sortedEnchants.get(lineNum - 1).getValue());
             } else {
                 itemData = "";
             }
@@ -427,8 +399,7 @@ public class BlockBoundHologram {
             if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
                 itemData = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
             } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
-                itemData = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(),
-                        sortedEnchants.get(lineNum - 1).getValue());
+                itemData = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(), sortedEnchants.get(lineNum - 1).getValue());
             } else {
                 itemData = "";
             }
