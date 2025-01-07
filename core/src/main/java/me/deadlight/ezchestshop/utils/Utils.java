@@ -249,6 +249,8 @@ public final class Utils {
         }
     }
 
+    // Suppressed deprecation; new alternative API is not available in MC 1.21/1.21.1.
+    @SuppressWarnings({"removal", "deprecation"})
     public static String getFinalItemName(ItemStack item) {
         String itemname;
         if (item.hasItemMeta()) {
