@@ -46,7 +46,6 @@ import me.deadlight.ezchestshop.version.BuildInfo;
 import me.deadlight.ezchestshop.version.GitHubUtil;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
-import net.kyori.adventure.translation.Translator;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -69,7 +68,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public final class EzChestShop extends JavaPlugin {
-    private static Economy econ = null;
+    private static Economy economy = null;
     public static boolean economyPluginFound = true;
 
     public static boolean slimefun = false;
@@ -305,7 +304,7 @@ public final class EzChestShop extends JavaPlugin {
             Map<String, Map<String, Integer>> result = new HashMap<>();
             Map<String, Integer> entry = new HashMap<>();
             if (economyPluginFound) {
-                entry.put(econ.getName(), 1);
+                entry.put(economy.getName(), 1);
                 result.put("Vault", entry);
             } else {
                 entry.put("XP", 1);
@@ -319,9 +318,9 @@ public final class EzChestShop extends JavaPlugin {
             Map<String, Map<String, Integer>> result = new HashMap<>();
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                String localeString = player.getLocale().toLowerCase(Locale.ROOT);
-                Locale locale = Translator.parseLocale(localeString);
-                String language = locale != null ? locale.getDisplayLanguage(Locale.ENGLISH) : "<Unknown>";
+                Locale locale = player.locale();
+                String localeString = locale.toString().toLowerCase(Locale.ROOT);
+                String language = locale.getDisplayLanguage(Locale.ENGLISH);
                 Map<String, Integer> entry = result.computeIfAbsent(language, ignored -> new HashMap<>());
                 entry.merge(localeString, 1, Integer::sum);
             }
@@ -488,12 +487,12 @@ public final class EzChestShop extends JavaPlugin {
         if (rsp == null) {
             return false;
         }
-        econ = rsp.getProvider();
-        return econ != null;
+        economy = rsp.getProvider();
+        return true;
     }
 
     public static Economy getEconomy() {
-        return econ;
+        return economy;
     }
 
     public DatabaseManager getDatabase() {
