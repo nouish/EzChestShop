@@ -65,6 +65,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+
 public final class EzChestShop extends JavaPlugin {
     private static Economy econ = null;
     public static boolean economyPluginFound = true;
@@ -141,7 +144,7 @@ public final class EzChestShop extends JavaPlugin {
 
         if (minecraftVersion == null) {
             OptionalInt dataVersion = VersionUtil.getDataVersion();
-            String dataVersionInfo = dataVersion.isPresent() ? String.valueOf(dataVersion.getAsInt()) : "Unknown";
+            String dataVersionInfo = dataVersion.isPresent() ? Integer.toString(dataVersion.getAsInt()) : "<Unknown>";
             logger().error("Unsupported version: {} (Data version: {})", Bukkit.getVersion(), dataVersionInfo);
             logger().error("Supported versions: {}", VersionUtil.getSupportedVersions());
             logger().error("The server will continue to load, but EzChestShop will be disabled. "
@@ -175,8 +178,8 @@ public final class EzChestShop extends JavaPlugin {
         economyPluginFound = setupEconomy();
         if (!economyPluginFound) {
             Config.useXP = true;
-            logger().warn("Cannot find vault or economy plugin. Switching to XP based economy... Please note that you need vault and at least one economy plugin installed to use a money based system.");
-            logger().warn("This fallback feature (XP based economy) will be removed in future versions of EzChestShopReborn!");
+            logger().warn("*** Cannot find vault or economy plugin. Switching to XP based economy... Please note that you need vault and at least one economy plugin installed to use a money based system.");
+            getComponentLogger().warn(text("*** This fallback feature (XP based economy) will be removed in future versions of EzChestShopReborn!", RED));
         }
 
         LanguageManager.loadLanguages();
