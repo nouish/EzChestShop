@@ -41,6 +41,8 @@ public class ContainerGuiItem {
         } else {
             item = new ItemStack(Material.AIR);
         }
+
+        ItemMeta meta = item.getItemMeta();
         if (item.getType() != Material.AIR) {
             int amount = 1;
             if (config.contains(path + ".count")) {
@@ -51,9 +53,7 @@ public class ContainerGuiItem {
             item.setAmount(amount);
             if (config.contains(path + ".enchanted") && config.getBoolean(path + ".enchanted")) {
                 item.addUnsafeEnchantment(Enchantment.LURE, 1);
-                ItemMeta meta = item.getItemMeta();
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                item.setItemMeta(meta);
             }
         }
 
@@ -71,6 +71,11 @@ public class ContainerGuiItem {
             column = Math.min(Math.max(column, 1), 9);
         }
 
+        if (config.contains(path + ".custom-model-data")) {
+            meta.setCustomModelData(config.getInt(path + ".custom-model-data"));
+        }
+
+        item.setItemMeta(meta);
         return new ContainerGuiItem(path.split("\\.")[path.split("\\.").length - 1],
                 item, row, column);
     }
