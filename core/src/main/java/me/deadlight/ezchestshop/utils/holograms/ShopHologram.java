@@ -349,11 +349,15 @@ public class ShopHologram {
     }
 
     public void setItemDataVisible(boolean visible) {
-        PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
-        int lines = (int) playerHolo.getBlockHologram().getContents().stream()
+        PlayerBlockBoundHologram hologram = blockHolo.getPlayerHologram(player);
+        int lines = (int) hologram.getBlockHologram().getContents().stream()
                 .filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest"))
                 .count();
         shop = ShopContainer.getShop(location);
+        if (shop == null) {
+            // Just in case the shop was deleted while someone else was inspecting it.
+            return;
+        }
         for (int i = -1; i < lines; i++) {
             ItemStack item = shop.getShopItem();
             if (Tag.SHULKER_BOXES.isTagged(item.getType())
@@ -361,10 +365,10 @@ public class ShopHologram {
                     || (item.getType() == Material.ENCHANTED_BOOK
                     && ((EnchantmentStorageMeta) item.getItemMeta()).getStoredEnchants().size() > 1)) {
                 if (i == -1) {
-                    playerHolo.updateTextReplacement("<itemdataRest/>", visible ?
+                    hologram.updateTextReplacement("<itemdataRest/>", visible ?
                             BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
                 } else {
-                    playerHolo.updateTextReplacement("<itemdata" + (i + 1) + "/>", visible ?
+                    hologram.updateTextReplacement("<itemdata" + (i + 1) + "/>", visible ?
                             BlockBoundHologram.getHologramItemData(i, item, lines) : "", false, true);
                 }
             }

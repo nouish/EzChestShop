@@ -3,7 +3,7 @@ package me.deadlight.ezchestshop.listeners;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -37,7 +37,7 @@ import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerCloseToChestListener implements Listener {
-    private final Map<Player, ShopHologram> inspectedShops = new HashMap<>();
+    private final Map<UUID, ShopHologram> inspectedShops = new HashMap<>();
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
@@ -108,7 +108,7 @@ public class PlayerCloseToChestListener implements Listener {
                 .filter(ezShop -> ezShop.getLocation() != null
                         && loc.getWorld().equals(ezShop.getLocation().getWorld())
                         && loc.distance(ezShop.getLocation()) < Config.holodistancing_distance + 5)
-                .collect(Collectors.toList());
+                .toList();
         for (EzShop ezShop : shops) {
             if (EzChestShop.slimefun) {
                 if (BlockStorage.hasBlockInfo(ezShop.getLocation())) {
@@ -123,7 +123,7 @@ public class PlayerCloseToChestListener implements Listener {
                     continue;
 
                 Block target = ezShop.getLocation().getWorld().getBlockAt(ezShop.getLocation());
-                if (target == null || !Utils.isApplicableContainer(target)) {
+                if (!Utils.isApplicableContainer(target)) {
                     return;
                 }
                 ShopHologram shopHolo = ShopHologram.getHologram(ezShop.getLocation(), player);
@@ -138,8 +138,9 @@ public class PlayerCloseToChestListener implements Listener {
             // Hide the Hologram that is too far away from the player
             else if (dist > Config.holodistancing_distance + 1 && dist < Config.holodistancing_distance + 3) {
                 // Hide the Hologram
-                if (ShopHologram.hasHologram(ezShop.getLocation(), player)) {
-                    ShopHologram.getHologram(ezShop.getLocation(), player).hide();
+                ShopHologram hologram = ShopHologram.getHologram(ezShop.getLocation(), player);
+                if (hologram != null) {
+                    hologram.hide();
                 }
             }
         }
@@ -147,14 +148,12 @@ public class PlayerCloseToChestListener implements Listener {
 
     @EventHandler
     public void onPlayerLogout(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        ShopHologram.hideAll(player);
+        ShopHologram.hideAll(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        Player player = event.getPlayer();
-        ShopHologram.hideAll(player);
+        ShopHologram.hideAll(event.getPlayer());
     }
 
     @EventHandler
@@ -166,8 +165,13 @@ public class PlayerCloseToChestListener implements Listener {
         } else if (!Config.holodistancing_show_item_first) {
             // When holodistancing_show_item_first is off, the shop needs to be queried separately.
             // It's less reactive but it works.
-            if (!event.isSneaking() && inspectedShops.containsKey(player)) {
-                inspectedShops.get(player).setItemDataVisible(false);
+            if (!event.isSneaking() && inspectedShops.containsKey(player.getUniqueId())) {
+                ShopHologram hologram = inspectedShops.get(player.getUniqueId());
+                if (hologram != null) {
+                    hologram.setItemDataVisible(false);
+                    inspectedShops.remove(player.getUniqueId());
+                    return;
+                }
             }
             RayTraceResult result = player.rayTraceBlocks(5);
             if (result == null)
@@ -177,10 +181,10 @@ public class PlayerCloseToChestListener implements Listener {
                 return;
             Location loc = block.getLocation();
             if (ShopContainer.isShop(loc)) {
-                ShopHologram shopHolo = ShopHologram.getHologram(loc, player);
+                ShopHologram hologram = ShopHologram.getHologram(loc, player);
                 if (event.isSneaking()) {
-                    shopHolo.setItemDataVisible(true);
-                    inspectedShops.put(player, shopHolo);
+                    hologram.setItemDataVisible(true);
+                    inspectedShops.put(player.getUniqueId(), hologram);
                 }
             }
         }
@@ -233,18 +237,6 @@ public class PlayerCloseToChestListener implements Listener {
         });
     }
 
-    //TODO, breaking blocks doesn't update the hologram, in fact the hologram gets hidden and the shop needs to be reopened to show the hologram again at all.
-    // this is because the shop gets removed in BlockBreakListener.
-//    @EventHandler
-//    public void onShopCapacityChange(BlockBreakEvent event) {
-//        if (!event.isCancelled() && (event.getBlock().getType() == Material.CHEST || event.getBlock().getType() == Material.TRAPPED_CHEST)) {
-//            Location location = BlockBoundHologram.getShopChestLocation(event.getBlock());
-//            if (ShopContainer.isShop(location)) {
-//                EzChestShop.getScheduler().runTaskLater(EzChestShop.getPlugin(), () -> ShopHologram.updateInventoryReplacements(location), 1);
-//            }
-//        }
-//    }
-
     @EventHandler
     public void onShopTransactionCapacityChange(PlayerTransactEvent event) {
         Location location = event.getContainerBlock().getLocation();
@@ -271,5 +263,4 @@ public class PlayerCloseToChestListener implements Listener {
                 || (Math.abs(from.getY() - to.getY()) >= 0.001)
                 || (Math.abs(from.getZ() - to.getZ()) >= 0.001);
     }
-
 }
