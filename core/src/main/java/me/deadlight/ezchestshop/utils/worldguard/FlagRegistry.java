@@ -1,12 +1,11 @@
 package me.deadlight.ezchestshop.utils.worldguard;
 
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.flags.BooleanFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import me.deadlight.ezchestshop.EzChestShop;
 
-public class FlagRegistry {
+public final class FlagRegistry {
 
     // All the flags:
 
@@ -30,9 +29,9 @@ public class FlagRegistry {
     // register a Boolean based flag:
     private static StateFlag registerStateFlag(String name, boolean def) {
         com.sk89q.worldguard.protection.flags.registry.FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-        Flag<?> existing = registry.get(name);
-        if (existing != null) {
-            return (StateFlag) existing;
+
+        if (registry.get(name) instanceof StateFlag flag) {
+            return flag;
         }
 
         try {
@@ -40,12 +39,20 @@ public class FlagRegistry {
             registry.register(flag);
             return flag;
         } catch (FlagConflictException e) {
-            Flag<?> existing2 = registry.get(name);
-            if (existing2 instanceof BooleanFlag) {
-                return (StateFlag) existing2;
+            // Logging to help gather information regarding this bug: https://github.com/nouish/EzChestShop/issues/50
+
+            // I suspect there probably is no good reason to repeat this now...
+            // But this is the previous implementation, so I'll keep it.
+            if (registry.get(name) instanceof StateFlag flag) {
+                EzChestShop.logger().warn("Conflict creating flag '{}', but found cached match.", name, e);
+                return flag;
             }
+
+            EzChestShop.logger().warn("Conflict creating flag '{}'", name, e);
         }
-        //This will never run as there's a try catch above.
+
+        // This will never run as there's a try catch above.
+        // TODO: Should probably throw some kind of exception instead of silent failure.
         return null;
     }
 }
