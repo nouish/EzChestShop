@@ -96,10 +96,12 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        // Adds Custom Flags to WorldGuard!
+        // Custom WorldGuard flags must be registered before the plugin is enabled.
+        // To achieve this, we create them during onLoad().
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            worldguard = true;
             FlagRegistry.onLoad();
+            worldguard = true;
+            logger().info("WorldGuard integration enabled.");
         }
 
         migrateDataToFork();
