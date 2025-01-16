@@ -26,13 +26,9 @@ public final class FlagRegistry {
     }
 
 
-    // register a Boolean based flag:
+    // https://worldguard.enginehub.org/en/latest/developer/regions/custom-flags/
     private static StateFlag registerStateFlag(String name, boolean def) {
-        com.sk89q.worldguard.protection.flags.registry.FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-
-        if (registry.get(name) instanceof StateFlag flag) {
-            return flag;
-        }
+        var registry = WorldGuard.getInstance().getFlagRegistry();
 
         try {
             StateFlag flag = new StateFlag(name, def);
