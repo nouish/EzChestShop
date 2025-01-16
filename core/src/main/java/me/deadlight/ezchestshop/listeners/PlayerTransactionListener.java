@@ -24,9 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerTransactionListener implements Listener {
-
-    LanguageManager lm = new LanguageManager();
-
     static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     @EventHandler
@@ -43,8 +40,8 @@ public class PlayerTransactionListener implements Listener {
                     Player admin = Bukkit.getPlayer(adminUUID);
                     if (admin != null) {
                         if (admin.isOnline()) {
-                            admin.getPlayer().sendMessage(lm.transactionBuyInform(event.getCustomer().getName(), event.getCount(),
-                                    event.getItemName(), event.getPrice()));
+                            admin.getPlayer().sendMessage(LanguageManager.getInstance().transactionBuyInform(event.getCustomer().getName(),
+                                    event.getCount(), event.getItemName(), event.getPrice()));
                         }
                     }
                 }
@@ -54,8 +51,8 @@ public class PlayerTransactionListener implements Listener {
                     if (admin != null) {
                         if (admin.isOnline()) {
                             if (admin.isOnline()) {
-                                admin.getPlayer().sendMessage(lm.transactionSellInform(event.getCustomer().getName(), event.getCount(),
-                                        event.getItemName(), event.getPrice()));
+                                admin.getPlayer().sendMessage(LanguageManager.getInstance().transactionSellInform(
+                                        event.getCustomer().getName(), event.getCount(), event.getItemName(), event.getPrice()));
                             }
                         }
                     }

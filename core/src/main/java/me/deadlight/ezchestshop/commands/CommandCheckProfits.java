@@ -23,12 +23,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class CommandCheckProfits implements CommandExecutor, Listener, TabCompleter {
 
-    public static LanguageManager lm = new LanguageManager();
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player p) {
             if (!p.hasPermission("ecs.checkprofits"))
                 return false;
 
@@ -75,17 +72,17 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                             return x.getSellPrice();
                     }).sum();
                 }
-                p.spigot().sendMessage(lm.checkProfitsLandingpage(p, buyCost, buyAmount, sellCost, sellAmount));
+                p.spigot().sendMessage(LanguageManager.getInstance().checkProfitsLandingpage(p, buyCost, buyAmount, sellCost, sellAmount));
             } else if (args.length == 1) {
                 if (args[0].equals("clear")) {
                     // Send message that asks to confirm
-                    p.spigot().sendMessage(lm.confirmProfitClear());
+                    p.spigot().sendMessage(LanguageManager.getInstance().confirmProfitClear());
                 }
             } else if (args.length == 2) {
                 if (args[0].equals("clear") && args[1].equals("-confirm")) {
                     // Clear data & send cleared message
                     pc.clearProfits();
-                    p.sendMessage(lm.confirmProfitClearSuccess());
+                    p.sendMessage(LanguageManager.getInstance().confirmProfitClearSuccess());
                 } else if (args[0].equals("p")) {
                     // ShopChest sc = ShopChest.getInstance();
                     int page;
@@ -102,10 +99,10 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                     int pages = (int) Math.floor(checkprofits.size() / 4.0)
                             + ((checkprofits.size() % Config.command_checkprofit_lines_pp == 0) ? 0 : 1);// add 1 if not divideable by 4
                     if (page > pages || page < 1) {
-                        p.sendMessage(lm.wrongInput());
+                        p.sendMessage(LanguageManager.getInstance().wrongInput());
                         return false;
                     }
-                    p.spigot().sendMessage(lm.checkProfitsDetailpage(p, checkprofits, page, pages));
+                    p.spigot().sendMessage(LanguageManager.getInstance().checkProfitsDetailpage(p, checkprofits, page, pages));
                 }
             }
         }
@@ -125,7 +122,7 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
             return;
         else if (checkprofits.getFirst().getItem() == null)
             return;
-        EzChestShop.getScheduler().runTaskLater(() -> p.spigot().sendMessage(lm.joinProfitNotification()), 4L);
+        EzChestShop.getScheduler().runTaskLater(() -> p.spigot().sendMessage(LanguageManager.getInstance().joinProfitNotification()), 4L);
     }
 
     @Override

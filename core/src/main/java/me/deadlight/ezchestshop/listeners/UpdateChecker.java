@@ -30,8 +30,6 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class UpdateChecker implements Listener {
 
-    LanguageManager lm = new LanguageManager();
-
     private static boolean isGuiUpdateAvailable;
 
     private static final HashMap<GuiData.GuiType, List<List<String>>> overlappingItems = new HashMap<>();
@@ -44,10 +42,10 @@ public class UpdateChecker implements Listener {
         if (player.isOp()) {
             if (isGuiUpdateAvailable) {
                 if (Config.notify_overflowing_gui_items && !requiredOverflowRows.isEmpty()) {
-                    EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(lm.overflowingGuiItemsNotification(requiredOverflowRows)), 10L);
+                    EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(LanguageManager.getInstance().overflowingGuiItemsNotification(requiredOverflowRows)), 10L);
                 }
                 if (Config.notify_overlapping_gui_items && !overlappingItems.isEmpty()) {
-                    EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(lm.overlappingItemsNotification(overlappingItems)), 10L);
+                    EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(LanguageManager.getInstance().overlappingItemsNotification(overlappingItems)), 10L);
                 }
             }
         }

@@ -28,10 +28,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class CustomMessageManageGUI {
 
-    LanguageManager lm = new LanguageManager();
-
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
-
+        LanguageManager lm = LanguageManager.getInstance();
         ContainerGui container = GuiData.getMessageManager();
         PaginatedGui paginatedGui = Gui.paginated()
                 .title(Component.text(lm.customMessageManagerTitle()))
@@ -130,6 +128,7 @@ public class CustomMessageManageGUI {
     }
 
     private void showDeleteConfirm(Player player, Block containerBlock, boolean isAdmin, Location loc) {
+        LanguageManager lm = LanguageManager.getInstance();
         Gui gui = new Gui(3, lm.customMessageManagerConfirmDeleteGuiTitle());
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
@@ -155,10 +154,10 @@ public class CustomMessageManageGUI {
         gui.setItem(2, 5, confirmItem);
 
         ItemStack back = new ItemStack(Material.DARK_OAK_DOOR, 1);
-        ItemMeta backMeta = back.getItemMeta();
-        backMeta.setDisplayName(lm.customMessageManagerBackToCustomMessageManagerTitle());
-        backMeta.setLore(lm.customMessageManagerBackToCustomMessageManagerLore());
-        back.setItemMeta(backMeta);
+        back.editMeta(backMeta -> {
+            backMeta.setDisplayName(lm.customMessageManagerBackToCustomMessageManagerTitle());
+            backMeta.setLore(lm.customMessageManagerBackToCustomMessageManagerLore());
+        });
         GuiItem backItem = new GuiItem(back, event -> {
             event.setCancelled(true);
             showGUI(player, containerBlock, isAdmin);

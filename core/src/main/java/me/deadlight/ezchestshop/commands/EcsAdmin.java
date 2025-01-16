@@ -62,18 +62,9 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class EcsAdmin implements CommandExecutor, TabCompleter {
-
-    public static LanguageManager lm = new LanguageManager();
-
-    public static void updateLM(LanguageManager languageManager) {
-        EcsAdmin.lm = languageManager;
-    }
-
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             int size = args.length;
 
             if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.remove") ||
@@ -88,7 +79,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         if (target != null) {
                             removeShop(player, args, target);
                         } else {
-                            player.sendMessage(lm.lookAtChest());
+                            player.sendMessage(LanguageManager.getInstance().lookAtChest());
                         }
                     } else if (firstarg.equalsIgnoreCase("reload") && (player.hasPermission("ecs.admin.reload") || player.hasPermission("ecs.admin"))) {
                         reload();
@@ -105,13 +96,13 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                         e.printStackTrace();
                                     }
                                 } else {
-                                    player.sendMessage(lm.negativePrice());
+                                    player.sendMessage(LanguageManager.getInstance().negativePrice());
                                 }
                             } else {
-                                player.sendMessage(lm.notenoughARGS());
+                                player.sendMessage(LanguageManager.getInstance().notenoughARGS());
                             }
                         } else {
-                            player.sendMessage(lm.lookAtChest());
+                            player.sendMessage(LanguageManager.getInstance().lookAtChest());
                         }
                     } else if (firstarg.equalsIgnoreCase("transfer-ownership") && (player.hasPermission("ecs.admin.transfer") || player.hasPermission("ecs.admin"))) {
                         Block target = getCorrectBlock(player.getTargetBlockExact(6));
@@ -121,24 +112,23 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             if (op != null && op.hasPlayedBefore()) {
                                 BlockState blockState = getLookedAtBlockState(player, true, false, target);
                                 if (blockState != null) {
-                                    player.spigot().sendMessage(lm.shopTransferConfirm(args[1], true)); // Confirmation message similar to the clearprofit message.
+                                    player.spigot().sendMessage(LanguageManager.getInstance().shopTransferConfirm(args[1], true)); // Confirmation message similar to the clearprofit message.
                                 }
                             } else {
-                                player.sendMessage(lm.noPlayer());
+                                player.sendMessage(LanguageManager.getInstance().noPlayer());
                             }
                         } else if (size == 3 && args[2].equals("-confirm")) {
                             OfflinePlayer op = Bukkit.getOfflinePlayer(args[1]);
 
                             if (op != null && op.hasPlayedBefore()) {
-
                                 BlockState blockState = getLookedAtBlockState(player, true, false, target);
                                 if (blockState != null) {
                                     ShopContainer.transferOwner(blockState, op);
                                     ShopHologram.getHologram(blockState.getLocation(), player).updateOwner();
-                                    player.sendMessage(lm.shopTransferred(args[1]));
+                                    player.sendMessage(LanguageManager.getInstance().shopTransferred(args[1]));
                                 }
                             } else {
-                                player.sendMessage(lm.noPlayer());
+                                player.sendMessage(LanguageManager.getInstance().noPlayer());
                             }
                         } else {
                             sendHelp(player);
@@ -157,10 +147,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 if (shop != null) {
                                     Config.shopCommandManager.showActionEditor(player, shop.getLocation());
                                 } else {
-                                    player.sendMessage(lm.notAChestOrChestShop());
+                                    player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                                 }
                             } else {
-                                player.sendMessage(lm.lookAtChest());
+                                player.sendMessage(LanguageManager.getInstance().lookAtChest());
                             }
                         } else {
                             if (args[1].startsWith("W:")) {
@@ -317,7 +307,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
 
     private void sendHelp(Player player) {
-        player.spigot().sendMessage(lm.cmdadminHelp());
+        player.spigot().sendMessage(LanguageManager.getInstance().cmdadminHelp());
     }
 
     private void removeShop(Player player, String[] args, Block target) {
@@ -326,7 +316,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
                 if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    player.sendMessage(LanguageManager.getInstance().slimeFunBlockNotSupported());
                     return;
                 }
             }
@@ -340,12 +330,12 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         if (EzChestShop.worldguard) {
                             if (container.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1) {
                                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
-                                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                                    player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                                     return;
                                 }
                             } else {
                                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                                    player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                                     return;
                                 }
                             }
@@ -379,18 +369,18 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         ShopContainer.deleteShop(blockState.getLocation());
                         ShopHologram.hideForAll(blockState.getLocation());
                         state.update();
-                        player.sendMessage(lm.chestShopRemoved());
+                        player.sendMessage(LanguageManager.getInstance().chestShopRemoved());
                     } else {
-                        player.sendMessage(lm.notAChestOrChestShop());
+                        player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                     }
                 } else {
-                    player.sendMessage(lm.notAChestOrChestShop());
+                    player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                 }
             } else {
-                player.sendMessage(lm.notAChestOrChestShop());
+                player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
             }
         } else {
-            player.sendMessage(lm.notAChestOrChestShop());
+            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
         }
     }
 
@@ -401,7 +391,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
                 if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    player.sendMessage(LanguageManager.getInstance().slimeFunBlockNotSupported());
                     return;
                 }
             }
@@ -409,14 +399,14 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
                 if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    player.sendMessage(LanguageManager.getInstance().slimeFunBlockNotSupported());
                     return;
                 }
             }
 
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_ADMIN_SHOP, player)) {
-                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                    player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -433,7 +423,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
                     //already a shop
                     if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
-                        player.sendMessage(lm.alreadyAShop());
+                        player.sendMessage(LanguageManager.getInstance().alreadyAShop());
                     } else {
                         //not a shop
                         if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
@@ -441,7 +431,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             ItemStack thatItem = thatIteminplayer.clone();
                             thatItem.setAmount(1);
                             if (Tag.SHULKER_BOXES.isTagged(thatItem.getType()) && Tag.SHULKER_BOXES.isTagged(target.getType())) {
-                                player.sendMessage(lm.invalidShopItem());
+                                player.sendMessage(LanguageManager.getInstance().invalidShopItem());
                                 return;
                             }
 
@@ -478,19 +468,19 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             //adminshop 0/1
                             Utils.storeItem(thatItem, container);
                             state.update();
-                            player.sendMessage(lm.shopCreated());
+                            player.sendMessage(LanguageManager.getInstance().shopCreated());
                         } else {
-                            player.sendMessage(lm.holdSomething());
+                            player.sendMessage(LanguageManager.getInstance().holdSomething());
                         }
                     }
                 } else {
-                    player.sendMessage(lm.noChest());
+                    player.sendMessage(LanguageManager.getInstance().noChest());
                 }
             } else {
-                player.sendMessage(lm.lookAtChest());
+                player.sendMessage(LanguageManager.getInstance().lookAtChest());
             }
         } else {
-            player.sendMessage(lm.lookAtChest());
+            player.sendMessage(LanguageManager.getInstance().lookAtChest());
         }
     }
 
@@ -558,7 +548,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(blockState.getBlock().getLocation());
                 if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    player.sendMessage(LanguageManager.getInstance().slimeFunBlockNotSupported());
                     return null;
                 }
             }
@@ -589,23 +579,23 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) || chkIfDCS != null) {
                             return blockState;
                         } else if (sendErrors) {
-                            player.sendMessage(lm.notAChestOrChestShop());
+                            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                         }
                     } else if (sendErrors) {
                         if (isCreateOrRemove) {
-                            player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                            player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                         } else {
-                            player.sendMessage(lm.notAChestOrChestShop());
+                            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                         }
                     }
                 } else if (sendErrors) {
-                    player.sendMessage(lm.notAChestOrChestShop());
+                    player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                 }
             } else if (sendErrors) {
-                player.sendMessage(lm.notAChestOrChestShop());
+                player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
             }
         } else if (sendErrors) {
-            player.sendMessage(lm.notAChestOrChestShop());
+            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
         }
         return null;
     }

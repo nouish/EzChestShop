@@ -31,8 +31,6 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
  * When working with a shop hologram, this class should always be addressed, as it's a tailored abstraction to the BlockBoundHologram and PlayerBlockBoundHologram.
  */
 public class ShopHologram {
-
-    private static final LanguageManager lm = new LanguageManager();
     private static final Map<UUID, HashMap<Location, ShopHologram>> playerLocationShopHoloMap = new HashMap<>();
     private static final Map<Location, BlockBoundHologram> locationBlockHoloMap = new HashMap<>();
 
@@ -116,7 +114,7 @@ public class ShopHologram {
             ) {
                 // visible if the shop does not contain at least 1 item.
                 boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
-                textReplacements.put("<emptyShopInfo/>", visible ? lm.emptyShopHologramInfo() : "");
+                textReplacements.put("<emptyShopInfo/>", visible ? LanguageManager.getInstance().emptyShopHologramInfo() : "");
             } else {
                 textReplacements.put("<emptyShopInfo/>", "");
             }
@@ -156,7 +154,7 @@ public class ShopHologram {
             HashMap<String, String> conditionalTextReplacements = new HashMap<>();
             EzShop shop = ShopContainer.getShop(location);
             if (shop != null && shop.getSettings() != null && shop.getSettings().isDbuy() && shop.getSettings().isDsell()) {
-                conditionalTextReplacements.put("separator", lm.disabledButtonTitle());
+                conditionalTextReplacements.put("separator", LanguageManager.getInstance().disabledButtonTitle());
                 conditionalTags.put("separator", true);
             }
 
@@ -386,7 +384,7 @@ public class ShopHologram {
                 // visible if the shop does not contain at least 1 item.
                 boolean visible = !Utils.containsAtLeast(shopInventory, shop.getShopItem(), 1);
                 playerHolo.updateTextReplacement("<emptyShopInfo/>", visible ?
-                        lm.emptyShopHologramInfo() : "", false, true);
+                        LanguageManager.getInstance().emptyShopHologramInfo() : "", false, true);
             }
         }
     }
@@ -601,7 +599,7 @@ public class ShopHologram {
             playerHolo.getBlockHologram().removeConditionalText("separator");
             playerHolo.updateConditionalTag("separator", true, true);
         } else if (shop.getSettings().isDbuy() && shop.getSettings().isDsell())  {
-            playerHolo.getBlockHologram().setConditionalText("separator", lm.disabledButtonTitle());
+            playerHolo.getBlockHologram().setConditionalText("separator", LanguageManager.getInstance().disabledButtonTitle());
             playerHolo.updateConditionalTag("separator", true, true);
         } else {
             playerHolo.getBlockHologram().removeConditionalText("separator");

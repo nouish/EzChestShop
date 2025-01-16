@@ -56,19 +56,12 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MainCommands implements CommandExecutor, TabCompleter {
-    public static LanguageManager lm = new LanguageManager();
     public static HashMap<UUID, ShopSettings> settingsHashMap = new HashMap<>();
-
-    private enum SettingType {TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME, ROTATION}
-
-    public static void updateLM(LanguageManager languageManager) {
-        MainCommands.lm = languageManager;
-    }
+    private enum SettingType { TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME, ROTATION }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
 
             if (args.length > 0) {
                 String mainarg = args[0];
@@ -88,7 +81,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         maxShops = maxShops == -1 ? 10000 : maxShops;
                                         int shops = ShopContainer.getShopCount(player);
                                         if (shops >= maxShops) {
-                                            player.sendMessage(lm.maxShopLimitReached(maxShops));
+                                            player.sendMessage(LanguageManager.getInstance().maxShopLimitReached(maxShops));
                                             return false;
                                         }
                                     } else {
@@ -96,7 +89,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         maxShopsWorld = maxShopsWorld == -1 ? 10000 : maxShopsWorld;
                                         int shops = ShopContainer.getShopCount(player, player.getWorld());
                                         if (shops >= maxShopsWorld) {
-                                            player.sendMessage(lm.maxShopLimitReached(maxShopsWorld));
+                                            player.sendMessage(LanguageManager.getInstance().maxShopLimitReached(maxShopsWorld));
                                             return false;
                                         }
                                     }
@@ -107,13 +100,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                     e.printStackTrace();
                                 }
                             } else {
-                                player.sendMessage(lm.negativePrice());
+                                player.sendMessage(LanguageManager.getInstance().negativePrice());
                             }
                         } else {
                             sendHelp(player);
                         }
                     } else {
-                        player.sendMessage(lm.notenoughARGS());
+                        player.sendMessage(LanguageManager.getInstance().notenoughARGS());
                     }
                 } else if (mainarg.equalsIgnoreCase("remove") && target != null) {
                     removeShop(player, args, target);
@@ -130,7 +123,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 sendHelp(player);
             }
         } else {
-            sender.sendMessage(lm.consoleNotAllowed());
+            sender.sendMessage(LanguageManager.getInstance().consoleNotAllowed());
         }
 
         return false;
@@ -269,7 +262,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     }
 
     private void sendHelp(Player player) {
-        player.spigot().sendMessage(lm.cmdHelp(player.hasPermission("admin")));
+        player.spigot().sendMessage(LanguageManager.getInstance().cmdHelp(player.hasPermission("admin")));
     }
 
     private void createShop(Player player, String[] args, Block target) throws IOException {
@@ -279,14 +272,14 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
                 if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    player.sendMessage(LanguageManager.getInstance().slimeFunBlockNotSupported());
                     return;
                 }
             }
 
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.CREATE_SHOP, player)) {
-                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                    player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -296,12 +289,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     if (checkIfLocation(target.getLocation(), player)) {
                         if (EzChestShop.towny && Config.towny_integration_shops_only_in_shop_plots) {
                             if (!ShopPlotUtil.isShopPlot(target.getLocation())) {
-                                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                                player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                                 return;
                             }
                             if (!(ShopPlotUtil.doesPlayerOwnShopPlot(player, target.getLocation()) ||
                                     ShopPlotUtil.doesPlayerHaveAbilityToEditShopPlot(player, target.getLocation()))) {
-                                player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                                player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                                 return;
                             }
                         }
@@ -316,7 +309,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 
                         //already a shop
                         if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) || ifItsADoubleChestShop(target) != null) {
-                            player.sendMessage(lm.alreadyAShop());
+                            player.sendMessage(LanguageManager.getInstance().alreadyAShop());
                         } else {
                             //not a shop
                             if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
@@ -324,7 +317,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 ItemStack thatItem = thatIteminplayer.clone();
                                 thatItem.setAmount(1);
                                 if (Tag.SHULKER_BOXES.isTagged(thatItem.getType()) && Tag.SHULKER_BOXES.isTagged(target.getType())) {
-                                    player.sendMessage(lm.invalidShopItem());
+                                    player.sendMessage(LanguageManager.getInstance().invalidShopItem());
                                     return;
                                 }
 
@@ -332,7 +325,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 double sellprice = Double.parseDouble(args[2]);
 
                                 if (Config.settings_buy_greater_than_sell && (sellprice > buyprice && buyprice != 0)) {
-                                    player.sendMessage(lm.buyGreaterThanSellRequired());
+                                    player.sendMessage(LanguageManager.getInstance().buyGreaterThanSellRequired());
                                     return;
                                 }
                                 //owner, buy, sell, msgtoggle, dbuy, dsell, admins, shareincome, trans, adminshop, rotation
@@ -367,22 +360,22 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 state.update();
                                 ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
                                         isDbuy == 1, isDSell == 1, "none", true, false, Config.settings_defaults_rotation);
-                                player.sendMessage(lm.shopCreated());
+                                player.sendMessage(LanguageManager.getInstance().shopCreated());
                             } else {
-                                player.sendMessage(lm.holdSomething());
+                                player.sendMessage(LanguageManager.getInstance().holdSomething());
                             }
                         }
                     } else {
-                        player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                        player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                     }
                 } else {
-                    player.sendMessage(lm.noChest());
+                    player.sendMessage(LanguageManager.getInstance().noChest());
                 }
             } else {
-                player.sendMessage(lm.lookAtChest());
+                player.sendMessage(LanguageManager.getInstance().lookAtChest());
             }
         } else {
-            player.sendMessage(lm.lookAtChest());
+            player.sendMessage(LanguageManager.getInstance().lookAtChest());
         }
     }
 
@@ -391,7 +384,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         if (blockState != null) {
             if (EzChestShop.worldguard) {
                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
-                    player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                    player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                     return;
                 }
             }
@@ -426,7 +419,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             ShopContainer.deleteShop(blockState.getLocation());
             ShopHologram.hideForAll(blockState.getLocation());
             blockState.update();
-            player.sendMessage(lm.chestShopRemoved());
+            player.sendMessage(LanguageManager.getInstance().chestShopRemoved());
         }
     }
 
@@ -481,10 +474,10 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                             UUID.fromString(s)).getName()).collect(
                                             Collectors.joining("\n" + ChatColor.GRAY + " - " + ChatColor.YELLOW)));
                                 } else {
-                                    player.sendMessage(ChatColor.GREEN + "Admins:\n" + ChatColor.GRAY + " - " + ChatColor.YELLOW + lm.nobodyStatusAdmins());
+                                    player.sendMessage(ChatColor.GREEN + "Admins:\n" + ChatColor.GRAY + " - " + ChatColor.YELLOW + LanguageManager.getInstance().nobodyStatusAdmins());
                                 }
                             } else {
-                                player.sendMessage(ChatColor.GREEN + "Admins:\n" + ChatColor.GRAY + " - " + ChatColor.YELLOW + lm.nobodyStatusAdmins());
+                                player.sendMessage(ChatColor.GREEN + "Admins:\n" + ChatColor.GRAY + " - " + ChatColor.YELLOW + LanguageManager.getInstance().nobodyStatusAdmins());
                             }
                         }
                     }
@@ -503,7 +496,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         if (blockState != null) {
                             double price = Double.parseDouble(args[2]);
                             if (price < 0) {
-                                player.sendMessage(lm.negativePrice());
+                                player.sendMessage(LanguageManager.getInstance().negativePrice());
                                 return;
                             }
                             EzShop shop = ShopContainer.getShop(blockState.getLocation());
@@ -513,7 +506,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         (isBuy && shop.getSellPrice() > price && price != 0) ||
                                                 (!isBuy && price > shop.getBuyPrice() && shop.getBuyPrice() != 0)
                                 ) {
-                                    player.sendMessage(lm.buyGreaterThanSellRequired());
+                                    player.sendMessage(LanguageManager.getInstance().buyGreaterThanSellRequired());
                                     return;
                                 }
                             }
@@ -544,10 +537,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             } else {
                                 hologram.updateSellPrice();
                             }
-                            player.sendMessage(isBuy ? lm.shopBuyPriceUpdated() : lm.shopSellPriceUpdated());
+                            player.sendMessage(isBuy ? LanguageManager.getInstance().shopBuyPriceUpdated()
+                                                     : LanguageManager.getInstance().shopSellPriceUpdated());
                         }
                     } catch (NumberFormatException e) {
-                        player.sendMessage(lm.wrongInput());
+                        player.sendMessage(LanguageManager.getInstance().wrongInput());
                     }
                 } else {
                     sendHelp(player);
@@ -568,10 +562,10 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 //                    if (op != null && op.hasPlayedBefore()) {
 //                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
 //                        if (blockState != null) {
-//                            player.spigot().sendMessage(lm.shopTransferConfirm(args[2], false)); // Confirmation message similar to the clearprofit message.
+//                            player.spigot().sendMessage(LanguageManager.getInstance().shopTransferConfirm(args[2], false)); // Confirmation message similar to the clearprofit message.
 //                        }
 //                    } else {
-//                        player.sendMessage(lm.noPlayer());
+//                        player.sendMessage(LanguageManager.getInstance().noPlayer());
 //                    }
 //
 //                } else if (args.length == 4 && args[3].equals("-confirm")) {
@@ -582,11 +576,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
 //                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
 //                        if (blockState != null) {
 //                            ShopContainer.transferOwner(blockState, op);
-//                            player.sendMessage(lm.shopTransferred(args[2]));
+//                            player.sendMessage(LanguageManager.getInstance().shopTransferred(args[2]));
 //                        }
 //
 //                    } else {
-//                        player.sendMessage(lm.noPlayer());
+//                        player.sendMessage(LanguageManager.getInstance().noPlayer());
 //                    }
 //                } else {
 //                    sendHelp(player);
@@ -596,6 +590,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     }
 
     private void copyShopSettings(Player player, Block target) {
+        var lm = LanguageManager.getInstance();
         BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
         if (blockState != null) {
             ShopSettings settings = ShopContainer.getShopSettings(blockState.getLocation());
@@ -608,7 +603,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
             settings.setRotation(settings.getRotation() == null ? Config.settings_defaults_rotation : settings.getRotation());
             settingsHashMap.put(player.getUniqueId(), settings.clone());
-            player.spigot().sendMessage(lm.copiedShopSettings(lm.toggleTransactionMessageButton() + ": " + (settings.isMsgtoggle() ? lm.statusOn() : lm.statusOff()) + "\n" +
+            player.spigot().sendMessage(LanguageManager.getInstance().copiedShopSettings(LanguageManager.getInstance().toggleTransactionMessageButton() + ": " + (settings.isMsgtoggle() ? lm.statusOn() : lm.statusOff()) + "\n" +
                     lm.disableBuyingButtonTitle() + ": " + (settings.isDbuy() ? lm.statusOn() : lm.statusOff()) + "\n" +
                     lm.disableSellingButtonTitle() + ": " + (settings.isDsell() ? lm.statusOn() : lm.statusOff()) + "\n" +
                     lm.shopAdminsButtonTitle() + ": " + net.md_5.bungee.api.ChatColor.GREEN + adminString + "\n" +
@@ -650,7 +645,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             newSettings.setShareincome(settings.isShareincome());
             newSettings.setRotation(settings.getRotation());
             blockState.update();
-            player.sendMessage(lm.pastedShopSettings());
+            player.sendMessage(LanguageManager.getInstance().pastedShopSettings());
         }
     }
 
@@ -709,7 +704,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 }
             }
             blockState.update();
-            player.sendMessage(lm.pastedShopSettings());
+            player.sendMessage(LanguageManager.getInstance().pastedShopSettings());
         }
     }
 
@@ -727,9 +722,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     db.setBool("location", sloc, "buyDisabled", "shopdata", settings.isDbuy());
                     container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
                     if (settings.isDbuy()) {
-                        player.sendMessage(lm.disableBuyingOnInChat());
+                        player.sendMessage(LanguageManager.getInstance().disableBuyingOnInChat());
                     } else {
-                        player.sendMessage(lm.disableBuyingOffInChat());
+                        player.sendMessage(LanguageManager.getInstance().disableBuyingOffInChat());
                     }
                     shopHologram.updateDbuy();
                     break;
@@ -738,16 +733,16 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     db.setBool("location", sloc, "sellDisabled", "shopdata", settings.isDsell());
                     container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
                     if (settings.isDsell()) {
-                        player.sendMessage(lm.disableSellingOnInChat());
+                        player.sendMessage(LanguageManager.getInstance().disableSellingOnInChat());
                     } else {
-                        player.sendMessage(lm.disableSellingOffInChat());
+                        player.sendMessage(LanguageManager.getInstance().disableSellingOffInChat());
                     }
                     shopHologram.updateDsell();
                     break;
                 case ADMINS:
                     if (data.equalsIgnoreCase("clear")) {
                         data = null;
-                        player.sendMessage(lm.clearedAdmins());
+                        player.sendMessage(LanguageManager.getInstance().clearedAdmins());
                     } else if (data.startsWith("+")) {
                         data = data.replace("+", "");
                         List<UUID> oldData = (settings.getAdmins() == null || settings.getAdmins().equals("none")) ? new ArrayList<>() :
@@ -767,16 +762,16 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 } else {
                                     data = settings.getAdmins() + "@" + newData;
                                 }
-                                player.sendMessage(lm.sucAdminAdded(newPlayers.stream()
+                                player.sendMessage(LanguageManager.getInstance().sucAdminAdded(newPlayers.stream()
                                         .map(s -> Bukkit.getOfflinePlayer(s).getName())
                                         .collect(Collectors.joining(", "))));
                             } else {
                                 data = settings.getAdmins();
-                                player.sendMessage(lm.selfAdmin());
+                                player.sendMessage(LanguageManager.getInstance().selfAdmin());
                             }
                         } else {
                             data = settings.getAdmins();
-                            player.sendMessage(lm.noPlayer());
+                            player.sendMessage(LanguageManager.getInstance().noPlayer());
                         }
 
                     } else if (data.startsWith("-")) {
@@ -792,7 +787,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             List<String> newData = newPlayers.stream().map(UUID::toString).collect(Collectors.toList());
                             oldData.removeAll(newData);
                             data = String.join("@", oldData);
-                            player.sendMessage(lm.sucAdminRemoved(newPlayers.stream()
+                            player.sendMessage(LanguageManager.getInstance().sucAdminRemoved(newPlayers.stream()
                                     .map(s -> Bukkit.getOfflinePlayer(s).getName())
                                     .collect(Collectors.joining(", "))));
                             if (data.trim().equalsIgnoreCase("")) {
@@ -800,7 +795,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }
                         } else {
                             data = settings.getAdmins();
-                            player.sendMessage(lm.noPlayer());
+                            player.sendMessage(LanguageManager.getInstance().noPlayer());
                         }
                     }
                     if (data == null || data.equalsIgnoreCase("none")) {
@@ -818,9 +813,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     db.setBool("location", sloc, "msgToggle", "shopdata", settings.isMsgtoggle());
                     container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
                     if (settings.isMsgtoggle()) {
-                        player.sendMessage(lm.toggleTransactionMessageOnInChat());
+                        player.sendMessage(LanguageManager.getInstance().toggleTransactionMessageOnInChat());
                     } else {
-                        player.sendMessage(lm.toggleTransactionMessageOffInChat());
+                        player.sendMessage(LanguageManager.getInstance().toggleTransactionMessageOffInChat());
                     }
                     break;
                 case SHAREINCOME:
@@ -828,16 +823,16 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     db.setBool("location", sloc, "shareIncome", "shopdata", settings.isShareincome());
                     container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
                     if (settings.isShareincome()) {
-                        player.sendMessage(lm.sharedIncomeOnInChat());
+                        player.sendMessage(LanguageManager.getInstance().sharedIncomeOnInChat());
                     } else {
-                        player.sendMessage(lm.sharedIncomeOffInChat());
+                        player.sendMessage(LanguageManager.getInstance().sharedIncomeOffInChat());
                     }
                     break;
                 case ROTATION:
                     settings.setRotation(Utils.rotations.contains(data) ? data : Utils.getNextRotation(settings.getRotation()));
                     db.setString("location", sloc, "rotation", "shopdata", settings.getRotation());
                     container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
-                    player.sendMessage(lm.rotateHologramInChat(settings.getRotation()));
+                    player.sendMessage(LanguageManager.getInstance().rotateHologramInChat(settings.getRotation()));
                     ShopHologram.getHologram(blockState.getLocation(), player).updatePosition();
                     break;
             }
@@ -904,7 +899,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(blockState.getBlock().getLocation());
                 if (sfresult) {
-                    player.sendMessage(lm.slimeFunBlockNotSupported());
+                    player.sendMessage(LanguageManager.getInstance().slimeFunBlockNotSupported());
                     return null;
                 }
             }
@@ -940,26 +935,26 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             if (player.getName().equalsIgnoreCase(owner)) {
                                 return blockState;
                             } else if (sendErrors) {
-                                player.sendMessage(lm.notOwner());
+                                player.sendMessage(LanguageManager.getInstance().notOwner());
                             }
                         } else if (sendErrors) {
-                            player.sendMessage(lm.notAChestOrChestShop());
+                            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                         }
                     } else if (sendErrors) {
                         if (isCreateOrRemove) {
-                            player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
+                            player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                         } else {
-                            player.sendMessage(lm.notAChestOrChestShop());
+                            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                         }
                     }
                 } else if (sendErrors) {
-                    player.sendMessage(lm.notAChestOrChestShop());
+                    player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
                 }
             } else if (sendErrors) {
-                player.sendMessage(lm.notAChestOrChestShop());
+                player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
             }
         } else if (sendErrors) {
-            player.sendMessage(lm.notAChestOrChestShop());
+            player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
         }
         return null;
     }
@@ -996,7 +991,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 }
             }
             Utils.enabledOutlines.remove(player.getUniqueId());
-            player.sendMessage(lm.emptyShopHighlightedDisabled());
+            player.sendMessage(LanguageManager.getInstance().emptyShopHighlightedDisabled());
 
         } else {
             Utils.enabledOutlines.add(player.getUniqueId());
@@ -1012,7 +1007,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             tones.add(Note.Tone.G);
 
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
-            player.sendMessage(lm.emptyShopHighlightedEnabled(blocks.size()));
+            player.sendMessage(LanguageManager.getInstance().emptyShopHighlightedEnabled(blocks.size()));
             AtomicInteger actionBarCounter = new AtomicInteger();
             EzChestShop.getScheduler().runTaskLaterAsynchronously(() -> {
                 //Iterate through each block with an asychronous delay of 5 ticks
@@ -1025,16 +1020,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             return;
                         }
                         actionBarCounter.getAndIncrement();
-                        Utils.sendActionBar(
-                                player,
-                                lm.emptyShopActionBar(actionBarCounter.get())
-                        );
+                        Utils.sendActionBar(player, LanguageManager.getInstance().emptyShopActionBar(actionBarCounter.get()));
                         player.playNote(player.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
                         noteIndex.getAndIncrement();
                         if (noteIndex.get() == 7) {
                             noteIndex.set(0);
                         }
-
                     }, 2L * index);
                 });
             }, 1L);

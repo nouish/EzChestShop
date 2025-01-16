@@ -24,8 +24,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoinListener implements Listener {
 
-    LanguageManager lm = new LanguageManager();
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
         Player player = event.getPlayer();
@@ -81,7 +79,7 @@ public class PlayerJoinListener implements Listener {
                             return;
                         }
                         actionBarCounter.getAndIncrement();
-                        Utils.sendActionBar(player, lm.emptyShopActionBar(actionBarCounter.get()));
+                        Utils.sendActionBar(player, LanguageManager.getInstance().emptyShopActionBar(actionBarCounter.get()));
                         player.playNote(b.getLocation(), Instrument.BIT, Note.flat(1, tones.get(noteIndex.get())));
                         noteIndex.getAndIncrement();
                         if (noteIndex.get() == 7) {

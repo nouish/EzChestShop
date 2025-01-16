@@ -37,8 +37,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class BlockPistonExtendListener implements Listener {
-
-    private static final LanguageManager lm = new LanguageManager();
     private static final HashMap<String, String> lockMap = new HashMap<>();
     private static final List<String> lockList = new ArrayList<>();
     private static final HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
@@ -186,7 +184,7 @@ public class BlockPistonExtendListener implements Listener {
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
-            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, EzChestShopConstants.OWNER_KEY))).getName(),
+            List<String> nlore = LanguageManager.getInstance().shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, EzChestShopConstants.OWNER_KEY))).getName(),
                     Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, EzChestShopConstants.ITEM_KEY))),
                     getContainerDouble(container, EzChestShopConstants.BUY_PRICE_KEY),
                     getContainerDouble(container, EzChestShopConstants.SELL_PRICE_KEY));

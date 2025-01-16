@@ -35,7 +35,7 @@ public class NonOwnerShopGUI {
     public NonOwnerShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
-        LanguageManager lm = new LanguageManager();
+        LanguageManager lm = LanguageManager.getInstance();
         String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
         Preconditions.checkNotNull(rawId);
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
@@ -244,17 +244,16 @@ public class NonOwnerShopGUI {
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        LanguageManager lm = new LanguageManager();
-        if (disabling){
+        if (disabling) {
             //disabled Item
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
-            ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
-            disabledItemMeta.setLore(lm.disabledButtonLore());
-            disabledItemStack.setItemMeta(disabledItemMeta);
+            disabledItemStack.editMeta(disabledItemMeta -> {
+                disabledItemMeta.setDisplayName(LanguageManager.getInstance().disabledButtonTitle());
+                disabledItemMeta.setLore(LanguageManager.getInstance().disabledButtonLore());
+            });
             return disabledItemStack;
-        } else {
-            return mainItem;
         }
+
+        return mainItem;
     }
 }

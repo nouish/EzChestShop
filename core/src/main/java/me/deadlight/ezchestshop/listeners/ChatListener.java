@@ -25,12 +25,8 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class ChatListener implements Listener {
 
-    public static HashMap<UUID, ChatWaitObject> chatmap = new HashMap<>();
-    public static LanguageManager lm = new LanguageManager();
-
-    public static void updateLM(LanguageManager languageManager) {
-        ChatListener.lm = languageManager;
-    }
+    public static final HashMap<UUID, ChatWaitObject> chatmap = new HashMap<>();
+    public static final LanguageManager lm = LanguageManager.getInstance();
 
     @EventHandler
     public void onAsyncChat(AsyncChatEvent event) {

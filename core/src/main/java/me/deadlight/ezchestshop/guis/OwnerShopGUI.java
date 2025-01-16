@@ -33,7 +33,7 @@ public class OwnerShopGUI {
     public OwnerShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, boolean isAdmin) {
-        LanguageManager lm = new LanguageManager();
+        LanguageManager lm = LanguageManager.getInstance();
         String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
         if (rawId == null) {
             throw new NullPointerException("Null owner id");
@@ -228,18 +228,17 @@ public class OwnerShopGUI {
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        if (disabling){
+        if (disabling) {
             //disabled Item
-            LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
-            ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
-            disabledItemMeta.setLore(lm.disabledButtonLore());
-            disabledItemStack.setItemMeta(disabledItemMeta);
+            disabledItemStack.editMeta(disabledItemMeta -> {
+                disabledItemMeta.setDisplayName(LanguageManager.getInstance().disabledButtonTitle());
+                disabledItemMeta.setLore(LanguageManager.getInstance().disabledButtonLore());
+            });
             return disabledItemStack;
-        } else {
-            return mainItem;
         }
+
+        return mainItem;
     }
 
 }

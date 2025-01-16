@@ -77,8 +77,6 @@ public final class Utils {
     public static HashMap<String, Block> blockBreakMap = new HashMap<>();
     public static ConcurrentHashMap<Integer, BlockOutline> activeOutlines = new ConcurrentHashMap<>(); //player uuid, list of outlines
     public static List<UUID> enabledOutlines = new ArrayList<>();
-    private static final LanguageManager lm = new LanguageManager();
-
     public static NmsHandle nmsHandle;
     public static DatabaseManager databaseManager;
 
@@ -261,7 +259,7 @@ public final class Utils {
                     && meta instanceof EnchantmentStorageMeta enchMeta
                     && enchMeta.getStoredEnchants().size() == 1) {
                 Map.Entry<Enchantment, Integer> entry = enchMeta.getStoredEnchants().entrySet().iterator().next();
-                itemname = lm.itemEnchantHologram(entry.getKey(), entry.getValue());
+                itemname = LanguageManager.getInstance().itemEnchantHologram(entry.getKey(), entry.getValue());
             } else if (meta.hasLocalizedName()) {
                 itemname = meta.getLocalizedName();
             } else {

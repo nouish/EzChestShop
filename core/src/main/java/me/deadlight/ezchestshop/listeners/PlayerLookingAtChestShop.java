@@ -41,8 +41,6 @@ import org.bukkit.util.Vector;
 public class PlayerLookingAtChestShop implements Listener {
 
     private final Map<Player, Location> map = new HashMap<>();
-    private static final LanguageManager lm = new LanguageManager();
-
 
     private static final Map<Location, List<Player>> playershopmap = new HashMap<>();
 
@@ -172,7 +170,7 @@ public class PlayerLookingAtChestShop implements Listener {
                 if (is_dbuy || is_dsell) {
                     line = line.replaceAll("<separator>.*?<\\/separator>", "");
                     if (is_dbuy && is_dsell) {
-                        line = lm.disabledButtonTitle();
+                        line = LanguageManager.getInstance().disabledButtonTitle();
                     } else if (is_dbuy) {
                         line = line.replaceAll("<buy>.*?<\\/buy>", "").replaceAll("<sell>|<\\/sell>", "");
                     } else if (is_dsell) {
@@ -216,7 +214,7 @@ public class PlayerLookingAtChestShop implements Listener {
                         // Check if the shop is empty by getting the inventory of the block
                         Inventory inv = Utils.getBlockInventory(shopLocation.getBlock());
                         if (!Utils.containsAtLeast(inv, shop.getShopItem(), 1)) {
-                            line = line.replace("<emptyShopInfo/>", lm.emptyShopHologramInfo());
+                            line = line.replace("<emptyShopInfo/>", LanguageManager.getInstance().emptyShopHologramInfo());
                         } else {
                             continue;
                         }

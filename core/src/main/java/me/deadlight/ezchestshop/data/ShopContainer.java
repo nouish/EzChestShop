@@ -252,8 +252,8 @@ public class ShopContainer {
 
     public static void buyItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
         ItemStack thatItem = tthatItem.clone();
+        LanguageManager lm = LanguageManager.getInstance();
 
-        LanguageManager lm = new LanguageManager();
         //check for money
         if (Utils.containsAtLeast(Utils.getBlockInventory(containerBlock), thatItem , count)) {
             if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
@@ -294,7 +294,7 @@ public class ShopContainer {
     }
 
     public static void sellItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
-        LanguageManager lm = new LanguageManager();
+        LanguageManager lm = LanguageManager.getInstance();
         ItemStack thatItem = tthatItem.clone();
 
         if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
@@ -336,7 +336,7 @@ public class ShopContainer {
 
     public static void buyServerItem(Block containerBlock, double price, int count, Player player, ItemStack tthatItem, PersistentDataContainer data) {
         ItemStack thatItem = tthatItem.clone();
-        LanguageManager lm = new LanguageManager();
+        LanguageManager lm = LanguageManager.getInstance();
 
         //check for money
         if (ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
@@ -372,7 +372,7 @@ public class ShopContainer {
     }
 
     public static void sellServerItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, PersistentDataContainer data) {
-        LanguageManager lm = new LanguageManager();
+        LanguageManager lm = LanguageManager.getInstance();
         ItemStack thatItem = tthatItem.clone();
 
         if (Utils.containsAtLeast(player.getInventory(), thatItem, count)) {

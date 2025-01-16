@@ -13,10 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import de.themoep.minedown.MineDown;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
-import me.deadlight.ezchestshop.commands.EcsAdmin;
-import me.deadlight.ezchestshop.commands.MainCommands;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.listeners.ChatListener;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.XPEconomy;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
@@ -33,8 +30,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public final class LanguageManager {
+    private LanguageManager() {}
+
+    private static final LanguageManager INSTANCE = new LanguageManager();
+
+    public static @NotNull LanguageManager getInstance() {
+        return INSTANCE;
+    }
 
     private static FileConfiguration languageConfig;
     private static final ImmutableSet<String> SUPPORTED_LOCALES = ImmutableSet.of(
@@ -68,11 +73,9 @@ public final class LanguageManager {
     }
 
     public static void reloadLanguages() {
-        languageConfig = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "translations/" + Config.language + ".yml"));
-        LanguageManager newLanguage = new LanguageManager();
-        MainCommands.updateLM(newLanguage);
-        ChatListener.updateLM(newLanguage);
-        EcsAdmin.updateLM(newLanguage);
+        File translationsDir = new File(EzChestShop.getPlugin().getDataFolder(), "translations");
+        File translationPath = new File(translationsDir, Config.language + ".yml");
+        languageConfig = YamlConfiguration.loadConfiguration(translationPath);
     }
 
     public static void checkForLanguagesYMLupdate() throws IOException {

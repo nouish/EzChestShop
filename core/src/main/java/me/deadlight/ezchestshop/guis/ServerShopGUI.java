@@ -36,7 +36,7 @@ public class ServerShopGUI {
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
-        LanguageManager lm = new LanguageManager();
+        LanguageManager lm = LanguageManager.getInstance();
         String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
         Preconditions.checkNotNull(rawId);
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
@@ -267,18 +267,17 @@ public class ServerShopGUI {
     }
 
     private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
-        if (disabling){
+        if (disabling) {
             //disabled Item
-            LanguageManager lm = new LanguageManager();
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
-            ItemMeta disabledItemMeta = disabledItemStack.getItemMeta();
-            disabledItemMeta.setDisplayName(lm.disabledButtonTitle());
-            disabledItemMeta.setLore(lm.disabledButtonLore());
-            disabledItemStack.setItemMeta(disabledItemMeta);
+            disabledItemStack.editMeta(disabledItemMeta -> {
+                disabledItemMeta.setDisplayName(LanguageManager.getInstance().disabledButtonTitle());
+                disabledItemMeta.setLore(LanguageManager.getInstance().disabledButtonLore());
+            });
             return disabledItemStack;
-        } else {
-            return mainItem;
         }
+
+        return mainItem;
     }
 
     private boolean isAdmin(PersistentDataContainer data, String uuid) {
@@ -286,5 +285,4 @@ public class ServerShopGUI {
         List<UUID> adminsUUID = Utils.getAdminsList(data);
         return adminsUUID.contains(owneruuid);
     }
-
 }

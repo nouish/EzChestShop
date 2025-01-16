@@ -38,7 +38,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class SettingsGUI {
-    public static LanguageManager lm = new LanguageManager();
+    public static final LanguageManager lm = LanguageManager.getInstance();
     //msgtoggle 0/1
     //dbuy 0/1
     //dsell 0/1

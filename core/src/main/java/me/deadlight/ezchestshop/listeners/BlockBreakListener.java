@@ -35,7 +35,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class BlockBreakListener implements Listener {
-    private static final LanguageManager lm = new LanguageManager();
+    private static final LanguageManager lm = LanguageManager.getInstance();
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreak(BlockBreakEvent event) {

@@ -43,8 +43,6 @@ public class BlockBoundHologram {
         NORTH, SOUTH, EAST, WEST, UP, DOWN
     }
 
-    private static final LanguageManager lm = new LanguageManager();
-
     private Location location;
     private List<String> contents;
 
@@ -367,9 +365,9 @@ public class BlockBoundHologram {
                 Collections.reverse(sortedItems);
 
                 if (lineNum == -1 && sortedItems.size() - lines > 0) {
-                    itemData = lm.shulkerboxItemHologramMore(sortedItems.size() - lines);
+                    itemData = LanguageManager.getInstance().shulkerboxItemHologramMore(sortedItems.size() - lines);
                 } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedItems.size()) {
-                    itemData = lm.shulkerboxItemHologram(sortedItems.get(lineNum - 1).getKey(), sortedItems.get(lineNum - 1).getValue());
+                    itemData = LanguageManager.getInstance().shulkerboxItemHologram(sortedItems.get(lineNum - 1).getKey(), sortedItems.get(lineNum - 1).getValue());
                 } else {
                     itemData = "";
                 }
@@ -383,9 +381,9 @@ public class BlockBoundHologram {
             Collections.reverse(sortedEnchants);
 
             if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
-                itemData = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
+                itemData = LanguageManager.getInstance().itemEnchantHologramMore((sortedEnchants.size() - lines));
             } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
-                itemData = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(), sortedEnchants.get(lineNum - 1).getValue());
+                itemData = LanguageManager.getInstance().itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(), sortedEnchants.get(lineNum - 1).getValue());
             } else {
                 itemData = "";
             }
@@ -397,9 +395,9 @@ public class BlockBoundHologram {
             Collections.reverse(sortedEnchants);
 
             if (lineNum == -1 && sortedEnchants.size() - lines > 0) {
-                itemData = lm.itemEnchantHologramMore((sortedEnchants.size() - lines));
+                itemData = LanguageManager.getInstance().itemEnchantHologramMore((sortedEnchants.size() - lines));
             } else if (lineNum - 1 >= 0 && lineNum - 1 < sortedEnchants.size()) {
-                itemData = lm.itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(), sortedEnchants.get(lineNum - 1).getValue());
+                itemData = LanguageManager.getInstance().itemEnchantHologram(sortedEnchants.get(lineNum - 1).getKey(), sortedEnchants.get(lineNum - 1).getValue());
             } else {
                 itemData = "";
             }
