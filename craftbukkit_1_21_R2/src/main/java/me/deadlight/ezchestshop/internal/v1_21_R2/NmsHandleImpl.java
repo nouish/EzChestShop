@@ -90,6 +90,7 @@ public class NmsHandleImpl extends NmsHandle {
         //------------------------------------------------------
 
         ItemEntity floatingItem = new ItemEntity(world, location.getX(), location.getY(), location.getZ(), CraftItemStack.asNMSCopy(itemStack));
+        floatingItem.makeFakeItem(); //no merge with other items
         floatingItem.setNoGravity(true); //no gravity
         floatingItem.setId(ID); //set entity id
         floatingItem.setDeltaMovement(0, 0, 0); //set velocity
