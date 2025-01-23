@@ -2,7 +2,9 @@ package me.deadlight.ezchestshop.utils;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,13 +61,13 @@ public class WebhookSender {
 
     private static void sendDiscordWebhookInternal(JSONObject messageJson) {
         try {
-            URL url = new URL(Config.discordWebhookUrl);
+            URL url = URI.create(Config.discordWebhookUrl).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             connection.setDoOutput(true);
 
-            try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8")) {
+            try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
                 writer.write(messageJson.toString());
             }
 
