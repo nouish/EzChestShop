@@ -287,6 +287,7 @@ public final class EzChestShop extends JavaPlugin {
             } else {
                 logger().warn("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is {} commits ahead.", status.getDistance());
                 logger().warn("Downloads are available from GitHub (must be logged in): {}", EzChestShopConstants.GITHUB_LINK);
+                logger().warn("Alternatively, join us on Discord ({}) for developer snapshot builds.", EzChestShopConstants.DISCORD_LINK);
             }
         } else if (status.isIdentical() || status.isAhead()) {
             logger().info("You are running the latest version of EzChestShopReborn.");
