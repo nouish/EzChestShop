@@ -81,4 +81,18 @@
       <version>${project.parent.version}</version>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>github-actions</id>
+      <activation>
+        <property>
+          <name>env.GITHUB_RUN_NUMBER</name>
+        </property>
+      </activation>
+      <build>
+        <finalName>EzChestShopReborn-${project.version}+${env.GITHUB_RUN_NUMBER}</finalName>
+      </build>
+    </profile>
+  </profiles>
 </project>

@@ -55,22 +55,21 @@ jobs:
       - name: Build with Maven
         run: |
           ./mvnw clean package --batch-mode --no-transfer-progress --show-version
-          echo "version=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-          echo "jarName=$(./mvnw help:evaluate -Dexpression=project.build.finalName -pl dist -q -DforceStdout)" >> $GITHUB_ENV
+          echo "BUILD_NAME=$(./mvnw help:evaluate -Dexpression=project.build.finalName -pl dist -q -DforceStdout)" >> $GITHUB_ENV
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: EzChestShopReborn-${{ env.version }}+${{ github.run_number }}
+          name: ${{ env.BUILD_NAME }}
           path: |
             dist/target/EzChestShopReborn-*.jar
 
       - name: Publish to Discord
-        if: github.repository == 'nouish/EzChestShop' && github.ref == 'refs/heads/main' && endsWith(env.jarName, '-SNAPSHOT')
+        if: github.repository == 'nouish/EzChestShop' && github.ref == 'refs/heads/main' && contains(env.BUILD_NAME, '-SNAPSHOT')
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
           curl -X POST \
-          -F "payload_json={\"content\": \"**Build Artifact:** EzChestShopReborn ${{ env.version }}+${{ github.run_number }}\"}" \
-          -F "file=@dist/target/${{ env.jarName }}.jar" \
+          -F "payload_json={\"content\": \"**Build Artifact:** ${{ env.BUILD_NAME }}\"}" \
+          -F "file=@dist/target/${{ env.BUILD_NAME }}.jar" \
           "$DISCORD_WEBHOOK_URL"
