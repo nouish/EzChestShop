@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -19,6 +20,7 @@ import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.objects.SqlQueue;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,6 +37,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 
 /**
  * ShopContainer - a tool to retrieve and store data regarding shops,
@@ -252,7 +257,7 @@ public class ShopContainer {
     }
 
     public static void buyItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
-        final var logger = EzChestShop.logger();
+        final var logger = EzChestShop.getPlugin().getComponentLogger();
         ItemStack thatItem = tthatItem.clone();
         LanguageManager lm = LanguageManager.getInstance();
 
@@ -304,10 +309,23 @@ public class ShopContainer {
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
         Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                 ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.BUY, count + "");
+
+        logger.info(text()
+                .append(text(player.getName(), NamedTextColor.GOLD))
+                .append(text(" bought "))
+                .append(text(String.format(Locale.ROOT, "%,d", count), NamedTextColor.GOLD))
+                .append(text(" x "))
+                .append(translatable(thatItem, NamedTextColor.GOLD))
+                .append(text(" from "))
+                .append(text(owner != null ? owner.getName() : "<Unknown>", NamedTextColor.GOLD))
+                .append(text(" for "))
+                .append(text(String.format(Locale.ROOT, "$%,.2f", price), NamedTextColor.GOLD))
+                .append(text("."))
+                .build());
     }
 
     public static void sellItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, OfflinePlayer owner, PersistentDataContainer data) {
-        final var logger = EzChestShop.logger();
+        final var logger = EzChestShop.getPlugin().getComponentLogger();
         LanguageManager lm = LanguageManager.getInstance();
         ItemStack thatItem = tthatItem.clone();
 
@@ -358,9 +376,23 @@ public class ShopContainer {
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
         Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                 ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.SELL, Integer.toString(count));
+
+        logger.info(text()
+                .append(text(player.getName(), NamedTextColor.GOLD))
+                .append(text(" sold "))
+                .append(text(String.format(Locale.ROOT, "%,d", count), NamedTextColor.GOLD))
+                .append(text(" x "))
+                .append(translatable(thatItem, NamedTextColor.GOLD))
+                .append(text(" to "))
+                .append(text(owner != null ? owner.getName() : "<Unknown>", NamedTextColor.GOLD))
+                .append(text(" for "))
+                .append(text(String.format(Locale.ROOT, "$%,.2f", price), NamedTextColor.GOLD))
+                .append(text("."))
+                .build());
     }
 
     public static void buyServerItem(Block containerBlock, double price, int count, Player player, ItemStack tthatItem, PersistentDataContainer data) {
+        final var logger = EzChestShop.getPlugin().getComponentLogger();
         ItemStack thatItem = tthatItem.clone();
         LanguageManager lm = LanguageManager.getInstance();
 
@@ -399,9 +431,23 @@ public class ShopContainer {
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
         Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                 ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.BUY, Integer.toString(count));
+
+        logger.info(text()
+                .append(text(player.getName(), NamedTextColor.GOLD))
+                .append(text(" bought "))
+                .append(text(String.format(Locale.ROOT, "%,d", count), NamedTextColor.GOLD))
+                .append(text(" x "))
+                .append(translatable(thatItem, NamedTextColor.GOLD))
+                .append(text(" from "))
+                .append(text("** admin shop **", NamedTextColor.RED))
+                .append(text(" for "))
+                .append(text(String.format(Locale.ROOT, "$%,.2f", price), NamedTextColor.GOLD))
+                .append(text("."))
+                .build());
     }
 
     public static void sellServerItem(Block containerBlock, double price, int count, ItemStack tthatItem, Player player, PersistentDataContainer data) {
+        final var logger = EzChestShop.getPlugin().getComponentLogger();
         LanguageManager lm = LanguageManager.getInstance();
         ItemStack thatItem = tthatItem.clone();
 
@@ -421,6 +467,19 @@ public class ShopContainer {
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
         Config.shopCommandManager.executeCommands(player, containerBlock.getLocation(),
                 ShopCommandManager.ShopType.ADMINSHOP, ShopCommandManager.ShopAction.SELL, Integer.toString(count));
+
+        logger.info(text()
+                .append(text(player.getName(), NamedTextColor.GOLD))
+                .append(text(" sold "))
+                .append(text(String.format(Locale.ROOT, "%,d", count), NamedTextColor.GOLD))
+                .append(text(" x "))
+                .append(translatable(thatItem, NamedTextColor.GOLD))
+                .append(text(" to "))
+                .append(text("** admin shop **", NamedTextColor.RED))
+                .append(text(" for "))
+                .append(text(String.format(Locale.ROOT, "$%,.2f", price), NamedTextColor.GOLD))
+                .append(text("."))
+                .build());
     }
 
     private static void deposit(double price, OfflinePlayer deposit) {
