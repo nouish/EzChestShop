@@ -56,6 +56,7 @@ jobs:
         run: |
           ./mvnw clean package --batch-mode --no-transfer-progress --show-version
           echo "version=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "jarName=$(./mvnw help:evaluate -Dexpression=project.build.finalName -pl dist -q -DforceStdout)" >> $GITHUB_ENV
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -63,3 +64,12 @@ jobs:
           name: EzChestShopReborn-${{ env.version }}+${{ github.run_number }}
           path: |
             dist/target/EzChestShopReborn-*.jar
+
+      - name: Publish to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -X POST \
+          -F "payload_json={\"content\": \"**Build Artifact:** EzChestShopReborn ${{ env.version }}+${{ github.run_number }}\"}" \
+          -F "file=@dist/target/${{ env.jarName }}.jar" \
+          "$DISCORD_WEBHOOK_URL"
