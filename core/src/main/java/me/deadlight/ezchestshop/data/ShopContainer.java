@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -317,7 +318,7 @@ public class ShopContainer {
                 .append(text(" x "))
                 .append(translatable(thatItem, NamedTextColor.GOLD))
                 .append(text(" from "))
-                .append(text(owner != null ? owner.getName() : "<Unknown>", NamedTextColor.GOLD))
+                .append(text(owner != null ? Objects.requireNonNullElse(owner.getName(), "<Unnamed>") : "<Unknown>", NamedTextColor.GOLD))
                 .append(text(" for "))
                 .append(text(String.format(Locale.ROOT, "$%,.2f", price), NamedTextColor.GOLD))
                 .append(text("."))
@@ -384,7 +385,7 @@ public class ShopContainer {
                 .append(text(" x "))
                 .append(translatable(thatItem, NamedTextColor.GOLD))
                 .append(text(" to "))
-                .append(text(owner != null ? owner.getName() : "<Unknown>", NamedTextColor.GOLD))
+                .append(text(owner != null ? Objects.requireNonNullElse(owner.getName(), "<Unnamed>") : "<Unknown>", NamedTextColor.GOLD))
                 .append(text(" for "))
                 .append(text(String.format(Locale.ROOT, "$%,.2f", price), NamedTextColor.GOLD))
                 .append(text("."))
