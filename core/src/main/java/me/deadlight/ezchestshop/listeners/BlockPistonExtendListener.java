@@ -93,8 +93,7 @@ public class BlockPistonExtendListener implements Listener {
                         EzChestShop.getScheduler().runTaskLater(() -> {
                             Collection<Entity> entitiyList = block.getWorld().getNearbyEntities(shulkerLoc, 2, 2, 2);
                             entitiyList.forEach(entity -> {
-                                if (entity instanceof Item) {
-                                    Item item = (Item) entity;
+                                if (entity instanceof Item item) {
                                     ItemStack itemStack = item.getItemStack();
                                     if (Tag.SHULKER_BOXES.isTagged(itemStack.getType())) {
                                         //get the lock
@@ -126,13 +125,10 @@ public class BlockPistonExtendListener implements Listener {
                                             ShulkerShopDropEvent shopDropEvent = new ShulkerShopDropEvent(item, shulkerLoc);
                                             //idk if item also needs update after removing a persistent value (Have to check later) ^^^^
                                             Bukkit.getPluginManager().callEvent(shopDropEvent);
-
                                         }
                                     }
                                 }
                             });
-
-
                         }, 5);
                     }
                 }
@@ -152,7 +148,6 @@ public class BlockPistonExtendListener implements Listener {
             //good, now validate that its the same shulker box that it was before
             if (lock != null && lockList.contains(lock)) {
                 //it is surely that shulker
-
                 PersistentDataContainer container = lockContainerMap.get(lock);
                 Location shulkerLoc = lockLocationMap.get(lock);
                 //reset the lock
@@ -200,6 +195,4 @@ public class BlockPistonExtendListener implements Listener {
     private Double getContainerDouble(PersistentDataContainer container, NamespacedKey key) {
         return container.get(key, PersistentDataType.DOUBLE);
     }
-
-
 }

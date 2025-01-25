@@ -24,8 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerTransactionListener implements Listener {
-    static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-
     @EventHandler
     public void onTransaction(PlayerTransactEvent event) {
         logProfits(event);
@@ -70,7 +68,7 @@ public class PlayerTransactionListener implements Listener {
         final String itemName = meta != null && meta.hasDisplayName() ? meta.getDisplayName() : event.getItemName();
         final String price = String.valueOf(event.getPrice());
         final String shopLocation = block.getWorld().getName() + ", " + block.getX() + ", " + block.getY() + ", " + block.getZ();
-        final String time = formatter.format(event.getTime()).replace("T", " | ").replace("Z", "").replace("-", "/");
+        final String time = DateTimeFormatter.ISO_DATE_TIME.format(event.getTime()).replace("T", " | ").replace("Z", "").replace("-", "/");
         final String quantity = String.valueOf(event.getCount());
         final String ownerName = event.getOwner().getName();
 

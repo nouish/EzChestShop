@@ -5,7 +5,6 @@ import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.TileState;
 import org.bukkit.block.data.Directional;
@@ -28,14 +27,13 @@ public class BlockPlaceListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockDispenserPlace(BlockDispenseEvent  event) {
-        BlockState state = event.getBlock().getState();
-        if (state instanceof Dispenser dispenser) {
+    public void onBlockDispenserPlace(BlockDispenseEvent event) {
+        Block block = event.getBlock();
+        if (block.getState() instanceof Dispenser dispenser) {
             final Directional directional = (Directional) dispenser.getBlockData();
-            EzChestShop.getScheduler().runTaskLater(() -> {
-                Block block = event.getBlock().getRelative(directional.getFacing());
-                ItemStack item = event.getItem();
-                placeBlock(block, item);
+            EzChestShop.getScheduler().runTaskLater(block.getLocation(), () -> {
+                Block relativeBlock = block.getRelative(directional.getFacing());
+                placeBlock(relativeBlock, event.getItem());
             }, 5);
         }
     }

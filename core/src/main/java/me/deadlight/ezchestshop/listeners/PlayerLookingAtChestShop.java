@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
@@ -77,12 +77,6 @@ public class PlayerLookingAtChestShop implements Listener {
                     rightone = rightchest.getPersistentDataContainer();
                 }
 
-                //show the hologram
-//                        if (Utils.validateContainerValues(rightone, ShopContainer.getShop(target.getLocation()))) {
-//                            EzChestShop.logConsole(
-//                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-//                            return;
-//                        }
                 ItemStack thatItem = Utils.decodeItem(rightone.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
                 double buy = rightone.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
                 double sell = rightone.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
@@ -106,13 +100,6 @@ public class PlayerLookingAtChestShop implements Listener {
             //not a double chest
             PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
             if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
-
-//                        if (Utils.validateContainerValues(container, ShopContainer.getShop(target.getLocation()))) {
-//                            EzChestShop.logConsole(
-//                                    "[ECS] Something unexpected happened with this container's data, so this shop has been removed.");
-//                            return;
-//                        }
-                //show the hologram
                 ItemStack thatItem = Utils.decodeItem(container.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
                 double buy = container.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
                 double sell = container.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
@@ -135,10 +122,8 @@ public class PlayerLookingAtChestShop implements Listener {
         }
     }
 
-
     private void showHologram(Location spawnLocation, Location shopLocation, ItemStack thatItem, double buy, double sell,
                               Player player, boolean is_adminshop, String shop_owner, boolean is_dbuy, boolean is_dsell) {
-
         List<ASHologram> holoTextList = new ArrayList<>();
         List<FloatingItem> holoItemList = new ArrayList<>();
 
@@ -152,7 +137,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
         List<String> structure = new ArrayList<>(is_adminshop ? Config.holostructure_admin : Config.holostructure);
         if (ShopContainer.getShopSettings(shopLocation).getRotation().equals("down")) Collections.reverse(structure);
-        int lines = structure.stream().filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest")).collect(Collectors.toList()).size();
+        int lines = structure.stream().filter(s -> s.startsWith("<itemdata") && !s.startsWith("<itemdataRest")).toList().size();
         for (String element : structure) {
             if (element.equalsIgnoreCase("[Item]")) {
                 lineLocation.add(0, 0.15 * Config.holo_linespacing, 0);
@@ -233,12 +218,9 @@ public class PlayerLookingAtChestShop implements Listener {
             }
         }
 
-        List<Player> players = playershopmap.get(shopLocation);
-        if (players == null)
-            players = new ArrayList<>();
+        List<Player> players = Objects.requireNonNullElseGet(playershopmap.get(shopLocation), ArrayList::new);
         players.add(player);
         playershopmap.put(shopLocation, players);
-
 
         EzChestShop.getScheduler().runTaskLater(() -> {
             for (ASHologram holo : holoTextList) {
@@ -272,33 +254,19 @@ public class PlayerLookingAtChestShop implements Listener {
     }
 
     private Location getHoloLoc(Block containerBlock) {
-        Location holoLoc;
         Inventory inventory = Utils.getBlockInventory(containerBlock);
         PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
         String rotation = container.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
         //Add rotation checks
-        switch (rotation) {
-            case "north":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
-                break;
-            case "east":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
-                break;
-            case "south":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
-                break;
-            case "west":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
-                break;
-            case "down":
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
-                break;
-            default:
-                holoLoc = getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
-                break;
-        }
-        return holoLoc;
+        return switch (rotation) {
+            case "north" -> getCentralLocation(containerBlock, inventory, new Vector(0, 0, -0.8));
+            case "east"  -> getCentralLocation(containerBlock, inventory, new Vector(0.8, 0, 0));
+            case "south" -> getCentralLocation(containerBlock, inventory, new Vector(0, 0, 0.8));
+            case "west"  -> getCentralLocation(containerBlock, inventory, new Vector(-0.8, 0, 0));
+            case "down"  -> getCentralLocation(containerBlock, inventory, new Vector(0, -1.5, 0));
+            default      -> getCentralLocation(containerBlock, inventory, new Vector(0, 1, 0));
+        };
     }
 
     private Location getCentralLocation(Block containerBlock, Inventory inventory, Vector direction) {

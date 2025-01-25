@@ -1,4 +1,5 @@
 package me.deadlight.ezchestshop.listeners;
+
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,12 +9,10 @@ public class PlayerLeavingListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) throws NoSuchFieldException, IllegalAccessException {
-        Utils.nmsHandle.ejectConnection(event.getPlayer());
-        if (ChatListener.chatmap.containsKey(event.getPlayer().getUniqueId())) {
-            ChatListener.chatmap.remove(event.getPlayer().getUniqueId());
-        }
-        Utils.enabledOutlines.remove(event.getPlayer().getUniqueId());
+        var player = event.getPlayer();
+        Utils.nmsHandle.ejectConnection(player);
+        ChatListener.chatmap.remove(player.getUniqueId());
+        Utils.enabledOutlines.remove(player.getUniqueId());
     }
-
 
 }
