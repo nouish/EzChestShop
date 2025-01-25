@@ -10,15 +10,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableMap;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -106,42 +106,35 @@ public class SQLite extends DatabaseManager {
 
 
     //TODO Don't forget to change this when adding a new database table that works with Player data!
-    public static final List<String> playerTables = Collections.singletonList("playerdata");
+    public static final List<String> playerTables = List.of("playerdata");
 
     /**************************************
      *         DATABASE STRUCTURE         *
      *           Very Important           *
      **************************************/
-    public LinkedHashMap<String, SQLTable> getTableObjects() {
-        LinkedHashMap<String, SQLTable> tables = new LinkedHashMap<>();
-        tables.put("shopdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
-            {
-                put("location", new SQLColumn("STRING (32)", true, false));
-                put("owner", new SQLColumn("STRING (32)", false, false));
-                put("item", new SQLColumn("STRING (32)", false, false));
-                put("buyPrice", new SQLColumn("DOUBLE", false, false));
-                put("sellPrice", new SQLColumn("DOUBLE", false, false));
-                put("msgToggle", new SQLColumn("BOOLEAN", false, false));
-                put("buyDisabled", new SQLColumn("BOOLEAN", false, false));
-                put("sellDisabled", new SQLColumn("BOOLEAN", false, false));
-                put("admins", new SQLColumn("STRING (32)", false, false));
-                put("shareIncome", new SQLColumn("BOOLEAN", false, false));
-                put("adminshop", new SQLColumn("BOOLEAN", false, false));
-                put("rotation", new SQLColumn("STRING (32)", false, false));
-                put("customMessages", new SQLColumn("STRING (32)", false, false));
-
-            }
-        }));
-        tables.put("playerdata", new SQLTable(new LinkedHashMap<String, SQLColumn>() {
-            {
-                put("uuid", new SQLColumn("STRING (32)", true, false));
-                put("checkprofits", new SQLColumn("STRING (32)", false, false));
-            }
-        }));
-
-        return tables;
+    public Map<String, SQLTable> getTableObjects() {
+        return ImmutableMap.<String, SQLTable>builder()
+                .put("shopdata", new SQLTable(ImmutableMap.<String, SQLColumn>builder()
+                        .put("location", new SQLColumn("STRING (32)", true, false))
+                        .put("owner", new SQLColumn("STRING (32)", false, false))
+                        .put("item", new SQLColumn("STRING (32)", false, false))
+                        .put("buyPrice", new SQLColumn("DOUBLE", false, false))
+                        .put("sellPrice", new SQLColumn("DOUBLE", false, false))
+                        .put("msgToggle", new SQLColumn("BOOLEAN", false, false))
+                        .put("buyDisabled", new SQLColumn("BOOLEAN", false, false))
+                        .put("sellDisabled", new SQLColumn("BOOLEAN", false, false))
+                        .put("admins", new SQLColumn("STRING (32)", false, false))
+                        .put("shareIncome", new SQLColumn("BOOLEAN", false, false))
+                        .put("adminshop", new SQLColumn("BOOLEAN", false, false))
+                        .put("rotation", new SQLColumn("STRING (32)", false, false))
+                        .put("customMessages", new SQLColumn("STRING (32)", false, false))
+                        .build()))
+                .put("playerdata", new SQLTable(ImmutableMap.<String, SQLColumn>builder()
+                        .put("uuid", new SQLColumn("STRING (32)", true, false))
+                        .put("checkprofits", new SQLColumn("STRING (32)", false, false))
+                        .build()))
+                .build();
     }
-
 
     //Insert statements:
     private List<String> convertObjecttoInsertStatement() {
