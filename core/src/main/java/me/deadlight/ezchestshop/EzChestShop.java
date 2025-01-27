@@ -40,6 +40,7 @@ import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.VersionUtil;
 import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.version.BuildInfo;
@@ -61,13 +62,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public final class EzChestShop extends JavaPlugin {
+    private static ExtendedLogger LOGGER;
+
     private static Economy economy = null;
     public static boolean economyPluginFound = true;
 
@@ -90,8 +91,14 @@ public final class EzChestShop extends JavaPlugin {
         return scheduler;
     }
 
-    public static Logger logger() {
-        return getPlugin().getSLF4JLogger();
+    public static ExtendedLogger logger() {
+        return LOGGER;
+    }
+
+    public EzChestShop() {
+        LOGGER = new ExtendedLogger(
+                getSLF4JLogger(),
+                ignored -> Config.debug_logging);
     }
 
     @Override
@@ -108,17 +115,16 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     private void migrateDataToFork() {
-        Logger logger = LoggerFactory.getLogger(getLogger().getName());
         File dataFolder = getDataFolder();
         File oldDataFolder = new File(dataFolder.getParentFile(), "EzChestShop");
 
         if (oldDataFolder.exists()) {
             if (dataFolder.exists()) {
-                logger.warn("Skipping automatic migration from EzChestShop because your directory contains data from both plugins.");
+                LOGGER.warn("Skipping automatic migration from EzChestShop because your directory contains data from both plugins.");
             } else if (oldDataFolder.renameTo(dataFolder)) {
-                logger.info("Successfully renamed directory '{}' to '{}'", oldDataFolder, dataFolder);
+                LOGGER.info("Successfully renamed directory '{}' to '{}'", oldDataFolder, dataFolder);
             } else {
-                logger.warn("Unable to rename directory '{}' to '{}'", oldDataFolder, dataFolder);
+                LOGGER.warn("Unable to rename directory '{}' to '{}'", oldDataFolder, dataFolder);
             }
         }
     }
@@ -155,7 +161,7 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
-        logger().info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
+        LOGGER.info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
 
         scheduler = UniversalScheduler.getScheduler(this);
         saveDefaultConfig();
@@ -171,7 +177,7 @@ public final class EzChestShop extends JavaPlugin {
         if (Config.database_type != null) {
             Utils.recognizeDatabase();
         } else {
-            logger().error("Database type not specified/or is wrong in config.yml! Disabling plugin...");
+            LOGGER.error("Database type not specified/or is wrong in config.yml! Disabling plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -179,7 +185,7 @@ public final class EzChestShop extends JavaPlugin {
         economyPluginFound = setupEconomy();
         if (!economyPluginFound) {
             Config.useXP = true;
-            logger().warn("*** Cannot find vault or economy plugin. Switching to XP based economy... Please note that you need vault and at least one economy plugin installed to use a money based system.");
+            LOGGER.warn("*** Cannot find vault or economy plugin. Switching to XP based economy... Please note that you need vault and at least one economy plugin installed to use a money based system.");
             getComponentLogger().warn(text("*** This fallback feature (XP based economy) will be removed in future versions of EzChestShopReborn!", RED));
         }
 
@@ -194,22 +200,22 @@ public final class EzChestShop extends JavaPlugin {
         try {
             GuiData.checkForGuiDataYMLupdate();
         } catch (IOException e) {
-            logger().warn("Uncaught IO exception during GUI update", e);
+            LOGGER.warn("Uncaught IO exception during GUI update", e);
         }
 
         if (getServer().getPluginManager().getPlugin("AdvancedRegionMarket") != null) {
             advancedregionmarket = true;
-            logger().info("AdvancedRegionMarket integration enabled.");
+            LOGGER.info("AdvancedRegionMarket integration enabled.");
         }
 
         if (getServer().getPluginManager().getPlugin("Slimefun") != null) {
             slimefun = true;
-            logger().info("Slimefun integration enabled.");
+            LOGGER.info("Slimefun integration enabled.");
         }
 
         if (getServer().getPluginManager().getPlugin("Towny") != null) {
             towny = true;
-            logger().info("Towny integration enabled.");
+            LOGGER.info("Towny integration enabled.");
         }
 
         Plugin coPlugin = getServer().getPluginManager().getPlugin("CoreProtect");
@@ -218,7 +224,7 @@ public final class EzChestShop extends JavaPlugin {
         if (coPlugin != null && coPlugin instanceof CoreProtect co) {
             coreProtectAPI = co.getAPI();
             coreProtect = true;
-            logger().info("CoreProtect integration enabled.");
+            LOGGER.info("CoreProtect integration enabled.");
         }
 
         registerListeners();
@@ -264,7 +270,7 @@ public final class EzChestShop extends JavaPlugin {
         String currentBuildName = BuildInfo.CURRENT.isStable()
                 ? BuildInfo.CURRENT.getId()
                 : BuildInfo.CURRENT.getId() + " (" + BuildInfo.CURRENT.getBranch() + ")";
-        logger().info("Checking for updates. Current version: {}.", currentBuildName);
+        LOGGER.info("Checking for updates. Current version: {}.", currentBuildName);
         BuildInfo latest = null;
         GitHubUtil.GitHubStatusLookup status;
 
@@ -276,23 +282,23 @@ public final class EzChestShop extends JavaPlugin {
                 status = GitHubUtil.compare(BuildInfo.CURRENT.getBranch(), BuildInfo.CURRENT.getId());
             }
         } catch (IOException e) {
-            logger().warn("Failed to determine the latest version!", e);
+            LOGGER.warn("Failed to determine the latest version!", e);
             return;
         }
 
         if (status.isBehind()) {
             if (BuildInfo.CURRENT.isStable()) {
-                logger().warn("A newer version of EzChestShopReborn is available: {}.", latest.getId());
-                logger().warn("Download at: https://github.com/nouish/EzChestShop/releases/tag/{}", latest.getId());
+                LOGGER.warn("A newer version of EzChestShopReborn is available: {}.", latest.getId());
+                LOGGER.warn("Download at: https://github.com/nouish/EzChestShop/releases/tag/{}", latest.getId());
             } else {
-                logger().warn("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is {} commits ahead.", status.getDistance());
-                logger().warn("Downloads are available from GitHub (must be logged in): {}", EzChestShopConstants.GITHUB_LINK);
-                logger().warn("Alternatively, join us on Discord ({}) for developer snapshot builds.", EzChestShopConstants.DISCORD_LINK);
+                LOGGER.warn("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is {} commits ahead.", status.getDistance());
+                LOGGER.warn("Downloads are available from GitHub (must be logged in): {}", EzChestShopConstants.GITHUB_LINK);
+                LOGGER.warn("Alternatively, join us on Discord ({}) for developer snapshot builds.", EzChestShopConstants.DISCORD_LINK);
             }
         } else if (status.isIdentical() || status.isAhead()) {
-            logger().info("You are running the latest version of EzChestShopReborn.");
+            LOGGER.info("You are running the latest version of EzChestShopReborn.");
         } else {
-            logger().warn("EzChestShopReborn was unable to check for newer versions.");
+            LOGGER.warn("EzChestShopReborn was unable to check for newer versions.");
         }
     }
 
@@ -449,10 +455,10 @@ public final class EzChestShop extends JavaPlugin {
         if (scheduler != null)
             scheduler.cancelTasks();
 
-        logger().info("Saving remaining items in SQL cache...");
+        LOGGER.info("Saving remaining items in SQL cache...");
         ShopContainer.saveSqlQueueCache();
         getDatabase().disconnect();
-        logger().info("Save completed.");
+        LOGGER.info("Save completed.");
 
         try {
             for (Object object : Utils.onlinePackets) {
@@ -501,5 +507,4 @@ public final class EzChestShop extends JavaPlugin {
     public DatabaseManager getDatabase() {
         return Utils.databaseManager;
     }
-
 }
