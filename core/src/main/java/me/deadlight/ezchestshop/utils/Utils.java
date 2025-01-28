@@ -31,6 +31,7 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -70,6 +71,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class Utils {
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+
     private Utils() {}
 
     public static List<Object> onlinePackets = new ArrayList<>();
@@ -837,26 +840,11 @@ public final class Utils {
     }
 
     public static String formatNumber(double number, FormatType type) {
-        String result = "Error";
-        DecimalFormat decimalFormat;
-        switch (type) {
-            case GUI:
-                decimalFormat = new DecimalFormat(Config.display_numberformat_gui);
-                result = decimalFormat.format(number);
-                break;
-            case CHAT:
-                decimalFormat = new DecimalFormat(Config.display_numberformat_chat);
-                result = decimalFormat.format(number);
-                break;
-            case HOLOGRAM:
-                decimalFormat = new DecimalFormat(Config.display_numberformat_holo);
-                result = decimalFormat.format(number);
-                break;
-        }
-        if (Config.debug_logging) {
-            EzChestShop.logger().info("Formatted number '{}' to: {}.", number, result);
-        }
-        return result;
+        return switch (type) {
+            case GUI -> new DecimalFormat(Config.display_numberformat_gui).format(number);
+            case CHAT -> new DecimalFormat(Config.display_numberformat_chat).format(number);
+            case HOLOGRAM -> new DecimalFormat(Config.display_numberformat_holo).format(number);
+        };
     }
 
     public static void sendVersionMessage(Player player) {

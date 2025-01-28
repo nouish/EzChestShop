@@ -63,7 +63,7 @@ public final class LanguageManager {
         for (String locale : LanguageManager.getSupportedLanguages()) {
             File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder() + File.separator + "translations", locale + ".yml");
             if (!customConfigFile.exists()) {
-                EzChestShop.logger().info("Generating language file '{}'.", locale);
+                EzChestShop.logger().debug("Generating language file '{}'.", locale);
                 customConfigFile.getParentFile().mkdirs();
                 EzChestShop.getPlugin().saveResource("translations/" + locale + ".yml", false);
             }

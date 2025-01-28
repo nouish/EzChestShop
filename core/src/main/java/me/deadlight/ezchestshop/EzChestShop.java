@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
@@ -62,6 +61,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.event.Level;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -83,6 +83,7 @@ public final class EzChestShop extends JavaPlugin {
     private static TaskScheduler scheduler;
 
     private boolean started = false;
+    private final boolean developmentMode;
 
     /**
      * Get the scheduler of the plugin
@@ -96,9 +97,18 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     public EzChestShop() {
-        LOGGER = new ExtendedLogger(
-                getSLF4JLogger(),
-                ignored -> Config.debug_logging);
+        // Boolean.getBoolean() is poorly named, but returns true for the System.getProperty() with said name.
+        // This is what we want. It can be toggled with the "-Dezchestshopreborn.developerMode=true" flag.
+        developmentMode = Boolean.getBoolean("ezchestshopreborn.developerMode");
+        LOGGER = new ExtendedLogger(getSLF4JLogger(), this::isLoggable);
+    }
+
+    private boolean isLoggable(@NotNull Level level) {
+        return switch (level) {
+            case TRACE -> developmentMode;
+            case DEBUG -> developmentMode || Config.debug_logging;
+            default -> true; // All other levels are already logged by default.
+        };
     }
 
     @Override
@@ -108,7 +118,7 @@ public final class EzChestShop extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             FlagRegistry.onLoad();
             worldguard = true;
-            logger().info("WorldGuard integration enabled.");
+            LOGGER.info("WorldGuard integration enabled.");
         }
 
         migrateDataToFork();
@@ -133,7 +143,7 @@ public final class EzChestShop extends JavaPlugin {
     public void onEnable() {
         if (Bukkit.getName().equalsIgnoreCase("Spigot")) {
             // Use JUL logger because Spigot doesn't have getSLF4JLogger().
-            getLogger().log(Level.SEVERE,
+            getLogger().log(java.util.logging.Level.SEVERE,
                     """
 
 
@@ -152,9 +162,9 @@ public final class EzChestShop extends JavaPlugin {
         if (minecraftVersion == null) {
             OptionalInt dataVersion = VersionUtil.getDataVersion();
             String dataVersionInfo = dataVersion.isPresent() ? Integer.toString(dataVersion.getAsInt()) : "<Unknown>";
-            logger().error("Unsupported version: {} (Data version: {})", Bukkit.getVersion(), dataVersionInfo);
-            logger().error("Supported versions: {}", VersionUtil.getSupportedVersions());
-            logger().error("The server will continue to load, but EzChestShop will be disabled. "
+            LOGGER.error("Unsupported version: {} (Data version: {})", Bukkit.getVersion(), dataVersionInfo);
+            LOGGER.error("Supported versions: {}", VersionUtil.getSupportedVersions());
+            LOGGER.error("The server will continue to load, but EzChestShop will be disabled. "
                     + "Be advised that this results in existing chest shops being unprotected, "
                     + "unless within the protected area of a separate plugin running.");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -169,7 +179,7 @@ public final class EzChestShop extends JavaPlugin {
         try {
             Config.checkForConfigYMLupdate();
         } catch (Exception e) {
-            logger().warn("Uncaught exception checking for config updates", e);
+            LOGGER.warn("Uncaught exception checking for config updates", e);
         }
         Config.loadConfig();
 
@@ -193,7 +203,7 @@ public final class EzChestShop extends JavaPlugin {
         try {
             LanguageManager.checkForLanguagesYMLupdate();
         } catch (IOException e) {
-            logger().warn("Uncaught IO exception during language update", e);
+            LOGGER.warn("Uncaught IO exception during language update", e);
         }
 
         GuiData.loadGuiData();

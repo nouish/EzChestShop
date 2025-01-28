@@ -13,11 +13,13 @@ import java.util.Map;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Database;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Config {
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
 
     public static String currency;
     public static boolean useXP;
@@ -152,11 +154,11 @@ public class Config {
         settings_hologram_message_show_empty_shop_always = config.getBoolean("shops.settings.hologram-messages.show-empty-shop-always");
 
         if (config.contains("commands.alias.ecs-shop") && config.getBoolean("commands.alias.ecs-shop")) {
-            EzChestShop.logger().warn("*** The config option 'commands.alias.ecs-shop' has been removed ***");
+            LOGGER.warn("*** The config option 'commands.alias.ecs-shop' has been removed ***");
         }
 
         if (config.contains("commands.alias.ecsadmin-adminshop") && config.getBoolean("commands.alias.ecsadmin-adminshop")) {
-            EzChestShop.logger().warn("*** The config option 'commands.alias.ecsadmin-adminshop' has been removed ***");
+            LOGGER.warn("*** The config option 'commands.alias.ecsadmin-adminshop' has been removed ***");
         }
 
         command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
@@ -170,11 +172,11 @@ public class Config {
         language = config.getString("language");
         if (!LanguageManager.getSupportedLanguages().contains(language)) {
             if (LanguageManager.getFoundlanguages().contains(language + ".yml")) {
-                EzChestShop.logger().info("Using external language: {}.", language);
+                LOGGER.info("Using external language: {}.", language);
             } else {
                 String oldLanguage = language;
                 language = "Locale_EN";
-                EzChestShop.logger().warn("*** Unsupported language '{}'. Using default language instead: '{}' ***", oldLanguage, language);
+                LOGGER.warn("*** Unsupported language '{}'. Using default language instead: '{}' ***", oldLanguage, language);
             }
         }
 
