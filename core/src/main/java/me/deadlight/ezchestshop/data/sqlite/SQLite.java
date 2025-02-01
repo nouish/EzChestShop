@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
@@ -26,12 +25,15 @@ import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLColumn;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLTable;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.Location;
 
 public class SQLite extends DatabaseManager {
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+
     private final String dbname;
     private final EzChestShop plugin;
     private HikariDataSource dataSource;
@@ -62,9 +64,9 @@ public class SQLite extends DatabaseManager {
             DatabaseMetaData meta = connection.getMetaData();
             String product = meta.getDatabaseProductName();
             String version = meta.getDatabaseProductVersion();
-            plugin.getLogger().info(String.format("Database: %s v%s.", product, version));
+            LOGGER.info("Database: {} v{}.", product, version);
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.WARNING, "Unable to determine database version.", e);
+            LOGGER.warn("Unable to determine database version.", e);
         }
     }
 
@@ -79,12 +81,12 @@ public class SQLite extends DatabaseManager {
                     statement.executeUpdate(i);
                 } catch (SQLException e) {
                     if (!e.getMessage().contains("duplicate")) {
-                        plugin.getLogger().log(Level.WARNING, "Error running SQLite query", e);
+                        LOGGER.warn("Error running SQLite query", e);
                     }
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.WARNING, "Error running SQLite query", e);
+            LOGGER.warn("Error running SQLite query", e);
         }
     }
 
@@ -196,7 +198,7 @@ public class SQLite extends DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return null;
     }
@@ -221,7 +223,7 @@ public class SQLite extends DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return null;
     }
@@ -246,7 +248,7 @@ public class SQLite extends DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return false;
     }
@@ -271,7 +273,7 @@ public class SQLite extends DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return 0;
     }
@@ -296,7 +298,7 @@ public class SQLite extends DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return 0;
     }
@@ -345,7 +347,7 @@ public class SQLite extends DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -366,7 +368,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(2, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -387,7 +389,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(2, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -408,7 +410,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(2, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -428,7 +430,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(2, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -445,7 +447,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(1, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -462,7 +464,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(1, key);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -484,7 +486,7 @@ public class SQLite extends DatabaseManager {
                 keys.add(caret.getString(primaryKey));
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return keys;
     }
@@ -507,7 +509,7 @@ public class SQLite extends DatabaseManager {
             }
             return keys;
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return keys;
     }
@@ -519,7 +521,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(1, uuid);
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -534,7 +536,7 @@ public class SQLite extends DatabaseManager {
                 return caret.next();
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return false;
     }
@@ -556,7 +558,7 @@ public class SQLite extends DatabaseManager {
                 return caret.next();
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return false;
     }
@@ -577,7 +579,7 @@ public class SQLite extends DatabaseManager {
                 return caret.next();
             }
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return false;
     }
@@ -605,7 +607,7 @@ public class SQLite extends DatabaseManager {
             statement.setString(13, String.join("#,#", customMessages));
             statement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
     }
 
@@ -628,9 +630,8 @@ public class SQLite extends DatabaseManager {
             }
             return map;
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), e);
+            LOGGER.error(Errors.sqlConnectionExecute(), e);
         }
         return null;
     }
-
 }

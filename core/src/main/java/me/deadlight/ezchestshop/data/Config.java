@@ -13,11 +13,13 @@ import java.util.Map;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Database;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Config {
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
 
     public static String currency;
     public static boolean useXP;
@@ -89,6 +91,7 @@ public class Config {
 
     public static boolean shopProtection;
     public static boolean emptyShopNotificationOnJoin;
+    public static boolean logTransactions;
 
     public static boolean isDiscordNotificationEnabled;
 
@@ -152,11 +155,11 @@ public class Config {
         settings_hologram_message_show_empty_shop_always = config.getBoolean("shops.settings.hologram-messages.show-empty-shop-always");
 
         if (config.contains("commands.alias.ecs-shop") && config.getBoolean("commands.alias.ecs-shop")) {
-            EzChestShop.logger().warn("*** The config option 'commands.alias.ecs-shop' has been removed ***");
+            LOGGER.warn("*** The config option 'commands.alias.ecs-shop' has been removed ***");
         }
 
         if (config.contains("commands.alias.ecsadmin-adminshop") && config.getBoolean("commands.alias.ecsadmin-adminshop")) {
-            EzChestShop.logger().warn("*** The config option 'commands.alias.ecsadmin-adminshop' has been removed ***");
+            LOGGER.warn("*** The config option 'commands.alias.ecsadmin-adminshop' has been removed ***");
         }
 
         command_checkprofit_lines_pp = config.getInt("commands.checkprofit-lines-per-page");
@@ -170,11 +173,11 @@ public class Config {
         language = config.getString("language");
         if (!LanguageManager.getSupportedLanguages().contains(language)) {
             if (LanguageManager.getFoundlanguages().contains(language + ".yml")) {
-                EzChestShop.logger().info("Using external language: {}.", language);
+                LOGGER.info("Using external language: {}.", language);
             } else {
                 String oldLanguage = language;
                 language = "Locale_EN";
-                EzChestShop.logger().warn("*** Unsupported language '{}'. Using default language instead: '{}' ***", oldLanguage, language);
+                LOGGER.warn("*** Unsupported language '{}'. Using default language instead: '{}' ***", oldLanguage, language);
             }
         }
 
@@ -200,6 +203,7 @@ public class Config {
 
         shopProtection = config.getBoolean("protection.prevent-shop-destruction", true);
         emptyShopNotificationOnJoin = config.getBoolean("notification.notify-empty-shop-on-join", true);
+        logTransactions = config.getBoolean("shops.settings.log-transactions", true);
         //
         isDiscordNotificationEnabled = config.getBoolean("notification.discord.enabled", false);
         discordWebhookUrl = config.getString("notification.discord.webhook-url", "");
@@ -370,12 +374,12 @@ public class Config {
         if (!updated1_5_7) {
             fc.set("economy.use-xp", false);
             fc.set("shops.commands.enabled", false);
-            fc.set("shops.commands.shop.buy.*", Arrays.asList("/tell %player_name% You bought an Item!", "/tell %player_name% Thanks for shopping!"));
-            fc.set("shops.commands.shop.sell.*", Arrays.asList("/tell %player_name% You sold an Item!"));
-            fc.set("shops.commands.shop.open", Arrays.asList("/tell %player_name% Opening shop!"));
-            fc.set("shops.commands.adminshop.buy.*", Arrays.asList("/tell %player_name% You bought an admin Item!"));
-            fc.set("shops.commands.adminshop.sell.*", Arrays.asList("/tell %player_name% You sold an admin Item!"));
-            fc.set("shops.commands.adminshop.open", Arrays.asList("/tell %player_name% Opening adminshop!"));
+            fc.set("shops.commands.shop.buy.*", List.of("/tell %player_name% You bought an Item!", "/tell %player_name% Thanks for shopping!"));
+            fc.set("shops.commands.shop.sell.*", List.of("/tell %player_name% You sold an Item!"));
+            fc.set("shops.commands.shop.open", List.of("/tell %player_name% Opening shop!"));
+            fc.set("shops.commands.adminshop.buy.*", List.of("/tell %player_name% You bought an admin Item!"));
+            fc.set("shops.commands.adminshop.sell.*", List.of("/tell %player_name% You sold an admin Item!"));
+            fc.set("shops.commands.adminshop.open", List.of("/tell %player_name% Opening adminshop!"));
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
         }
@@ -384,6 +388,15 @@ public class Config {
             fc.set("integration.towny.shops-only-in-shop-plots", true);
             fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
             Config.loadConfig();
+        }
+
+        if (!fc.isBoolean("shops.settings.log-transactions")) {
+            boolean defaultValue = true;
+            fc.set("shops.settings.log-transactions", defaultValue);
+            fc.setComments("shops.settings.log-transactions", List.of("When true, all transactions will be logged to the console."));
+            fc.save(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
+            Config.loadConfig();
+            LOGGER.trace("Added the 'shops.settings.log-transactions' config option (default: {}).", defaultValue);
         }
     }
 }

@@ -90,6 +90,8 @@ shops:
       line-count-default: 1
       # If true, this will always show players if a shop is empty.
       show-empty-shop-always: true
+    # When true, all transactions will be logged to the console.
+    log-transactions: true
   commands:
     enabled: false
     shop:

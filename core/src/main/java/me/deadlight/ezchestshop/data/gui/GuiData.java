@@ -29,7 +29,7 @@ public class GuiData {
     public static void loadGuiData() {
         File customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml");
         if (!customConfigFile.exists()) {
-            EzChestShop.logger().info("Generating guis.yml file");
+            EzChestShop.logger().debug("Generating guis.yml file");
             customConfigFile.getParentFile().mkdirs();
             EzChestShop.getPlugin().saveResource("guis.yml", false);
             customConfigFile = new File(EzChestShop.getPlugin().getDataFolder(), "guis.yml");
