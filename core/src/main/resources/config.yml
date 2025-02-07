@@ -132,7 +132,9 @@ tasks:
   check-for-removed-shops: false
 #databases section
 database:
-  #available types SQLite & MySQL  (MySQL is recommended for the best  & big servers)
+  # The database system to use.
+  # Options are [SQLite, MySQL]. Default: SQLite.
+  # SQLite is the preferred option.
   type: SQLite
   #MySQL database information in case of usage
   mysql:
