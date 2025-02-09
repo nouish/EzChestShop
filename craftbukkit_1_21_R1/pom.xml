@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.github.nouish.ezchestshop</groupId>
     <artifactId>ezchestshop-parent</artifactId>
-    <version>1.8.2-SNAPSHOT</version>
+    <version>1.8.2-rc1</version>
   </parent>
 
   <artifactId>ezchestshop-craftbukkit_1_21_R1</artifactId>
