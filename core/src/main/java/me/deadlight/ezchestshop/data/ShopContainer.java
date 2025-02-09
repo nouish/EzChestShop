@@ -17,6 +17,7 @@ import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.WebhookSender;
 import me.deadlight.ezchestshop.utils.XPEconomy;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.objects.SqlQueue;
@@ -47,6 +48,7 @@ import static net.kyori.adventure.text.Component.translatable;
  */
 
 public class ShopContainer {
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
     private static final Economy econ = EzChestShop.getEconomy();
     private static HashMap<Location, EzShop> shopMap = new HashMap<>();
 
@@ -59,6 +61,7 @@ public class ShopContainer {
     public static void queryShopsToMemory() {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         shopMap = db.queryShops();
+        LOGGER.info("Loaded and cached {} shops.", shopMap.size());
     }
 
     /**
@@ -68,8 +71,7 @@ public class ShopContainer {
      */
     public static void deleteShop(Location loc) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        db.deleteEntry("location", Utils.LocationtoString(loc),
-                "shopdata");
+        db.deleteEntry("location", Utils.LocationtoString(loc), "shopdata");
         shopMap.remove(loc);
 
         //This is not workign as intended
@@ -118,7 +120,7 @@ public class ShopContainer {
             try {
                 WebhookSender.sendDiscordNewShopAlert(ownerName, priceBuy, priceSell, itemName, materialType, time, shopLocation);
             } catch (Exception e) {
-                EzChestShop.logger().warn("Discord webhook failed!", e);
+                LOGGER.warn("Discord webhook failed!", e);
             }
         });
     }
