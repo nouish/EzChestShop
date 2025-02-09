@@ -63,12 +63,10 @@ public class BlockBreakListener implements Listener {
                 return;
             }
 
-            Location loc = event.getBlock().getLocation();
-            boolean isPartOfShop = Utils.isPartOfTheChestShop(event.getBlock().getLocation()) != null;
-            if (isPartOfShop) {
-                loc = Utils.isPartOfTheChestShop(event.getBlock().getLocation()).getLocation();
-            }
-            if (ShopContainer.isShop(loc) || isPartOfShop) {
+            EzShop shop = Utils.isPartOfTheChestShop(event.getBlock());
+            Location loc = shop != null ? shop.getLocation() : event.getBlock().getLocation();
+
+            if (ShopContainer.isShop(loc) || shop != null) {
                 if (Tag.SHULKER_BOXES.isTagged(event.getBlock().getType())) {
                     //first we check nobody is already in the shulker container (viewing it)
                     ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState();
@@ -124,12 +122,8 @@ public class BlockBreakListener implements Listener {
     private void preventShopBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        Location loc = block.getLocation();
-        EzShop partOfTheChestShop = Utils.isPartOfTheChestShop(loc);
-
-        if (partOfTheChestShop != null) {
-            loc = partOfTheChestShop.getLocation();
-        }
+        EzShop partOfTheChestShop = Utils.isPartOfTheChestShop(block);
+        Location loc = partOfTheChestShop != null ? partOfTheChestShop.getLocation() : block.getLocation();
 
         if (ShopContainer.isShop(loc) || partOfTheChestShop != null) {
             boolean adminshop = ShopContainer.getShop(loc).getSettings().isAdminshop();

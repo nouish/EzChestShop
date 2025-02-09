@@ -25,7 +25,7 @@ public class ChestShopBreakPrevention implements Listener {
         }
 
         event.blockList().removeIf(block -> ShopContainer.isShop(block.getLocation()));
-        event.blockList().removeIf(block -> Utils.isPartOfTheChestShop(block.getLocation()) != null);
+        event.blockList().removeIf(block -> Utils.isPartOfTheChestShop(block) != null);
     }
 
 
@@ -34,7 +34,7 @@ public class ChestShopBreakPrevention implements Listener {
         if (!Config.shopProtection) {
             return;
         }
-        if (ShopContainer.isShop(event.getBlock().getLocation()) || Utils.isPartOfTheChestShop(event.getBlock().getLocation()) != null) {
+        if (ShopContainer.isShop(event.getBlock().getLocation()) || Utils.isPartOfTheChestShop(event.getBlock()) != null) {
             event.setCancelled(true);
         }
 
@@ -46,7 +46,7 @@ public class ChestShopBreakPrevention implements Listener {
             return;
         }
         for (Block block : event.getBlocks()) {
-            if (ShopContainer.isShop(block.getLocation()) || Utils.isPartOfTheChestShop(block.getLocation()) != null) {
+            if (ShopContainer.isShop(block.getLocation()) || Utils.isPartOfTheChestShop(block) != null) {
                 event.setCancelled(true);
                 break;
             }
@@ -59,7 +59,7 @@ public class ChestShopBreakPrevention implements Listener {
             return;
         }
         for (Block block : event.getBlocks()) {
-            if (ShopContainer.isShop(block.getLocation()) || Utils.isPartOfTheChestShop(block.getLocation()) != null) {
+            if (ShopContainer.isShop(block.getLocation()) || Utils.isPartOfTheChestShop(block) != null) {
                 event.setCancelled(true);
                 break;
             }

@@ -918,9 +918,11 @@ public final class Utils {
         }
     }
 
-    public static EzShop isPartOfTheChestShop(Location location) {
-        Block block = location.getBlock();
+    public static EzShop isPartOfTheChestShop(@NotNull Location location) {
+        return isPartOfTheChestShop(location.getBlock());
+    }
 
+    public static EzShop isPartOfTheChestShop(@NotNull Block block) {
         if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) {
             return null;
         }
