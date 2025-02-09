@@ -179,11 +179,11 @@ public final class Utils {
      */
     public static Inventory getBlockInventory(Block block) {
         if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
-            return ((Chest) block.getState()).getInventory();
+            return ((Chest) block.getState(false)).getInventory();
         } else if (block.getType() == Material.BARREL) {
-            return ((Barrel) block.getState()).getInventory();
+            return ((Barrel) block.getState(false)).getInventory();
         } else if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
-            return ((ShulkerBox) block.getState()).getInventory();
+            return ((ShulkerBox) block.getState(false)).getInventory();
         } else
             return null;
     }
@@ -867,7 +867,7 @@ public final class Utils {
 
     public static PersistentDataContainer getDataContainer(Block block) {
         PersistentDataContainer dataContainer = null;
-        TileState state = (TileState) block.getState();
+        TileState state = (TileState) block.getState(false);
         Inventory inventory = Utils.getBlockInventory(block);
 
         if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
@@ -927,7 +927,7 @@ public final class Utils {
             return null;
         }
 
-        if (block.getState() instanceof Chest chest && chest.getInventory().getHolder(false) instanceof DoubleChest doubleChest) {
+        if (block.getState(false) instanceof Chest chest && chest.getInventory().getHolder(false) instanceof DoubleChest doubleChest) {
             Chest left = (Chest) Objects.requireNonNull(doubleChest.getLeftSide(false), "doubleChest.getLeftSide()");
             EzShop leftShop = ShopContainer.getShop(left.getLocation());
             if (leftShop != null) {

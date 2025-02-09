@@ -47,7 +47,7 @@ public class ServerShopGUI {
                 player.sendMessage(lm.chestShopProblem());
                 return;
             }
-            containerBlock.getState().update();
+            containerBlock.getState(false).update();
             EzShop shop = ShopContainer.getShop(containerBlock.getLocation());
             shopOwner = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
             if (shopOwner == null) {
@@ -161,7 +161,7 @@ public class ServerShopGUI {
 
 
         //settings item
-        boolean result = isAdmin(((TileState)containerBlock.getState()).getPersistentDataContainer(), player.getUniqueId().toString());
+        boolean result = isAdmin(((TileState) containerBlock.getState(false)).getPersistentDataContainer(), player.getUniqueId().toString());
         //place moved vvv because of settingsGUI
         if (container.hasItem("settings")) {
             if (player.hasPermission("ecs.admin") || result) {
@@ -171,7 +171,6 @@ public class ServerShopGUI {
                     event.setCancelled(true);
                     //opening the settigns menu
                     SettingsGUI settingsGUI = new SettingsGUI();
-
                     settingsGUI.showGUI(player, containerBlock, result);
                     player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
                 });

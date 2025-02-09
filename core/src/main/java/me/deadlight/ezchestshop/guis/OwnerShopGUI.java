@@ -46,7 +46,7 @@ public class OwnerShopGUI {
                 player.sendMessage(lm.chestShopProblem());
                 return;
             }
-            containerBlock.getState().update();
+            containerBlock.getState(false).update();
             EzShop shop = ShopContainer.getShop(containerBlock.getLocation());
             shopOwner = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
             if (shopOwner == null) {

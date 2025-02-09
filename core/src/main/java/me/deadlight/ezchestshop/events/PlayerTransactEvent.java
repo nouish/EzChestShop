@@ -104,13 +104,13 @@ public class PlayerTransactEvent extends Event {
     }
 
     private boolean getBoolean(Block containerBlock, NamespacedKey key) {
-        TileState state = (TileState) containerBlock.getState();
+        TileState state = (TileState) containerBlock.getState(false);
         PersistentDataContainer container = state.getPersistentDataContainer();
         return container.getOrDefault(key, PersistentDataType.INTEGER, 0) == 1;
     }
 
     private double getDouble(Block containerBlock, NamespacedKey key) {
-        TileState state = (TileState) containerBlock.getState();
+        TileState state = (TileState) containerBlock.getState(false);
         PersistentDataContainer container = state.getPersistentDataContainer();
         return container.getOrDefault(key, PersistentDataType.DOUBLE, 0.0);
     }

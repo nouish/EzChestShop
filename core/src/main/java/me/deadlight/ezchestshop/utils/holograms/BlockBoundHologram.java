@@ -313,7 +313,7 @@ public class BlockBoundHologram {
      * @return The shop container location. If not found, the location of the block.
      */
     public static Location getShopChestLocation(@NotNull Block target) {
-        if (target.getState() instanceof Container container
+        if (target.getState(false) instanceof Container container
                 && container.getInventory().getHolder(false) instanceof DoubleChest doubleChest) {
             Chest leftChest = (Chest) doubleChest.getLeftSide(false);
             Chest rightChest = (Chest) doubleChest.getRightSide(false);

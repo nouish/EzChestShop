@@ -50,7 +50,7 @@ public class SettingsGUI {
 
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
         ContainerGui container = GuiData.getSettings();
-        PersistentDataContainer dataContainer = ((TileState)containerBlock.getState()).getPersistentDataContainer();
+        PersistentDataContainer dataContainer = ((TileState) containerBlock.getState(false)).getPersistentDataContainer();
         boolean isAdminShop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
         Gui gui = new Gui(container.getRows(), lm.settingsGuiTitle(), EnumSet.noneOf(InteractionModifier.class));
         gui.getFiller().fill(container.getBackground());
@@ -88,14 +88,14 @@ public class SettingsGUI {
                 event.setCancelled(true);
                 //start the functionality for toggle message
                 if (dataContainer.getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState(false));
                     state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.toggleTransactionMessageOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(false);
                 } else {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState(false));
                     state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.toggleTransactionMessageOnInChat());
@@ -115,21 +115,21 @@ public class SettingsGUI {
                 event.setCancelled(true);
                 //start the functionality for disabling buy
                 if (dataContainer.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1) {
-                    TileState state = ((TileState) containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState(false));
                     state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.disableBuyingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
                 } else {
-                    TileState state = ((TileState) containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState(false));
                     state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.disableBuyingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
                 }
-                ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDbuy();
+                ShopHologram.getHologram(containerBlock.getLocation(), player).updateDbuy();
             });
             Utils.addItemIfEnoughSlots(gui, buyDisabledItem.getSlot(), buyDisabled);
         }
@@ -142,21 +142,21 @@ public class SettingsGUI {
                 event.setCancelled(true);
                 //start the functionality for disabling sell
                 if (dataContainer.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1) {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState(false));
                     state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.disableSellingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
                 } else {
-                    TileState state = ((TileState)containerBlock.getState());
+                    TileState state = ((TileState) containerBlock.getState(false));
                     state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.disableSellingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
                 }
-                ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDsell();
+                ShopHologram.getHologram(containerBlock.getLocation(), player).updateDsell();
             });
             Utils.addItemIfEnoughSlots(gui, sellDisabledItem.getSlot(), sellDisabled);
         }
@@ -194,14 +194,14 @@ public class SettingsGUI {
                     //start the functionality for shared income
 
                     if (dataContainer.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1) {
-                        TileState state = ((TileState)containerBlock.getState());
+                        TileState state = ((TileState) containerBlock.getState(false));
                         state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0);
                         state.update();
                         player.sendMessage(lm.sharedIncomeOffInChat());
                         showGUI(player, containerBlock, isAdmin);
                         ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(false);
                     } else {
-                        TileState state = ((TileState)containerBlock.getState());
+                        TileState state = ((TileState) containerBlock.getState(false));
                         state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 1);
                         state.update();
                         player.sendMessage(lm.sharedIncomeOnInChat());
@@ -272,7 +272,7 @@ public class SettingsGUI {
                 } else {
                     return;
                 }
-                TileState state = ((TileState)containerBlock.getState());
+                TileState state = ((TileState) containerBlock.getState(false));
                 state.getPersistentDataContainer().set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, next_rotation);
                 state.update();
                 player.sendMessage(lm.rotateHologramInChat(next_rotation));
@@ -310,13 +310,14 @@ public class SettingsGUI {
                                             return false;
                                         }
                                         EzChestShop.getScheduler().runTask(() -> {
-                                                    // If these checks complete successfully continue.
-                                                    if (changePrice(containerBlock.getState(), false, amount, player, containerBlock)) {
-                                                        ShopContainer.changePrice(containerBlock.getState(), amount, false);
-                                                        ShopHologram.getHologram(containerBlock.getLocation(), player).updateSellPrice();
-                                                        player.sendMessage(lm.shopSellPriceUpdated());
-                                                    }
-                                                });
+                                            BlockState state = containerBlock.getState(false);
+                                            // If these checks complete successfully continue.
+                                            if (changePrice(state, false, amount, player, containerBlock)) {
+                                                ShopContainer.changePrice(state, amount, false);
+                                                ShopHologram.getHologram(containerBlock.getLocation(), player).updateSellPrice();
+                                                player.sendMessage(lm.shopSellPriceUpdated());
+                                            }
+                                        });
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -344,13 +345,14 @@ public class SettingsGUI {
                                             return false;
                                         }
                                         EzChestShop.getScheduler().runTask(() -> {
-                                                    // If these checks complete successfully continue.
-                                                    if (changePrice(containerBlock.getState(), true, amount, player, containerBlock)) {
-                                                        ShopContainer.changePrice(containerBlock.getState(), amount, true);
-                                                        ShopHologram.getHologram(containerBlock.getLocation(), player).updateBuyPrice();
-                                                        player.sendMessage(lm.shopBuyPriceUpdated());
-                                                    }
-                                                });
+                                            BlockState state = containerBlock.getState(false);
+                                            // If these checks complete successfully continue.
+                                            if (changePrice(state, true, amount, player, containerBlock)) {
+                                                ShopContainer.changePrice(state, amount, true);
+                                                ShopHologram.getHologram(containerBlock.getLocation(), player).updateBuyPrice();
+                                                player.sendMessage(lm.shopBuyPriceUpdated());
+                                            }
+                                        });
                                     } else {
                                         thatplayer.sendMessage(lm.wrongInput());
                                     }
@@ -515,38 +517,38 @@ public class SettingsGUI {
          }
          // Revert from disabling buy sell.
          if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
-             TileState state = ((TileState)containerBlock.getState());
+             TileState state = ((TileState) containerBlock.getState(false));
              state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0);
              state.update();
              player.sendMessage(lm.disableBuyingOffInChat());
              ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
-             ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDbuy();
+             ShopHologram.getHologram(containerBlock.getLocation(), player).updateDbuy();
          }
          if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
-             TileState state = ((TileState)containerBlock.getState());
+             TileState state = ((TileState) containerBlock.getState(false));
              state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0);
              state.update();
              player.sendMessage(lm.disableSellingOffInChat());
              ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
-             ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateDsell();
+             ShopHologram.getHologram(containerBlock.getLocation(), player).updateDsell();
          }
          // Disable buy/sell
          if (price == 0 && Config.settings_zero_equals_disabled) {
              if (isBuy && shop.getBuyPrice() != 0) {
-                 TileState state = ((TileState)containerBlock.getState());
+                 TileState state = ((TileState) containerBlock.getState(false));
                  state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 1);
                  state.update();
                  player.sendMessage(lm.disableBuyingOffInChat());
                  ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
-                 ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateBuyPrice();
+                 ShopHologram.getHologram(containerBlock.getLocation(), player).updateBuyPrice();
              }
              if (!isBuy && shop.getSellPrice() != 0) {
-                 TileState state = ((TileState)containerBlock.getState());
+                 TileState state = ((TileState) containerBlock.getState(false));
                  state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 1);
                  state.update();
                  player.sendMessage(lm.disableSellingOffInChat());
                  ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);
-                 ShopHologram.getHologram(containerBlock.getState().getLocation(), player).updateSellPrice();
+                 ShopHologram.getHologram(containerBlock.getLocation(), player).updateSellPrice();
              }
          }
          return true;
@@ -570,12 +572,9 @@ public class SettingsGUI {
                                      List<String> messages = Arrays.asList(strings).subList(0, lines).stream()
                                              .filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
                                      // Save data!
-                                     ShopContainer.getShopSettings(location)
-                                             .setCustomMessages(messages);
+                                     ShopContainer.getShopSettings(location).setCustomMessages(messages);
                                      ShopHologram.getHologram(location, player).setCustomHologramMessage(messages);
-
                                  });
-
                      } catch (Exception e) {
                          return false;
                      }

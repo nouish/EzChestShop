@@ -20,7 +20,7 @@ public class ChatWaitObject {
         this.answer = answer;
         this.type = type;
         this.containerBlock = containerBlock;
-        this.dataContainer = getDataContainer(containerBlock.getState(), containerBlock.getType());
+        this.dataContainer = getDataContainer(containerBlock.getState(false), containerBlock.getType());
     }
 
     public ChatWaitObject(String answer, String type, Block containerBlock, PersistentDataContainer dataContainer) {

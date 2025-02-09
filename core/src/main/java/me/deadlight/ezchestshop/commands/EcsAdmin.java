@@ -320,11 +320,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     return;
                 }
             }
-            BlockState blockState = target.getState();
-            if (blockState instanceof TileState) {
+            BlockState blockState = target.getState(false);
+            if (blockState instanceof TileState state) {
                 if (Utils.isApplicableContainer(target)) {
-                    TileState state = (TileState) blockState;
-                    PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
+                    PersistentDataContainer container = state.getPersistentDataContainer();
 
                     if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
                         if (EzChestShop.worldguard) {
@@ -386,7 +385,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
     private void createShop(Player player, String[] args, Block target) throws IOException {
         if (target != null && target.getType() != Material.AIR) {
-            BlockState blockState = target.getState();
+            BlockState blockState = target.getState(false);
             //slimefun check
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(target.getLocation());
@@ -518,7 +517,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     private Chest ifItsADoubleChestShop(Block block) {
         //double chest
         if (block instanceof Chest) {
-            Chest chest = (Chest) block.getState();
+            Chest chest = (Chest) block.getState(false);
             Inventory inventory = chest.getInventory();
             if (inventory instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder(false);
@@ -544,7 +543,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
 
     private BlockState getLookedAtBlockState(Player player, boolean sendErrors, boolean isCreateOrRemove, Block target) {
         if (target != null && target.getType() != Material.AIR) {
-            BlockState blockState = target.getState();
+            BlockState blockState = target.getState(false);
             if (EzChestShop.slimefun) {
                 boolean sfresult = BlockStorage.hasBlockInfo(blockState.getBlock().getLocation());
                 if (sfresult) {
@@ -566,9 +565,9 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 Chest chestright = (Chest) doubleChest.getRightSide(false);
 
                                 if (!chestleft.getPersistentDataContainer().isEmpty()) {
-                                    blockState = chestleft.getBlock().getState();
+                                    blockState = chestleft.getBlock().getState(false);
                                 } else {
-                                    blockState = chestright.getBlock().getState();
+                                    blockState = chestright.getBlock().getState(false);
                                 }
                             }
                         }
