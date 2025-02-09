@@ -11,6 +11,7 @@ public final class EzChestShopConstants {
     public static final String REPOSITORY = "nouish/EzChestShop";
     public static final String DISCORD_LINK = "https://discord.gg/invite/gjV6BgKxFV";
     public static final String GITHUB_LINK = "https://github.com/" + REPOSITORY;
+    public static final String WIKI_LINK = GITHUB_LINK + "/wiki";
 
     // Continue to use the old namespace to ensure existing shops work.
     private static final String NAMESPACE = "ezchestshop";

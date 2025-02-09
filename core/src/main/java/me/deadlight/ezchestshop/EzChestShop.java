@@ -86,6 +86,11 @@ public final class EzChestShop extends JavaPlugin {
     private final boolean developmentMode;
 
     /**
+     * Is this the first time EzChestShopReborn is running on this server?
+     */
+    private boolean isFirstRun = false;
+
+    /**
      * Get the scheduler of the plugin
      */
     public static TaskScheduler getScheduler() {
@@ -113,6 +118,16 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        if (!getDataFolder().exists()) {
+            isFirstRun = true;
+
+            if (getDataFolder().mkdirs()) {
+                LOGGER.debug("Created data directory.");
+            } else {
+                LOGGER.debug("Unable to create data directory.");
+            }
+        }
+
         // Custom WorldGuard flags must be registered before the plugin is enabled.
         // To achieve this, we create them during onLoad().
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
@@ -259,6 +274,16 @@ public final class EzChestShop extends JavaPlugin {
                     this::checkForUpdates,
                     Math.divideExact(TimeUnit.SECONDS.toMillis(30), tickDurationInMillis),
                     Math.divideExact(TimeUnit.HOURS.toMillis(6), tickDurationInMillis));
+        }
+
+        if (isFirstRun) {
+            String line = "-".repeat(40);
+            LOGGER.info(line);
+            LOGGER.info("");
+            LOGGER.info("This seems to be your first time running {}!", getName());
+            LOGGER.info("Learn more about the plugin here: {}", EzChestShopConstants.WIKI_LINK);
+            LOGGER.info("");
+            LOGGER.info(line);
         }
 
         // The plugin started without encountering unrecoverable problems.
