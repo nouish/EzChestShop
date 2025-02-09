@@ -29,7 +29,7 @@ public class BlockPlaceListener implements Listener {
     @EventHandler
     public void onBlockDispenserPlace(BlockDispenseEvent event) {
         Block block = event.getBlock();
-        if (block.getState() instanceof Dispenser dispenser) {
+        if (block.getState(false) instanceof Dispenser dispenser) {
             final Directional directional = (Directional) dispenser.getBlockData();
             EzChestShop.getScheduler().runTaskLater(block.getLocation(), () -> {
                 Block relativeBlock = block.getRelative(directional.getFacing());
@@ -44,7 +44,7 @@ public class BlockPlaceListener implements Listener {
                 ItemMeta meta = shulker.getItemMeta();
                 PersistentDataContainer container = meta.getPersistentDataContainer();
                 if (container.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) != null) {
-                    TileState state = ((TileState) block.getState());
+                    TileState state = ((TileState) block.getState(false));
                     PersistentDataContainer bcontainer = ShopContainer.copyContainerData(container, state.getPersistentDataContainer());
                     state.update();
                     ShopContainer.loadShop(block.getLocation(), bcontainer);

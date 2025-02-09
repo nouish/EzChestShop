@@ -28,7 +28,7 @@ public class PlayerTransactionListener implements Listener {
     public void onTransaction(PlayerTransactEvent event) {
         logProfits(event);
         sendDiscordWebhook(event);
-        if (((TileState) event.getContainerBlock().getState()).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
+        if (((TileState) event.getContainerBlock().getState(false)).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
             OfflinePlayer owner = event.getOwner();
             List<UUID> getters = event.getAdminsUUID();
             getters.add(owner.getUniqueId());

@@ -69,7 +69,7 @@ public class BlockBreakListener implements Listener {
             if (ShopContainer.isShop(loc) || shop != null) {
                 if (Tag.SHULKER_BOXES.isTagged(event.getBlock().getType())) {
                     //first we check nobody is already in the shulker container (viewing it)
-                    ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState();
+                    ShulkerBox shulkerBox = (ShulkerBox) event.getBlock().getState(false);
                     int viewerCount = shulkerBox.getInventory().getViewers().size();
                     if (viewerCount > 0) {
                         event.setCancelled(true);
@@ -82,7 +82,7 @@ public class BlockBreakListener implements Listener {
                         ItemStack shulker = event.getBlock().getDrops().stream().findFirst().get();
                         ItemMeta meta = shulker.getItemMeta();
                         PersistentDataContainer container = meta.getPersistentDataContainer();
-                        PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState()).getPersistentDataContainer();
+                        PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState(false)).getPersistentDataContainer();
                         if (bcontainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) != null) {
                             container = ShopContainer.copyContainerData(bcontainer, container);
                             meta = addLore(meta, container);

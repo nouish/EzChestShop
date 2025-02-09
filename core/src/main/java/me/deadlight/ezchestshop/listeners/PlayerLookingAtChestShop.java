@@ -98,7 +98,7 @@ public class PlayerLookingAtChestShop implements Listener {
             }
         } else {
             //not a double chest
-            PersistentDataContainer container = ((TileState) target.getState()).getPersistentDataContainer();
+            PersistentDataContainer container = ((TileState) target.getState(false)).getPersistentDataContainer();
             if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
                 ItemStack thatItem = Utils.decodeItem(container.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
                 double buy = container.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
@@ -130,7 +130,7 @@ public class PlayerLookingAtChestShop implements Listener {
         Location lineLocation = spawnLocation.clone().subtract(0, 0.1, 0);
         String itemname = Utils.getFinalItemName(thatItem);
         List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
-                Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shopLocation.getBlock().getState()).getPersistentDataContainer()
+                Bukkit.getOfflinePlayer(UUID.fromString(((TileState) shopLocation.getBlock().getState(false)).getPersistentDataContainer()
                         .get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))), player.getInventory().getStorageContents(),
                 Utils.getBlockInventory(shopLocation.getBlock()).getStorageContents(),
                 buy, sell, thatItem);
@@ -255,7 +255,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
     private Location getHoloLoc(Block containerBlock) {
         Inventory inventory = Utils.getBlockInventory(containerBlock);
-        PersistentDataContainer container = ((TileState) containerBlock.getState()).getPersistentDataContainer();
+        PersistentDataContainer container = ((TileState) containerBlock.getState(false)).getPersistentDataContainer();
         String rotation = container.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
         rotation = Config.holo_rotation ? rotation : Config.settings_defaults_rotation;
         //Add rotation checks

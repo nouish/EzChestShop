@@ -46,12 +46,12 @@ public class BlockPistonExtendListener implements Listener {
     public void onExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
             if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
-                BlockState blockState = block.getState();
+                BlockState blockState = block.getState(false);
                 TileState state = (TileState) blockState;
                 PersistentDataContainer container = state.getPersistentDataContainer();
 
                 //first we check nobody is already in the shulker container (viewing it)
-                ShulkerBox shulkerBox = (ShulkerBox) block.getState();
+                ShulkerBox shulkerBox = (ShulkerBox) block.getState(false);
                 int viewerCount = shulkerBox.getInventory().getViewers().size();
                 if (viewerCount > 0) {
                     event.setCancelled(true);

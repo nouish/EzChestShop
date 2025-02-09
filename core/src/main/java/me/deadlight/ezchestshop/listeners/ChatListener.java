@@ -94,11 +94,11 @@ public class ChatListener implements Listener {
 
     public void addThePlayer(String answer, Block chest, Player player) {
         UUID answerUUID = Bukkit.getOfflinePlayer(answer).getUniqueId();
-        List<UUID> admins = Utils.getAdminsList(((TileState)chest.getState()).getPersistentDataContainer());
+        List<UUID> admins = Utils.getAdminsList(((TileState) chest.getState(false)).getPersistentDataContainer());
         if (!admins.contains(answerUUID)) {
             admins.add(answerUUID);
             String adminsString = convertListUUIDtoString(admins);
-            TileState state = ((TileState)chest.getState());
+            TileState state = ((TileState) chest.getState(false));
             PersistentDataContainer data = state.getPersistentDataContainer();
             data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
@@ -111,9 +111,9 @@ public class ChatListener implements Listener {
 
     public void removeThePlayer(String answer, Block chest, Player player) {
         UUID answerUUID = Bukkit.getOfflinePlayer(answer).getUniqueId();
-        List<UUID> admins = Utils.getAdminsList(((TileState)chest.getState()).getPersistentDataContainer());
+        List<UUID> admins = Utils.getAdminsList(((TileState) chest.getState(false)).getPersistentDataContainer());
         if (admins.contains(answerUUID)) {
-            TileState state = ((TileState)chest.getState());
+            TileState state = ((TileState) chest.getState(false));
             admins.remove(answerUUID);
             if (admins.isEmpty()) {
                 PersistentDataContainer data = state.getPersistentDataContainer();

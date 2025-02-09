@@ -57,7 +57,7 @@ public class ChestOpeningListener implements Listener {
             }
             PersistentDataContainer dataContainer = null;
             Location loc = chestblock.getLocation();
-            TileState state = (TileState) chestblock.getState();
+            TileState state = (TileState) chestblock.getState(false);
             Inventory inventory = Utils.getBlockInventory(chestblock);
 
             if (clickedType == Material.CHEST || clickedType == Material.TRAPPED_CHEST) {
