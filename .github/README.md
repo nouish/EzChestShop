@@ -19,51 +19,37 @@ If you use EzChestShopReborn, please don't ask questions in the upstream channel
 
 ## Download
 
-You can find the most recent version for download [here](https://github.com/nouish/EzChestShop/releases/latest) on GitHub, or join [Discord](https://discord.gg/invite/gjV6BgKxFV) to chat.
+You can download the latest version [right here on GitHub](https://github.com/nouish/EzChestShop/releases/latest).
 
+> [!NOTE]
+> Development builds can be downloaded from the GitHub Actions [workflow runs](https://github.com/nouish/EzChestShop/actions/workflows/main.yml). You must be logged into GitHub for the option to download files.
+>
+> Alternatively, the same development builds are posted in the [#github](https://discord.com/channels/1302627666007953559/1302628077729218650) channel on [Discord](https://discord.gg/invite/gjV6BgKxFV).
+
+## Documentation
+
+Find more information on the [projects wiki](https://github.com/nouish/EzChestShop/wiki).
 
 ## Support
 
-This plugin is built for the [Paper platform](https://papermc.io/).
-
-If you need help or need to report an issue, please [open a new issue here](https://github.com/nouish/EzChestShop/issues/new/choose).
+> [!IMPORTANT]
+> This plugin is built for the [Paper platform](https://papermc.io/).
 
 ### Supported Minecraft versions
 
-This is a full list of Minecraft versions supported by EzChestShopReborn:
+| Minecraft version |   | Status |
+|-------------------|---|--------|
+| Minecraft 1.21.4  | ✅ |        |
+| Minecraft 1.21.3  | ✅ |        |
+| Minecraft 1.21.2  | ✅ |        |
+| Minecraft 1.21.1  | ✅ |        |
+| Minecraft 1.21    | ✅ |        |
 
-| Minecraft version |    | Status                                               |
-|-------------------|----|------------------------------------------------------|
-| Minecraft 1.21.4  | ✅ |                                                      |
-| Minecraft 1.21.3  | ✅ |                                                      |
-| Minecraft 1.21.2  | ✅ |                                                      |
-| Minecraft 1.21.1  | ✅ |                                                      |
-| Minecraft 1.21    | ✅ |                                                      |
+If you need help or need to report an issue, please [open a new issue here](https://github.com/nouish/EzChestShop/issues/new/choose).
 
-## Contribute
+## Developer's Guide
 
-Feel free to contribute through Pull Requests.
-
-Please understand that features that may require a lot of work to maintain in future versions will be rejected. As such, it is a good idea to discuss changes before spending a lot of time for a feature that would be rejected.
-
-Please follow the existing code style of the project.
-
-
-### Build instructions
-
-Build with Apache Maven:
-
-```shell
-mvn clean package
-```
-
-If you have trouble with this, see the prerequisites below first, and refer to the [GitHub Actions configuration](workflows/main.yml) for a working example of building this plugin from the ground up.
-
-### Prerequisites 
-
-* Java 21 or later
-* Apache Maven 3.9.9 or later
-* You must build targeted Spigot versions [Spigots BuildTools](https://www.spigotmc.org/wiki/buildtools/). This will change to Paperweight in the future.
+Our [Developer's Guide](https://github.com/nouish/EzChestShop/wiki/Developers-Guide) is available on the wiki for more information.
 
 ## License
 
