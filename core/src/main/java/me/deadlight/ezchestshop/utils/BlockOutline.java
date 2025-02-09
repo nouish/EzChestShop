@@ -64,11 +64,11 @@ public class BlockOutline {
             Inventory blockInv = Utils.getBlockInventory(block);
             if (blockInv instanceof DoubleChestInventory) {
                 //get the other half of the double chest
-                DoubleChest doubleChest = (DoubleChest) blockInv.getHolder();
-                boolean isLeft = doubleChest.getLeftSide().getInventory().getLocation().equals(block.getLocation());
+                DoubleChest doubleChest = (DoubleChest) blockInv.getHolder(false);
+                boolean isLeft = doubleChest.getLeftSide(false).getInventory().getLocation().equals(block.getLocation());
                 if (isLeft) {
                     //so if it is left, we get the right side
-                    Block rightBlock = doubleChest.getRightSide().getInventory().getLocation().getBlock();
+                    Block rightBlock = doubleChest.getRightSide(false).getInventory().getLocation().getBlock();
                     BlockOutline outline = new BlockOutline(player, rightBlock);
                     outline.destroyAfter = this.destroyAfter;
                     outline.isMadeFromACheck = true;
@@ -76,7 +76,7 @@ public class BlockOutline {
                     this.aParentOrChild = outline;
                     outline.showOutline();
                 } else {
-                    Block leftBlock = doubleChest.getLeftSide().getInventory().getLocation().getBlock();
+                    Block leftBlock = doubleChest.getLeftSide(false).getInventory().getLocation().getBlock();
                     BlockOutline outline = new BlockOutline(player, leftBlock);
                     outline.destroyAfter = this.destroyAfter;
                     outline.isMadeFromACheck = true;

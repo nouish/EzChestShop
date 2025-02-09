@@ -173,7 +173,7 @@ public class OwnerShopGUI {
                 event.setCancelled(true);
                 Inventory lastinv = Utils.getBlockInventory(containerBlock);
                 if (lastinv instanceof DoubleChestInventory) {
-                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
+                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder(false);
                     lastinv = doubleChest.getInventory();
                 }
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);

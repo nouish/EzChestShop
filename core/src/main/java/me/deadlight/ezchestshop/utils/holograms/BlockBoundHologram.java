@@ -273,9 +273,9 @@ public class BlockBoundHologram {
         Location holoLoc;
         if (inventory instanceof DoubleChestInventory) {
             // Do some "fancy" math to rotate the hologram around the double chest
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
+            Chest leftchest = (Chest) doubleChest.getLeftSide(false);
+            Chest rightchest = (Chest) doubleChest.getRightSide(false);
             // Get the center of the double chest
             holoLoc = leftchest.getLocation().clone()
                     .add(0.5D, 0, 0.5D)
@@ -314,9 +314,9 @@ public class BlockBoundHologram {
      */
     public static Location getShopChestLocation(@NotNull Block target) {
         if (target.getState() instanceof Container container
-                && container.getInventory().getHolder() instanceof DoubleChest doubleChest) {
-            Chest leftChest = (Chest) doubleChest.getLeftSide();
-            Chest rightChest = (Chest) doubleChest.getRightSide();
+                && container.getInventory().getHolder(false) instanceof DoubleChest doubleChest) {
+            Chest leftChest = (Chest) doubleChest.getLeftSide(false);
+            Chest rightChest = (Chest) doubleChest.getRightSide(false);
 
             if (leftChest != null && leftChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
                 return leftChest.getLocation();

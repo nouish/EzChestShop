@@ -872,9 +872,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             Chest chest = (Chest) block.getState();
             Inventory inventory = chest.getInventory();
             if (inventory instanceof DoubleChestInventory) {
-                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder();
-                Chest leftchest = (Chest) doubleChest.getLeftSide();
-                Chest rightchest = (Chest) doubleChest.getRightSide();
+                DoubleChest doubleChest = (DoubleChest) chest.getInventory().getHolder(false);
+                Chest leftchest = (Chest) doubleChest.getLeftSide(false);
+                Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
                 if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
                         || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
@@ -909,9 +909,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         if (target.getType() == Material.CHEST || target.getType() == Material.TRAPPED_CHEST) {
                             Inventory inventory = Utils.getBlockInventory(target);
                             if (Utils.getBlockInventory(target) instanceof DoubleChestInventory) {
-                                DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                                Chest chestleft = (Chest) doubleChest.getLeftSide();
-                                Chest chestright = (Chest) doubleChest.getRightSide();
+                                DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
+                                Chest chestleft = (Chest) doubleChest.getLeftSide(false);
+                                Chest chestright = (Chest) doubleChest.getRightSide(false);
 
                                 if (!chestleft.getPersistentDataContainer().isEmpty()) {
                                     blockState = chestleft.getBlock().getState();
@@ -965,9 +965,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         if (inventory instanceof DoubleChestInventory) {
             //double chest
 
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
+            Chest leftchest = (Chest) doubleChest.getLeftSide(false);
+            Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
             if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
                     || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {

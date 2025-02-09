@@ -60,9 +60,9 @@ public class PlayerLookingAtChestShop implements Listener {
         if (inventory instanceof DoubleChestInventory) {
             //double chest
 
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
+            DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
+            Chest leftchest = (Chest) doubleChest.getLeftSide(false);
+            Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
             if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
                     || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
@@ -271,10 +271,10 @@ public class PlayerLookingAtChestShop implements Listener {
 
     private Location getCentralLocation(Block containerBlock, Inventory inventory, Vector direction) {
         Location holoLoc;
-        if (inventory instanceof DoubleChestInventory) {
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-            Chest leftchest = (Chest) doubleChest.getLeftSide();
-            Chest rightchest = (Chest) doubleChest.getRightSide();
+        if (inventory instanceof DoubleChestInventory doubleChestInventory) {
+            DoubleChest doubleChest = (DoubleChest) Objects.requireNonNull(doubleChestInventory.getHolder(false), "Double Chest");
+            Chest leftchest = (Chest) Objects.requireNonNull(doubleChest.getLeftSide(false), "Left Chest");
+            Chest rightchest = (Chest) Objects.requireNonNull(doubleChest.getRightSide(false), "Right Chest");
             holoLoc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5);
             if (direction.getY() == 0) {
                 Location lloc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D);

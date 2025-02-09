@@ -175,7 +175,7 @@ public class AdminShopGUI {
                 event.setCancelled(true);
                 Inventory lastinv = Utils.getBlockInventory(containerBlock);
                 if (lastinv instanceof DoubleChestInventory) {
-                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder();
+                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder(false);
                     lastinv = doubleChest.getInventory();
                 }
 

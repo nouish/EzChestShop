@@ -872,9 +872,9 @@ public final class Utils {
 
         if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
             if (inventory instanceof DoubleChestInventory) {
-                DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                Chest chestleft = (Chest) doubleChest.getLeftSide();
-                Chest chestright = (Chest) doubleChest.getRightSide();
+                DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
+                Chest chestleft = (Chest) doubleChest.getLeftSide(false);
+                Chest chestright = (Chest) doubleChest.getRightSide(false);
 
                 if (!chestleft.getPersistentDataContainer().isEmpty()) {
                     dataContainer = chestleft.getPersistentDataContainer();
@@ -926,12 +926,12 @@ public final class Utils {
         }
 
         if (block.getState() instanceof Chest chest && chest.getInventory().getHolder(false) instanceof DoubleChest doubleChest) {
-            Chest left = (Chest) Objects.requireNonNull(doubleChest.getLeftSide(), "doubleChest.getLeftSide()");
+            Chest left = (Chest) Objects.requireNonNull(doubleChest.getLeftSide(false), "doubleChest.getLeftSide()");
             EzShop leftShop = ShopContainer.getShop(left.getLocation());
             if (leftShop != null) {
                 return leftShop;
             } else {
-                Chest right = (Chest) Objects.requireNonNull(doubleChest.getRightSide(), "doubleChest.getRightSide()");
+                Chest right = (Chest) Objects.requireNonNull(doubleChest.getRightSide(false), "doubleChest.getRightSide()");
                 return ShopContainer.getShop(right.getLocation());
             }
         }

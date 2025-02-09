@@ -62,9 +62,9 @@ public class ChestOpeningListener implements Listener {
 
             if (clickedType == Material.CHEST || clickedType == Material.TRAPPED_CHEST) {
                 if (inventory instanceof DoubleChestInventory) {
-                    DoubleChest doubleChest = (DoubleChest) inventory.getHolder();
-                    Chest chestleft = (Chest) doubleChest.getLeftSide();
-                    Chest chestright = (Chest) doubleChest.getRightSide();
+                    DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
+                    Chest chestleft = (Chest) doubleChest.getLeftSide(false);
+                    Chest chestright = (Chest) doubleChest.getRightSide(false);
 
                     if (!chestleft.getPersistentDataContainer().isEmpty()) {
                         dataContainer = chestleft.getPersistentDataContainer();
