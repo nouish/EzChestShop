@@ -6,7 +6,7 @@
 
   <groupId>com.github.nouish.ezchestshop</groupId>
   <artifactId>ezchestshop-parent</artifactId>
-  <version>1.8.2-rc2</version>
+  <version>1.8.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>EzChestShop Parent</name>
