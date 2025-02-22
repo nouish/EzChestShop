@@ -46,6 +46,7 @@ import me.deadlight.ezchestshop.version.BuildInfo;
 import me.deadlight.ezchestshop.version.GitHubUtil;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -210,8 +211,10 @@ public final class EzChestShop extends JavaPlugin {
         economyPluginFound = setupEconomy();
         if (!economyPluginFound) {
             Config.useXP = true;
-            LOGGER.warn("*** Cannot find vault or economy plugin. Switching to XP based economy... Please note that you need vault and at least one economy plugin installed to use a money based system.");
-            getComponentLogger().warn(text("*** This fallback feature (XP based economy) will be removed in future versions of EzChestShopReborn!", RED));
+            ComponentLogger logger = getComponentLogger();
+            logger.warn(text("*** You're depending on a deprecated feature for your EzChestShopReborn setup!", RED));
+            logger.warn(text("*** Future versions (1.9.x) will no longer support XP-based economy.", RED));
+            logger.warn(text("*** For more information, see https://github.com/nouish/EzChestShop/wiki/Integrations#vault", RED));
         }
 
         LanguageManager.loadLanguages();
