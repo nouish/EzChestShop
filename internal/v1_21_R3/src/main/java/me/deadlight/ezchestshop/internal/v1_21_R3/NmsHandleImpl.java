@@ -15,6 +15,7 @@ import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.UpdateSignListener;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -48,7 +49,7 @@ public class NmsHandleImpl extends NmsHandle {
 
     @Override
     public void destroyEntity(Player player, int entityID) {
-        ((CraftPlayer) player).getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket(entityID));
+        ((CraftPlayer) player).getHandle().connection.send(new ClientboundRemoveEntitiesPacket(entityID));
         entities.remove(entityID);
     }
 
@@ -138,7 +139,6 @@ public class NmsHandleImpl extends NmsHandle {
         listeners.put(signMenuFactory, new UpdateSignListener() {
             @Override
             public void listen(Player player, String[] array) {
-
                 SignMenuFactory.Menu menu = signMenuFactory.getInputs().remove(player);
 
                 if (menu == null) {
@@ -204,12 +204,14 @@ public class NmsHandleImpl extends NmsHandle {
 
     @Override
     public void injectConnection(Player player) {
-        getConnection(player).channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+        ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        nmsPlayer.connection.connection.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
     }
 
     @Override
     public void ejectConnection(Player player) {
-        Channel channel = getConnection(player).channel;
+        ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        Channel channel = nmsPlayer.connection.connection.channel;
         channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
 

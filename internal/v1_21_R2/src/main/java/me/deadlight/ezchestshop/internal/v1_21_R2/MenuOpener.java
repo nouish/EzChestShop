@@ -1,7 +1,5 @@
 package me.deadlight.ezchestshop.internal.v1_21_R2;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
@@ -20,17 +18,6 @@ import org.bukkit.entity.Player;
 
 public class MenuOpener {
 
-    private static Constructor<ClientboundBlockEntityDataPacket> constructor;
-
-    static {
-        try {
-            constructor = ClientboundBlockEntityDataPacket.class.getDeclaredConstructor(BlockPos.class, BlockEntityType.class, CompoundTag.class);
-            constructor.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void openMenu(SignMenuFactory.Menu menu, Player player) {
         Objects.requireNonNull(player, "player");
         if (!player.isOnline()) {
@@ -47,14 +34,11 @@ public class MenuOpener {
         player.sendBlockChange(newLocation, Material.OAK_SIGN.createBlockData());
 
         ClientboundOpenSignEditorPacket editorPacket = new ClientboundOpenSignEditorPacket(position, true);
-
         CompoundTag compound = new CompoundTag();
-
         CompoundTag frontText = new CompoundTag();
         CompoundTag backText = new CompoundTag();
         ListTag backMessages = new ListTag();
         ListTag frontMessages = new ListTag();
-
 
         for (int line = 0; line < SignMenuFactory.SIGN_LINES; line++) {
             String text = menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "";
@@ -70,19 +54,7 @@ public class MenuOpener {
         compound.put("back_text", backText);
         compound.put("front_text", frontText);
 
-
-//        for (int line = 0; line < SignMenuFactory.SIGN_LINES; line++) {
-//            compound.a("Text" + (line + 1), menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "");
-//        } no loger works this way in 1.20, we need to use the new method above
-
-
-        ClientboundBlockEntityDataPacket tileEntityDataPacket = null;
-        try {
-            tileEntityDataPacket = constructor.newInstance(position, BlockEntityType.SIGN, compound);
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
+        ClientboundBlockEntityDataPacket tileEntityDataPacket = new ClientboundBlockEntityDataPacket(position, BlockEntityType.SIGN, compound);
         ServerGamePacketListenerImpl connection = ((CraftPlayer) player).getHandle().connection;
 
         connection.send(tileEntityDataPacket);

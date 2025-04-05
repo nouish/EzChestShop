@@ -1,6 +1,8 @@
 rootProject.name = "EzChestShopReborn"
 
 dependencyResolutionManagement {
+    // Incubating Gradle features
+    @Suppress("UnstableApiUsage")
     repositories {
         mavenCentral()
 
@@ -62,6 +64,13 @@ dependencyResolutionManagement {
                 includeModule("com.github.MilkBowl", "VaultAPI")
             }
         }
+    }
+}
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 }
 
