@@ -14,7 +14,7 @@ dependencies {
 gitProperties {
     gitPropertiesName = "version.properties"
     dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
-    keys = listOf("git.branch", "git.commit.time", "git.build.version", "git.commit.id.abbrev")
+    keys = listOf("git.branch", "git.build.version", "git.commit.id.abbrev")
 }
 
 tasks {
@@ -34,10 +34,10 @@ tasks {
         exclude("net/kyori/**")
 
         relocate("com.github.Anon8281.universalScheduler", "me.deadlight.ezchestshop.internal.scheduler")
-        relocate("dev.triumphteam.gui",                    "me.deadlight.ezchestshop.internal.triumphgui")
-        relocate("de.themoep.minedown",                    "me.deadlight.ezchestshop.internal.minedown")
-        relocate("com.zaxxer.hikari",                      "me.deadlight.ezchestshop.internal.hikari")
-        relocate("org.bstats",                             "me.deadlight.ezchestshop.internal.bstats")
+        relocate("dev.triumphteam.gui", "me.deadlight.ezchestshop.internal.triumphgui")
+        relocate("de.themoep.minedown", "me.deadlight.ezchestshop.internal.minedown")
+        relocate("com.zaxxer.hikari", "me.deadlight.ezchestshop.internal.hikari")
+        relocate("org.bstats", "me.deadlight.ezchestshop.internal.bstats")
     }
 
     assemble {
