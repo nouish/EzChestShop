@@ -1,20 +1,12 @@
 version: 2
 
 updates:
-  - package-ecosystem: "maven"
+  - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "daily"
       time: "12:00"
       timezone: "Europe/Oslo"
-    groups:
-      maven-plugin:
-        patterns:
-          - "org.apache.maven.plugins:*"
-      test-dependencies:
-        patterns:
-          - "org.junit.jupiter:*"
-          - "org.mockito:*"
     ignore:
       # Bundled with Minecraft. Keep version in sync.
       - dependency-name: "org.apache.logging.log4j:log4j-core"

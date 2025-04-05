@@ -19,7 +19,7 @@ authors:
   - ItzAmirreza
   - ElitoGame
   - nouish
-description: '${project.description}'
+description: 'Easy Chest Shop that any server owner wants that for his/her players.'
 
 commands:
   ecs:

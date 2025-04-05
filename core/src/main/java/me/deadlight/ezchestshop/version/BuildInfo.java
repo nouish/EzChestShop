@@ -1,15 +1,11 @@
 package me.deadlight.ezchestshop.version;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Properties;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,24 +52,23 @@ public final class BuildInfo {
     }
 
     private static BuildInfo readBuildInfo() {
-        try (InputStream in = EzChestShop.getPlugin().getResource("version.json")) {
+        try (InputStream in = EzChestShop.getPlugin().getResource("version.properties")) {
             if (in == null)
                 throw new IOException("No input");
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                return parseBuildInfo(reader);
-            }
+
+            Properties properties = new Properties();
+            properties.load(in);
+            return parseBuildInfo(properties);
         } catch (IOException e) {
             throw new AssertionError("Missing version information!", e);
         }
     }
 
-    private static BuildInfo parseBuildInfo(BufferedReader reader) {
-        JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-
-        String id = json.get("git.commit.id.abbrev").getAsString();
-        String name = json.get("git.build.version").getAsString();
-        String branch = json.get("git.branch").getAsString();
-        Instant buildTime = Instant.parse(json.get("git.build.time").getAsString());
+    private static BuildInfo parseBuildInfo(Properties properties) {
+        String id = properties.getProperty("git.commit.id.abbrev");
+        String name = properties.getProperty("git.build.version");
+        String branch = properties.getProperty("git.branch");
+        Instant buildTime = Instant.parse(properties.getProperty("git.commit.time"));
         // (1): <version core> "-" <pre-release>
         // (2): <version core> "+" <build>
         boolean stable = name.indexOf('-') == -1 && name.indexOf('+') == -1;
