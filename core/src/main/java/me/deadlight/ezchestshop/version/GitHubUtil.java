@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -49,8 +48,7 @@ public final class GitHubUtil {
     private static BuildInfo parseBuildInfo(BufferedReader reader) {
         JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
         String id = json.get("tag_name").getAsString();
-        Instant buildTime = Instant.parse(json.get("published_at").getAsString());
-        return new BuildInfo(id, id, GitHubUtil.MAIN_BRANCH, buildTime, true);
+        return new BuildInfo(id, id, GitHubUtil.MAIN_BRANCH, true);
     }
 
     public static GitHubStatusLookup compare(@NotNull String base, @NotNull String head) throws IOException {
