@@ -37,13 +37,14 @@ Find more information on the [projects wiki](https://github.com/nouish/EzChestSh
 
 ### Supported Minecraft versions
 
-| Minecraft version |   | Status |
-|-------------------|---|--------|
-| Minecraft 1.21.4  | ✅ |        |
-| Minecraft 1.21.3  | ✅ |        |
-| Minecraft 1.21.2  | ✅ |        |
-| Minecraft 1.21.1  | ✅ |        |
-| Minecraft 1.21    | ✅ |        |
+| Minecraft version |   | Status         |
+|-------------------|---|----------------|
+| Minecraft 1.21.5  | ✅ | Snapshots only |
+| Minecraft 1.21.4  | ✅ | |
+| Minecraft 1.21.3  | ✅ | |
+| Minecraft 1.21.2  | ✅ | |
+| Minecraft 1.21.1  | ✅ | |
+| Minecraft 1.21    | ✅ | |
 
 If you need help or need to report an issue, please [open a new issue here](https://github.com/nouish/EzChestShop/issues/new/choose).
 
