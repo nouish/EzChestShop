@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
 
 public class ASHologram {
 
@@ -35,7 +34,8 @@ public class ASHologram {
     }
 
     public void teleport(Location location) {
-        Bukkit.getScheduler().runTask(EzChestShop.getPlugin(), () -> {
+        // May be worth to investigate the caller here
+        EzChestShop.getScheduler().runTask(() -> {
             this.location = location;
             Utils.nmsHandle.teleportEntity(handler, entityID, location);
         });
