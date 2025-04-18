@@ -25,6 +25,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
@@ -173,7 +174,19 @@ public class AdminShopGUI {
 
             GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
                 event.setCancelled(true);
-                Inventory lastinv = Utils.getBlockInventory(containerBlock);
+
+                Block theBlock = player.getWorld().getBlockAt(containerBlock.getLocation());
+                if (theBlock.getState(false) instanceof TileState state) {
+                    PersistentDataContainer pdc = state.getPersistentDataContainer();
+                    if (!pdc.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                        // https://www.youtube.com/watch?v=Kbllpg9PGJw
+                        EzChestShop.logger().warn("{} attempted to duplicate items!", player.getName());
+                        player.closeInventory();
+                        return;
+                    }
+                }
+
+                Inventory lastinv = Utils.getBlockInventory(theBlock);
                 if (lastinv instanceof DoubleChestInventory) {
                     DoubleChest doubleChest = (DoubleChest) lastinv.getHolder(false);
                     lastinv = doubleChest.getInventory();
