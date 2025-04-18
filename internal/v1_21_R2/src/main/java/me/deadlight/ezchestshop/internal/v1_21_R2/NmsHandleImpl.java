@@ -1,10 +1,8 @@
 package me.deadlight.ezchestshop.internal.v1_21_R2;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import io.netty.channel.Channel;
@@ -13,7 +11,6 @@ import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
 import me.deadlight.ezchestshop.utils.NmsHandle;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.UpdateSignListener;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
@@ -174,42 +171,16 @@ public class NmsHandleImpl extends NmsHandle {
         MenuOpener.openMenu(menu, player);
     }
 
-    private Connection getConnection(Player player) {
-        Objects.requireNonNull(player, "player");
-
-        ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-        Class<?> cls = nmsPlayer.connection.getClass().getSuperclass();
-        Field field;
-
-        try {
-            field = cls.getDeclaredField("e");
-        } catch (NoSuchFieldException e1) {
-            try {
-                field = cls.getDeclaredField("connection");
-            } catch (NoSuchFieldException e2) {
-                e2.addSuppressed(e1);
-                EzChestShop.logger().error("Unable to locate connection field of {}", cls.getName(), e2);
-                throw new AssertionError("Unable to inject connection!");
-            }
-        }
-
-        field.setAccessible(true);
-
-        try {
-            return (Connection) field.get(nmsPlayer.connection);
-        } catch (IllegalAccessException e) {
-            throw new AssertionError("Unable to get Connection from ServerGamePacketListenerImpl", e);
-        }
-    }
-
     @Override
     public void injectConnection(Player player) {
-        getConnection(player).channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+        ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        nmsPlayer.connection.connection.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
     }
 
     @Override
     public void ejectConnection(Player player) {
-        Channel channel = getConnection(player).channel;
+        ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+        Channel channel = nmsPlayer.connection.connection.channel;
         channel.eventLoop().submit(() -> channel.pipeline().remove("ecs_listener"));
     }
 
