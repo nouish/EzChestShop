@@ -2,9 +2,9 @@ package me.deadlight.ezchestshop.utils;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import me.deadlight.ezchestshop.EzChestShop;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
 
 public class ASHologram {
 
@@ -34,8 +34,11 @@ public class ASHologram {
     }
 
     public void teleport(Location location) {
-        this.location = location;
-        Utils.nmsHandle.teleportEntity(handler, entityID, location);
+        // May be worth to investigate the caller here
+        EzChestShop.getScheduler().runTask(() -> {
+            this.location = location;
+            Utils.nmsHandle.teleportEntity(handler, entityID, location);
+        });
     }
 
     public void rename(String name) {

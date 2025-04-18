@@ -187,6 +187,11 @@ public class AdminShopGUI {
                 }
 
                 Inventory lastinv = Utils.getBlockInventory(theBlock);
+                if (lastinv == null) {
+                    player.closeInventory();
+                    return;
+                }
+
                 if (lastinv instanceof DoubleChestInventory) {
                     DoubleChest doubleChest = (DoubleChest) lastinv.getHolder(false);
                     lastinv = doubleChest.getInventory();
