@@ -25,7 +25,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoinListener implements Listener {
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Utils.nmsHandle.injectConnection(player);
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();

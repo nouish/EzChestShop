@@ -3,9 +3,11 @@ package me.deadlight.ezchestshop.internal.v1_21_R2;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
 import me.deadlight.ezchestshop.utils.NmsHandle;
@@ -174,7 +176,22 @@ public class NmsHandleImpl extends NmsHandle {
     @Override
     public void injectConnection(Player player) {
         ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-        nmsPlayer.connection.connection.channel.pipeline().addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+        ChannelPipeline pipeline = nmsPlayer.connection.connection.channel.pipeline();
+        try {
+            pipeline.addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
+        } catch (NoSuchElementException ex) {
+            String cause = ex.getMessage();
+            if (cause != null && cause.contains("packet_handler")) {
+                EzChestShop.logger().warn("Unsupported server implementation! Unable to find Minecraft packet handler!");
+                EzChestShop.logger().warn("Found handlers:");
+                int count = 1;
+                for (var entry : pipeline) {
+                    EzChestShop.logger().warn("{}: {}", count, entry.getKey());
+                    count++;
+                }
+            }
+            throw ex;
+        }
     }
 
     @Override

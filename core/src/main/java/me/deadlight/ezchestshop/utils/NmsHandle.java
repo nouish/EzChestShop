@@ -25,9 +25,9 @@ public abstract class NmsHandle {
 
     public abstract void openMenu(SignMenuFactory.Menu menu, Player player);
 
-    public abstract void injectConnection(Player player) throws IllegalAccessException, NoSuchFieldException;
+    public abstract void injectConnection(Player player);
 
-    public abstract void ejectConnection(Player player) throws NoSuchFieldException, IllegalAccessException;
+    public abstract void ejectConnection(Player player);
 
     public abstract void showOutline(Player player, Block block, int eID);
 
