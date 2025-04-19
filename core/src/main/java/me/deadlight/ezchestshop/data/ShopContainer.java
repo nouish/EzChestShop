@@ -82,6 +82,14 @@ public class ShopContainer {
             if (ShopHologram.hasHologram(loc, p))
                 ShopHologram.hideForAll(loc);
         }
+
+        EzChestShop.getPlugin().getComponentLogger().info(text()
+                .append(text("Deleted shop at "))
+                .append(text(loc.getBlockX(), NamedTextColor.GOLD)).append(text(", "))
+                .append(text(loc.getBlockY(), NamedTextColor.GOLD)).append(text(", "))
+                .append(text(loc.getBlockZ(), NamedTextColor.GOLD))
+                .append(text("."))
+                .build());
     }
 
     /**
@@ -115,6 +123,17 @@ public class ShopContainer {
         final String time = formatter.format(java.time.LocalDateTime.now()).replace("T", " | ");
         // Display shop location as this: world, x, y, z
         final String shopLocation = world.getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ();
+
+        EzChestShop.getPlugin().getComponentLogger().info(text()
+                .append(text(ownerName, NamedTextColor.GOLD))
+                .append(text(" created a shop ("))
+                .append(translatable(item, NamedTextColor.GOLD))
+                .append(text(") at "))
+                .append(text(loc.getBlockX(), NamedTextColor.GOLD)).append(text(", "))
+                .append(text(loc.getBlockY(), NamedTextColor.GOLD)).append(text(", "))
+                .append(text(loc.getBlockZ(), NamedTextColor.GOLD))
+                .append(text("."))
+                .build());
 
         EzChestShop.getScheduler().runTaskAsynchronously(() -> {
             try {
