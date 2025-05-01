@@ -15,7 +15,6 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.XPEconomy;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -885,7 +884,7 @@ public final class LanguageManager {
 
     //checkprofits.
     public BaseComponent[] checkProfitsLandingpage(Player player, double buyCost, int buyAmount, double sellCost, int sellAmount) {
-        double balance = Config.useXP ? XPEconomy.getXP(player) : (EzChestShop.getEconomy() == null ? 0.0 : EzChestShop.getEconomy().getBalance(player));
+        double balance = EzChestShop.getEconomy() == null ? 0.0 : EzChestShop.getEconomy().getBalance(player);
         double total = buyCost - sellCost;
         return MineDown.parse(getList("checkprofits.landing-menu").stream().map(Utils::colorify).collect(Collectors.joining("\n"))
                 .replace("%currency%", Config.currency)

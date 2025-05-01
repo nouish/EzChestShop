@@ -31,7 +31,6 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -71,8 +70,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class Utils {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
-
     private Utils() {}
 
     public static List<Object> onlinePackets = new ArrayList<>();
@@ -558,8 +555,7 @@ public final class Utils {
                                                     ItemStack[] storageInventory, double eachBuyPrice, ItemStack itemStack) {
         // I was going to run this in async but maybe later...
         int possibleCount = 0;
-        double buyerBalance =
-                Config.useXP ? XPEconomy.getXP(offlinePlayer) : EzChestShop.getEconomy().getBalance(offlinePlayer);
+        double buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
         int emptyCount = playerEmptyCount(playerInventory, itemStack);
         int howManyExists = howManyOfItemExists(storageInventory, itemStack);
 
@@ -604,9 +600,7 @@ public final class Utils {
             buyerBalance = Double.MAX_VALUE;
         } else {
             if (hasPlayedBefore(offlinePlayer)) {
-                buyerBalance = Config.useXP
-                        ? XPEconomy.getXP(offlinePlayer)
-                        : EzChestShop.getEconomy().getBalance(offlinePlayer);
+                buyerBalance = EzChestShop.getEconomy().getBalance(offlinePlayer);
             } else {
                 buyerBalance = 0;
             }

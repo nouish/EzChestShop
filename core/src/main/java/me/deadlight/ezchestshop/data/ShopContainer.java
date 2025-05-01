@@ -15,7 +15,6 @@ import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.WebhookSender;
-import me.deadlight.ezchestshop.utils.XPEconomy;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
@@ -511,28 +510,16 @@ public class ShopContainer {
     }
 
     private static void deposit(double price, OfflinePlayer deposit) {
-        if (Config.useXP) {
-            XPEconomy.depositPlayer(deposit, price);
-        } else {
-            econ.depositPlayer(deposit, price);
-        }
+        econ.depositPlayer(deposit, price);
     }
 
     private static boolean withdraw(double price, OfflinePlayer deposit) {
-        if (Config.useXP) {
-            return XPEconomy.withDrawPlayer(deposit, price);
-        } else {
-            return econ.withdrawPlayer(deposit, price).transactionSuccess();
-        }
+        return econ.withdrawPlayer(deposit, price).transactionSuccess();
     }
 
     private static boolean ifHasMoney(OfflinePlayer player, double price) {
-        if (Config.useXP) {
-            return XPEconomy.has(player, price);
-        } else  {
-            double balance = econ.getBalance(player);
-            return !(balance < price);
-        }
+        double balance = econ.getBalance(player);
+        return !(balance < price);
     }
 
     private static void getandgive(OfflinePlayer withdraw, double price, OfflinePlayer deposit) {

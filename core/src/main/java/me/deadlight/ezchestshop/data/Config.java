@@ -22,8 +22,6 @@ public class Config {
     private static final ExtendedLogger LOGGER = EzChestShop.logger();
 
     public static String currency;
-    public static boolean useXP;
-
     public static boolean showholo;
     public static List<String> holostructure;
     public static List<String> holostructure_admin;
@@ -369,9 +367,7 @@ public class Config {
             Config.loadConfig();
         }
 
-        boolean updated1_5_7 = fc.isBoolean("economy.use-xp");
-        if (!updated1_5_7) {
-            fc.set("economy.use-xp", false);
+        if (!fc.isBoolean("shops.commands.enabled")) {
             fc.set("shops.commands.enabled", false);
             fc.set("shops.commands.shop.buy.*", List.of("/tell %player_name% You bought an Item!", "/tell %player_name% Thanks for shopping!"));
             fc.set("shops.commands.shop.sell.*", List.of("/tell %player_name% You sold an Item!"));

@@ -9,7 +9,6 @@ import java.util.Set;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.ImprovedOfflinePlayer;
 import me.deadlight.ezchestshop.utils.NmsHandle;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.UpdateSignListener;
@@ -40,11 +39,6 @@ import org.bukkit.inventory.ItemStack;
 public class NmsHandleImpl extends NmsHandle {
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
     private static final Map<Integer, Entity> entities = new HashMap<>();
-
-    @Override
-    public ImprovedOfflinePlayer getImprovedOfflinePlayer() {
-        return ImprovedOfflinePlayerImpl.INSTANCE;
-    }
 
     @Override
     public void destroyEntity(Player player, int entityID) {
