@@ -115,7 +115,6 @@ public class Config {
         EzChestShop.getPlugin().reloadConfig();
         FileConfiguration config = EzChestShop.getPlugin().getConfig();
         currency = config.getString("economy.server-currency");
-        useXP = EzChestShop.economyPluginFound ? config.getBoolean("economy.use-xp") : true;
 
         showholo = config.getBoolean("shops.hologram.show-holograms");
         holostructure = config.getStringList("shops.hologram.holo-structure");

@@ -46,7 +46,6 @@ import me.deadlight.ezchestshop.version.BuildInfo;
 import me.deadlight.ezchestshop.version.GitHubUtil;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -71,8 +70,6 @@ public final class EzChestShop extends JavaPlugin {
     private static ExtendedLogger LOGGER;
 
     private static Economy economy = null;
-    public static boolean economyPluginFound = true;
-
     public static boolean slimefun = false;
     public static boolean towny = false;
     public static boolean worldguard = false;
@@ -203,18 +200,23 @@ public final class EzChestShop extends JavaPlugin {
         if (Config.database_type != null) {
             Utils.recognizeDatabase();
         } else {
-            LOGGER.error("Database type not specified/or is wrong in config.yml! Disabling plugin...");
+            getComponentLogger().error(text("*** Invalid database configuration! EzChestShopReborn will be disabled."), RED);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        economyPluginFound = setupEconomy();
-        if (!economyPluginFound) {
-            Config.useXP = true;
-            ComponentLogger logger = getComponentLogger();
-            logger.warn(text("*** You're depending on a deprecated feature for your EzChestShopReborn setup!", RED));
-            logger.warn(text("*** Future versions (1.9.x) will no longer support XP-based economy.", RED));
-            logger.warn(text("*** For more information, see https://github.com/nouish/EzChestShop/wiki/Integrations#vault", RED));
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            getComponentLogger().error(text("*** Vault and an economy implementation is required! EzChestShopReborn will be disabled.", RED));
+            getComponentLogger().error(text("*** For more information, see https://github.com/nouish/EzChestShop/wiki/Integrations#vault", RED));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        if (!setupEconomy()) {
+            getComponentLogger().error(text("*** No Vault-compatible economy implementation has been found! EzChestShopReborn will be disabled.", RED));
+            getComponentLogger().error(text("*** For more information, see https://github.com/nouish/EzChestShop/wiki/Integrations#vault", RED));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         LanguageManager.loadLanguages();
@@ -350,13 +352,8 @@ public final class EzChestShop extends JavaPlugin {
         metrics.addCustomChart(new DrilldownPie("economyBackend", () -> {
             Map<String, Map<String, Integer>> result = new HashMap<>();
             Map<String, Integer> entry = new HashMap<>();
-            if (economyPluginFound) {
-                entry.put(economy.getName(), 1);
-                result.put("Vault", entry);
-            } else {
-                entry.put("XP", 1);
-                result.put("XP", entry);
-            }
+            entry.put(economy.getName(), 1);
+            result.put("Vault", entry);
             return result;
         }));
 

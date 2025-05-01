@@ -641,8 +641,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         boolean slimefun = EzChestShop.slimefun;
         //whether if it got worldguard or not
         boolean worldguard = EzChestShop.worldguard;
-        //if it got an economy plugin or not
-        boolean economy = EzChestShop.economyPluginFound;
         //get list of plugins
         List<String> plugins = new ArrayList<>();
         for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
@@ -671,7 +669,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         jsonObject.addProperty("vault", vault);
         jsonObject.addProperty("slimefun", slimefun);
         jsonObject.addProperty("worldguard", worldguard);
-        jsonObject.addProperty("economy", economy);
+        jsonObject.addProperty("economy", true); // previously supported "xp-based-economy".
         jsonObject.addProperty("plugins", plugins.toString());
         jsonObject.addProperty("worlds", worlds.toString());
         jsonObject.addProperty("onlinePlayers", onlinePlayers);
