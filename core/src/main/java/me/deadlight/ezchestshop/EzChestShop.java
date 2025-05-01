@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
 import me.deadlight.ezchestshop.commands.MainCommands;
@@ -57,6 +58,7 @@ import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -219,6 +221,9 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
+        EconomyProvider economyProvider = getEconomyProvider();
+        LOGGER.info("Economy: {} ({})", economyProvider.name(), economyProvider.version());
+
         LanguageManager.loadLanguages();
         try {
             LanguageManager.checkForLanguagesYMLupdate();
@@ -342,6 +347,26 @@ public final class EzChestShop extends JavaPlugin {
         }
     }
 
+    private record EconomyProvider(@NotNull String name, @NotNull String version) {
+        // Just used as return type for getEconomyProvider().
+    }
+
+    // Handle both oldschool Bukkit and Paper plugins.
+    @SuppressWarnings({"deprecation", "ConstantExpression", "UnstableApiUsage", "ConstantValue"})
+    private EconomyProvider getEconomyProvider() {
+        JavaPlugin economyPlugin = JavaPlugin.getProvidingPlugin(economy.getClass());
+        PluginDescriptionFile description = economyPlugin.getDescription();
+        if (description != null) {
+            return new EconomyProvider(economyPlugin.getName(), description.getVersion());
+        } else {
+            PluginMeta meta = economyPlugin.getPluginMeta();
+            if (meta != null) {
+                return new EconomyProvider(economyPlugin.getName(), meta.getVersion());
+            }
+        }
+        return new EconomyProvider(economyPlugin.getName(), "<unknown>");
+    }
+
     private void registerMetrics() {
         Metrics metrics = new Metrics(this, EzChestShopConstants.BSTATS_PROJECT_ID);
         metrics.addCustomChart(new SimplePie("databaseType", () -> Config.database_type.getName()));
@@ -349,11 +374,12 @@ public final class EzChestShop extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("language", () -> Config.language));
         metrics.addCustomChart(new SingleLineChart("totalShopCount", () -> ShopContainer.getShops().size()));
 
-        metrics.addCustomChart(new DrilldownPie("economyBackend", () -> {
+        metrics.addCustomChart(new DrilldownPie("economyProvider", () -> {
             Map<String, Map<String, Integer>> result = new HashMap<>();
             Map<String, Integer> entry = new HashMap<>();
-            entry.put(economy.getName(), 1);
-            result.put("Vault", entry);
+            EconomyProvider provider = getEconomyProvider();
+            entry.put(provider.version(), 1);
+            result.put(provider.name(), entry);
             return result;
         }));
 
