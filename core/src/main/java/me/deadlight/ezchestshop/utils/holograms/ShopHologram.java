@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -444,33 +445,42 @@ public class ShopHologram {
 
     public void updateStockAndCapacity() {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
-        if (playerHolo != null) {
-            shop = ShopContainer.getShop(location);
-            Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
-            assert shopInventory != null;
-            int availableSlots = shopInventory.getSize();
+        if (playerHolo == null) {
+            return;
+        }
 
-            //check if the hologram text actually contains the %stock% and %capacity% placeholders
-            boolean containsStock = false;
-            boolean containsCapacity = false;
+        shop = ShopContainer.getShop(location);
+        Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+        if (shopInventory == null) {
+            EzChestShop.logger().warn("Unexpected {} block at {}, {}, {}.",
+                    player.getWorld().getBlockAt(location).getType().key(),
+                    location.getBlockX(),
+                    location.getBlockY(),
+                    location.getBlockZ());
+            return;
+        }
+        int availableSlots = shopInventory.getSize();
 
-            for (String content : playerHolo.getBlockHologram().getContents()) {
-                if (content.contains("%stock%")) {
-                    containsStock = true;
-                }
-                if (content.contains("%capacity%")) {
-                    containsCapacity = true;
-                }
-            }
+        //check if the hologram text actually contains the %stock% and %capacity% placeholders
+        boolean containsStock = false;
+        boolean containsCapacity = false;
 
-            if (containsStock) {
-                playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
-                        shop.getShopItem()) + "", true, false);
+        for (String content : playerHolo.getBlockHologram().getContents()) {
+            if (content.contains("%stock%")) {
+                containsStock = true;
             }
-            if (containsCapacity) {
-                playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
-                        true, false);
+            if (content.contains("%capacity%")) {
+                containsCapacity = true;
             }
+        }
+
+        if (containsStock) {
+            playerHolo.updateTextReplacement("%stock%", Utils.howManyOfItemExists(shopInventory.getStorageContents(),
+                    shop.getShopItem()) + "", true, false);
+        }
+        if (containsCapacity) {
+            playerHolo.updateTextReplacement("%capacity%", availableSlots * shop.getShopItem().getMaxStackSize() + "",
+                    true, false);
         }
     }
 
