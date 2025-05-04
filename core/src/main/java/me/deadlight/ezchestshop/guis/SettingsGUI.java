@@ -1,12 +1,10 @@
 package me.deadlight.ezchestshop.guis;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -24,6 +22,7 @@ import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.ChatWaitObject;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -52,7 +51,11 @@ public class SettingsGUI {
         ContainerGui container = GuiData.getSettings();
         PersistentDataContainer dataContainer = ((TileState) containerBlock.getState(false)).getPersistentDataContainer();
         boolean isAdminShop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
-        Gui gui = new Gui(container.getRows(), lm.settingsGuiTitle(), EnumSet.noneOf(InteractionModifier.class));
+        Gui gui = Gui.gui()
+                .rows(container.getRows())
+                .title(Component.text(lm.settingsGuiTitle()))
+                .disableAllInteractions()
+                .create();
         gui.getFiller().fill(container.getBackground());
 
         //trans This menu will not be available for now, until I find a way to make it work properly

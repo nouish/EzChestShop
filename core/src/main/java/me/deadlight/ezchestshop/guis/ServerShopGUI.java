@@ -19,6 +19,7 @@ import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -65,7 +66,11 @@ public class ServerShopGUI {
 
         ContainerGui container = GuiData.getShop();
 
-        Gui gui = new Gui(container.getRows(), lm.adminshopguititle());
+        Gui gui = Gui.gui()
+                .rows(container.getRows())
+                .title(Component.text(lm.adminshopguititle()))
+                .disableAllInteractions()
+                .create();
         gui.getFiller().fill(container.getBackground());
 
         ItemStack mainitem = Utils.decodeItem(data.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));

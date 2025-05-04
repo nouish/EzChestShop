@@ -129,7 +129,11 @@ public class CustomMessageManageGUI {
 
     private void showDeleteConfirm(Player player, Block containerBlock, boolean isAdmin, Location loc) {
         LanguageManager lm = LanguageManager.getInstance();
-        Gui gui = new Gui(3, lm.customMessageManagerConfirmDeleteGuiTitle());
+        Gui gui = Gui.gui()
+                .rows(3)
+                .title(Component.text(lm.customMessageManagerConfirmDeleteGuiTitle()))
+                .disableAllInteractions()
+                .create();
         ItemStack glassis = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glassis.getItemMeta();
         glassmeta.setDisplayName(Utils.colorify("&d"));
