@@ -16,7 +16,7 @@ dependencies {
     api("com.github.Anon8281:UniversalScheduler:0.1.6")
     implementation("de.themoep:minedown:1.7.1-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:6.3.0")
-    implementation("dev.triumphteam:triumph-gui:3.1.11")
+    implementation("dev.triumphteam:triumph-gui:3.1.12")
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
     // Optional integrations
