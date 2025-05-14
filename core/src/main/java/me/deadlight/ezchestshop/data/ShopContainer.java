@@ -293,7 +293,7 @@ public class ShopContainer {
             return;
         }
 
-        if (!ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
+        if (!hasBalance(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
@@ -321,7 +321,7 @@ public class ShopContainer {
         thatItem.setAmount(count);
         EzChestShop.getPlugin().tellCoreProtectToTrackChangesAt(player, containerBlock.getLocation());
         Utils.removeItem(blockInventory, thatItem);
-        getandgive(Bukkit.getOfflinePlayer(player.getUniqueId()), price, owner);
+        transfer(Bukkit.getOfflinePlayer(player.getUniqueId()), owner, price);
         sharedIncomeCheck(data, price);
         transactionMessage(data, owner, player, price, true, tthatItem, count, containerBlock.getLocation().getBlock());
         player.sendMessage(lm.messageSuccBuy(price));
@@ -356,7 +356,7 @@ public class ShopContainer {
             return;
         }
 
-        if (!ifHasMoney(owner, price)) {
+        if (!hasBalance(owner, price)) {
             player.sendMessage(lm.shopCannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
@@ -391,7 +391,7 @@ public class ShopContainer {
         //For the transaction event
         thatItem.setAmount(count);
         Utils.removeItem(player.getInventory(), thatItem);
-        getandgive(owner, price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+        transfer(owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price);
         transactionMessage(data, owner, Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock.getLocation().getBlock());
         player.sendMessage(lm.messageSuccSell(price));
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
@@ -420,7 +420,7 @@ public class ShopContainer {
         LanguageManager lm = LanguageManager.getInstance();
 
         //check for money
-        if (!ifHasMoney(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
+        if (!hasBalance(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
             player.sendMessage(lm.cannotAfford());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
             return;
@@ -446,7 +446,7 @@ public class ShopContainer {
 
         //For the transaction event
         thatItem.setAmount(count);
-        withdraw(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+        withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), price);
         transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
                 data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))),
                 Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, tthatItem, count, containerBlock);
@@ -483,7 +483,7 @@ public class ShopContainer {
         }
 
         thatItem.setAmount(count);
-        deposit(price, Bukkit.getOfflinePlayer(player.getUniqueId()));
+        deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), price);
         transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
                 data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))),
                 Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock);
@@ -509,22 +509,34 @@ public class ShopContainer {
         }
     }
 
-    private static void deposit(double price, OfflinePlayer deposit) {
-        econ.depositPlayer(deposit, price);
+    private static boolean deposit(OfflinePlayer target, double amount) {
+        var response = econ.depositPlayer(target, amount);
+        if (response.transactionSuccess()) {
+            LOGGER.debug("Deposited {} to {}.", econ.format(amount), target.getName());
+        } else {
+            LOGGER.info("Failed to deposit {} to {}.", econ.format(amount), target.getName());
+        }
+        return response.transactionSuccess();
     }
 
-    private static boolean withdraw(double price, OfflinePlayer deposit) {
-        return econ.withdrawPlayer(deposit, price).transactionSuccess();
+    private static boolean withdraw(OfflinePlayer target, double amount) {
+        var response = econ.withdrawPlayer(target, amount);
+        if (response.transactionSuccess()) {
+            LOGGER.debug("Withdrew {} from {}.", econ.format(amount), target.getName());
+        } else {
+            LOGGER.info("Failed to withdraw {} from {}.", econ.format(amount), target.getName());
+        }
+        return response.transactionSuccess();
     }
 
-    private static boolean ifHasMoney(OfflinePlayer player, double price) {
-        double balance = econ.getBalance(player);
-        return !(balance < price);
+    private static boolean hasBalance(OfflinePlayer target, double minBalance) {
+        double balance = econ.getBalance(target);
+        LOGGER.debug("{}'s balance is: {} (check minimum: {})", target.getName(), econ.format(balance), econ.format(minBalance));
+        return balance >= minBalance;
     }
 
-    private static void getandgive(OfflinePlayer withdraw, double price, OfflinePlayer deposit) {
-        withdraw(price, withdraw);
-        deposit(price, deposit);
+    private static boolean transfer(OfflinePlayer withdraw, OfflinePlayer deposit, double price) {
+        return withdraw(withdraw, price) && deposit(deposit, price);
     }
 
     private static void transactionMessage(PersistentDataContainer data, OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, ItemStack item, int count, Block containerBlock) {
@@ -540,11 +552,11 @@ public class ShopContainer {
             List<UUID> adminsList = Utils.getAdminsList(data);
             double profit = price / (adminsList.size() + 1);
             if (!adminsList.isEmpty()) {
-                if (ifHasMoney(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
-                    boolean succesful = withdraw(profit * adminsList.size(), Bukkit.getOfflinePlayer(ownerUUID));
+                if (hasBalance(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size())) {
+                    boolean succesful = withdraw(Bukkit.getOfflinePlayer(ownerUUID), profit * adminsList.size());
                     if (succesful) {
                         for (UUID adminUUID : adminsList) {
-                            deposit(profit, Bukkit.getOfflinePlayer(adminUUID));
+                            deposit(Bukkit.getOfflinePlayer(adminUUID), profit);
                         }
                     }
                 }
