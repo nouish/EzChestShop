@@ -1,12 +1,12 @@
 package me.deadlight.ezchestshop.utils;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipException;
 
 import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.guis.Gui;
@@ -65,12 +66,14 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 public final class Utils {
     private Utils() {}
+
+    private static final Logger LOGGER = EzChestShop.logger();
 
     public static List<Object> onlinePackets = new ArrayList<>();
     public static final List<String> rotations = List.of("up", "north", "east", "south", "west", "down");
@@ -116,16 +119,8 @@ public final class Utils {
      * @param item
      * @return
      */
-    public static String encodeItem(ItemStack item) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (BukkitObjectOutputStream os = new BukkitObjectOutputStream(baos)) {
-                os.writeObject(item);
-            }
-            return Base64.getEncoder().encodeToString(baos.toByteArray());
-        } catch (IOException ex) {
-            System.out.println(ex);
-            return null;
-        }
+    public static String encodeItem(@NotNull ItemStack item) {
+        return Base64.getEncoder().encodeToString(item.serializeAsBytes());
     }
 
     /**
@@ -135,15 +130,29 @@ public final class Utils {
      * @return
      */
     public static ItemStack decodeItem(String encodedItem) {
-        byte[] buf = Base64.getDecoder().decode(encodedItem);
+        final byte[] bytes = Base64.getDecoder().decode(encodedItem);
 
-        try (ByteArrayInputStream io = new ByteArrayInputStream(buf);
-             BukkitObjectInputStream in = new BukkitObjectInputStream(io)) {
-            return (ItemStack) in.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
-            System.out.println(ex);
-            return null;
+        try {
+            return ItemStack.deserializeBytes(bytes);
+        } catch (RuntimeException e) {
+            if (!(e.getCause() instanceof ZipException)) {
+                LOGGER.warn("Failed to decode with ItemStack::deserializeBytes()", e);
+            }
+            // Fall back to the legacy implementation
         }
+
+        try (ByteArrayInputStream io = new ByteArrayInputStream(bytes);
+             BukkitObjectInputStream in = new BukkitObjectInputStream(io)) {
+            ItemStack result = (ItemStack) in.readObject();
+            if (Config.debug_logging) {
+                LOGGER.info("Decoded item using legacy format");
+            }
+            return result;
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.warn("Unable to deserialize ItemStack: {}", HexFormat.of().formatHex(bytes), e);
+        }
+
+        return null;
     }
 
     /**
