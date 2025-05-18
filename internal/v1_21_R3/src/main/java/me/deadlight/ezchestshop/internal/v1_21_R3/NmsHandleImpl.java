@@ -26,6 +26,7 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.level.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -126,7 +127,7 @@ public class NmsHandleImpl extends NmsHandle {
 
         // For some reason, using the scheduler for the entity silently fails.
         // Because this should only ever run for nearby players, it will hopefully be OK in most cases (big ?).
-        player.getScheduler().run(EzChestShop.getPlugin(), ignoredTask1 ->
+        Bukkit.getRegionScheduler().run(EzChestShop.getPlugin(), bukkitEntity.getLocation(), ignoredTask1 -> {
             bukkitEntity.teleportAsync(destination).thenAccept(teleported -> {
                 if (!teleported) {
                     EzChestShop.logger().warn("Failed to teleport {} from {}", bukkitEntity.getType(), startLocation);
@@ -143,9 +144,10 @@ public class NmsHandleImpl extends NmsHandle {
                     );
                     minecraftPlayer.connection.send(packet);
                 }, null);
-            }), null
-        );
+            });
+        });
     }
+
 
     @Override
     public void signFactoryListen(SignMenuFactory signMenuFactory) {
