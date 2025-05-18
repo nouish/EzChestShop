@@ -1,7 +1,6 @@
 package me.deadlight.ezchestshop.internal.v1_21_R3;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -119,12 +118,33 @@ public class NmsHandleImpl extends NmsHandle {
 
     @Override
     public void teleportEntity(Player player, int entityID, Location location) {
-        ServerPlayer ServerPlayer = ((CraftPlayer) player).getHandle();
-        Entity e = entities.get(entityID);
-        e.teleportTo(ServerPlayer.serverLevel(), location.getX(), location.getY(), location.getZ(), new HashSet<>(), 0, 0, false);
-        // not sure if it's needed
-        ClientboundTeleportEntityPacket packet = new ClientboundTeleportEntityPacket(e.getId(), PositionMoveRotation.of(e), Set.of(), e.onGround());
-        ServerPlayer.connection.send(packet);
+        ServerPlayer minecraftPlayer = ((CraftPlayer) player).getHandle();
+        Entity minecraftEntity = entities.get(entityID);
+        var bukkitEntity = minecraftEntity.getBukkitEntity();
+        var startLocation = bukkitEntity.getLocation().clone();
+        var destination = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ(), 0, 0);
+
+        // For some reason, using the scheduler for the entity silently fails.
+        // Because this should only ever run for nearby players, it will hopefully be OK in most cases (big ?).
+        player.getScheduler().run(EzChestShop.getPlugin(), ignoredTask1 ->
+            bukkitEntity.teleportAsync(destination).thenAccept(teleported -> {
+                if (!teleported) {
+                    EzChestShop.logger().warn("Failed to teleport {} from {}", bukkitEntity.getType(), startLocation);
+                    return;
+                }
+
+                player.getScheduler().run(EzChestShop.getPlugin(), ignoredTask2 -> {
+                    // not sure if it's needed
+                    ClientboundTeleportEntityPacket packet = new ClientboundTeleportEntityPacket(
+                        minecraftEntity.getId(),
+                        PositionMoveRotation.of(minecraftEntity),
+                        Set.of(),
+                        minecraftEntity.onGround()
+                    );
+                    minecraftPlayer.connection.send(packet);
+                }, null);
+            }), null
+        );
     }
 
     @Override
