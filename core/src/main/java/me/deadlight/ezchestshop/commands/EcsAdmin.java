@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,9 +61,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
+import static net.kyori.adventure.text.Component.text;
+
 public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (sender instanceof Player player) {
             int size = args.length;
 
@@ -953,10 +955,10 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.RED + "Something went wrong while uploading the logs!");
                 }
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            EzChestShop.logger().info("Failed to upload debug information - enable debug logging for more information.");
+            EzChestShop.logger().debug("Error uploading debug information", e);
+            player.sendMessage(text("Something went wrong while uploading the logs!", NamedTextColor.RED));
         }
     }
 
