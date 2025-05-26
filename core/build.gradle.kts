@@ -20,7 +20,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
     // Optional integrations
-    compileOnly("com.palmergames.bukkit.towny:towny:0.101.1.11")
+    compileOnly("com.palmergames.bukkit.towny:towny:0.101.1.12")
     compileOnly("net.coreprotect:coreprotect:22.4")
     compileOnly("com.github.Slimefun:Slimefun4:RC-37")
     compileOnly("net.alex9849.advancedregionmarket:advancedregionmarket:3.5.5")
