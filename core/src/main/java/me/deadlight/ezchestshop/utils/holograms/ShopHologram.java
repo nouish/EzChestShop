@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.slf4j.Logger;
 
 /**
  * This class represents a hologram of a shop.
@@ -32,6 +36,8 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
  * When working with a shop hologram, this class should always be addressed, as it's a tailored abstraction to the BlockBoundHologram and PlayerBlockBoundHologram.
  */
 public class ShopHologram {
+    private static final Logger LOGGER = EzChestShop.logger();
+
     private static final Map<UUID, HashMap<Location, ShopHologram>> playerLocationShopHoloMap = new HashMap<>();
     private static final Map<Location, BlockBoundHologram> locationBlockHoloMap = new HashMap<>();
 
@@ -63,7 +69,21 @@ public class ShopHologram {
 
             String itemName = Utils.getFinalItemName(shop.getShopItem());
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
-            assert shopInventory != null;
+            if (shopInventory == null) {
+                World world = Objects.requireNonNullElse(location.getWorld(), player.getWorld());
+                Block blockAtLocation = world.getBlockAt(location);
+                // Debugging a specific, unconfirmed, error on Paper 1.21 #130.
+                LOGGER.warn(" *".repeat(16));
+                LOGGER.warn("Ran into unexpected state for shop at {}, {}, {} (in world {}).",
+                        location.getBlockX(), location.getBlockY(), location.getBlockZ(), world);
+                LOGGER.warn("Player: {} ({})", player.getName(), player.getUniqueId());
+                LOGGER.warn("Block type: {}", blockAtLocation.getType().key());
+                LOGGER.warn("Item: {}", itemName);
+                LOGGER.warn("Please report this on GitHub; more information about the world and other plugins will be useful.");
+                LOGGER.warn(" *".repeat(32));
+                // Because I'm looking for a more permanent fix here, we just fall through, knowing it will result in an NPE.
+            }
+            assert shopInventory != null : "Location should be a valid shop, but has no inventory!";
             int availableSlots = shopInventory.getSize();
             for (ItemStack item : shopInventory.getStorageContents()) {
                 // if item is one of the below, then it is a slot that can be used, otherwise subtract from available slots.
@@ -76,7 +96,7 @@ public class ShopHologram {
                 possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()),
                         Bukkit.getOfflinePlayer(shop.getOwnerID()),
                         player.getInventory().getStorageContents(),
-                        Utils.getBlockInventory(location.getBlock()).getStorageContents(),
+                        shopInventory.getStorageContents(),
                         shop.getBuyPrice(), shop.getSellPrice(), shop.getShopItem());
             } catch (Exception e) {
                 // If the block is not found or some other error occurs, just set the possible counts to 0
