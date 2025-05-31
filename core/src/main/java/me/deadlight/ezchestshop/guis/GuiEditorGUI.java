@@ -57,6 +57,10 @@ public class GuiEditorGUI {
                 default:
                     item = new ItemStack(Material.CHEST);
             }
+            if (type == GuiData.GuiType.TRANSACTION_LOGS) {
+                // Disabled feature
+                return;
+            }
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(type.toString()));
             item.setItemMeta(meta);
@@ -65,7 +69,7 @@ public class GuiEditorGUI {
                 showGuiSettingsEditor(player, type);
             });
             // Simple way of spacing them out. If more items are needed one day, increase the row count and change the row/column calculation
-            gui.setItem(2, 2 + i.get() * 2, GuiItem);
+            gui.setItem(2, 3 + i.get() * 2, GuiItem);
             i.incrementAndGet();
         });
 
@@ -257,6 +261,8 @@ public class GuiEditorGUI {
                         showGuiInEditor(player, type);
                     }
                 }));
+            } else if (key.equals("latest-transactions")) {
+                // Skip disabled feature
             } else {
                 ContainerGuiItem cgi = container.getItem(key).setName(ChatColor.YELLOW + Utils.capitalizeFirstSplit(key.replace("-", "_")));
                 if (sameSlotItems.containsKey(cgi.getSlot())) {
