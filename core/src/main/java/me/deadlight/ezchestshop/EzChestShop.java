@@ -63,6 +63,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.event.Level;
 
 import static net.kyori.adventure.text.Component.text;
@@ -221,8 +222,8 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
-        EconomyProvider economyProvider = getEconomyProvider();
-        LOGGER.info("Economy: {} ({})", economyProvider.name(), economyProvider.version());
+        PluginVersion economyImpl = findVersion(JavaPlugin.getProvidingPlugin(economy.getClass()));
+        LOGGER.info("Economy: {} ({})", economyImpl.name(), economyImpl.version());
 
         LanguageManager.loadLanguages();
         try {
@@ -347,24 +348,27 @@ public final class EzChestShop extends JavaPlugin {
         }
     }
 
-    private record EconomyProvider(@NotNull String name, @NotNull String version) {
+    private record PluginVersion(@NotNull String name, @NotNull String version) {
         // Just used as return type for getEconomyProvider().
     }
 
-    // Handle both oldschool Bukkit and Paper plugins.
     @SuppressWarnings({"deprecation", "ConstantExpression", "UnstableApiUsage", "ConstantValue"})
-    private EconomyProvider getEconomyProvider() {
-        JavaPlugin economyPlugin = JavaPlugin.getProvidingPlugin(economy.getClass());
-        PluginDescriptionFile description = economyPlugin.getDescription();
-        if (description != null) {
-            return new EconomyProvider(economyPlugin.getName(), description.getVersion());
-        } else {
-            PluginMeta meta = economyPlugin.getPluginMeta();
-            if (meta != null) {
-                return new EconomyProvider(economyPlugin.getName(), meta.getVersion());
-            }
+    @Nullable
+    private static PluginVersion findVersion(@Nullable Plugin plugin) {
+        if (plugin == null) {
+            return null;
         }
-        return new EconomyProvider(economyPlugin.getName(), "<unknown>");
+        PluginMeta meta = plugin.getPluginMeta();
+        if (meta != null) {
+            return new PluginVersion(meta.getName(), meta.getVersion());
+        }
+        PluginDescriptionFile description = plugin.getDescription();
+        return new PluginVersion(description.getName(), description.getVersion());
+    }
+
+    @Nullable
+    private static PluginVersion findVersion(@NotNull String name) {
+        return findVersion(Bukkit.getPluginManager().getPlugin(name));
     }
 
     private void registerMetrics() {
@@ -377,10 +381,16 @@ public final class EzChestShop extends JavaPlugin {
         metrics.addCustomChart(new DrilldownPie("economyProvider", () -> {
             Map<String, Map<String, Integer>> result = new HashMap<>();
             Map<String, Integer> entry = new HashMap<>();
-            EconomyProvider provider = getEconomyProvider();
+            PluginVersion provider = findVersion(JavaPlugin.getProvidingPlugin(economy.getClass()));
             entry.put(provider.version(), 1);
             result.put(provider.name(), entry);
             return result;
+        }));
+
+        // Curious about adoptation considering how CoreProtect is distributed these days.
+        metrics.addCustomChart(new SimplePie("intCoreProtect", () -> {
+            PluginVersion plugin = findVersion("CoreProtect");
+            return plugin != null ? plugin.version() : "<unused>";
         }));
 
         metrics.addCustomChart(new DrilldownPie("playerLanguage", () -> {
