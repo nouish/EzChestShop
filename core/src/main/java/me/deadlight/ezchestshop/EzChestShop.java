@@ -223,7 +223,9 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         PluginVersion economyImpl = findVersion(JavaPlugin.getProvidingPlugin(economy.getClass()));
-        LOGGER.info("Economy: {} ({})", economyImpl.name(), economyImpl.version());
+        if (economyImpl != null) {
+            LOGGER.info("Economy: {} ({})", economyImpl.name(), economyImpl.version());
+        }
 
         LanguageManager.loadLanguages();
         try {
@@ -381,15 +383,27 @@ public final class EzChestShop extends JavaPlugin {
         metrics.addCustomChart(new DrilldownPie("economyProvider", () -> {
             Map<String, Map<String, Integer>> result = new HashMap<>();
             Map<String, Integer> entry = new HashMap<>();
-            PluginVersion provider = findVersion(JavaPlugin.getProvidingPlugin(economy.getClass()));
-            entry.put(provider.version(), 1);
-            result.put(provider.name(), entry);
+            PluginVersion plugin = findVersion(JavaPlugin.getProvidingPlugin(economy.getClass()));
+            if (plugin != null) {
+                entry.put(plugin.version(), 1);
+                result.put(plugin.name(), entry);
+            }
             return result;
         }));
 
         // Curious about adoptation considering how CoreProtect is distributed these days.
         metrics.addCustomChart(new SimplePie("intCoreProtect", () -> {
             PluginVersion plugin = findVersion("CoreProtect");
+            return plugin != null ? plugin.version() : "<unused>";
+        }));
+
+        metrics.addCustomChart(new SimplePie("intTowny", () -> {
+            PluginVersion plugin = findVersion("Towny");
+            return plugin != null ? plugin.version() : "<unused>";
+        }));
+
+        metrics.addCustomChart(new SimplePie("intWorldGuard", () -> {
+            PluginVersion plugin = findVersion("WorldGuard");
             return plugin != null ? plugin.version() : "<unused>";
         }));
 
