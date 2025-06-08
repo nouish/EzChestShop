@@ -564,20 +564,14 @@ public final class LanguageManager {
     }
 
     public String rotationFromData(String rotation) {
-        switch (rotation) {
-            case "north":
-                return rotationNorth();
-            case "east":
-                return rotationEast();
-            case "south":
-                return rotationSouth();
-            case "west":
-                return rotationWest();
-            case "down":
-                return rotationDown();
-            default:
-                return rotationUp();
-        }
+        return switch (rotation) {
+            case "north" -> rotationNorth();
+            case "east" -> rotationEast();
+            case "south" -> rotationSouth();
+            case "west" -> rotationWest();
+            case "down" -> rotationDown();
+            default -> rotationUp();
+        };
     }
 
     //settings.chat.hologramRotation.rotation.
@@ -987,45 +981,22 @@ public final class LanguageManager {
         if (enchant.getMaxLevel() == 1) {
             return msg.replace("%level%", "").replace("%level-roman%", "").trim();
         }
-        msg = msg.replace("%level%", "" + level);
+        msg = msg.replace("%level%", String.valueOf(level));
         // Convert %level-roman% to a roman number for level 1-10, then just use the level.
         if (msg.contains("%level-roman%")) {
-            String roman;
-            switch (level) {
-                case 1:
-                    roman = "I";
-                    break;
-                case 2:
-                    roman = "II";
-                    break;
-                case 3:
-                    roman = "III";
-                    break;
-                case 4:
-                    roman = "IV";
-                    break;
-                case 5:
-                    roman = "V";
-                    break;
-                case 6:
-                    roman = "VI";
-                    break;
-                case 7:
-                    roman = "VII";
-                    break;
-                case 8:
-                    roman = "VIII";
-                    break;
-                case 9:
-                    roman = "IX";
-                    break;
-                case 10:
-                    roman = "X";
-                    break;
-                default:
-                    roman = "" + level;
-                    break;
-            }
+            String roman = switch (level) {
+                case 1 -> "I";
+                case 2 -> "II";
+                case 3 -> "III";
+                case 4 -> "IV";
+                case 5 -> "V";
+                case 6 -> "VI";
+                case 7 -> "VII";
+                case 8 -> "VIII";
+                case 9 -> "IX";
+                case 10 -> "X";
+                default -> String.valueOf(level);
+            };
             msg = msg.replace("%level-roman%", roman);
         }
         return msg;

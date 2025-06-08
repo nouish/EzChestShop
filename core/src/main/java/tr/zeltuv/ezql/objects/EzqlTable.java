@@ -140,13 +140,13 @@ public class EzqlTable {
      * @param whereValue The condition value
      * @return Return the value as an object
      */
-    public <T> T getSingleValue(String requestedValue, String where, String whereValue,Class<T> clazz) {
+    public <T> T getSingleValue(String requestedValue, String where, String whereValue) {
         EzqlRow ezqlRow = getSingleRow(where,whereValue, Sets.newHashSet(requestedValue));
 
-        if(ezqlRow.getValues().isEmpty())
+        if (ezqlRow.getValues().isEmpty())
             return null;
 
-        return (T)ezqlRow.getValue(requestedValue);
+        return ezqlRow.getValue(requestedValue);
     }
 
     /**

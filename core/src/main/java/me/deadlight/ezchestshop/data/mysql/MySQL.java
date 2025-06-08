@@ -183,7 +183,7 @@ public class MySQL extends DatabaseManager {
     @Override
     public String getString(String primary_key, String key, String column, String table) {
         EzqlTable ezqlTable = database.getTable(prefix + table);
-        return ezqlTable.getSingleValue(column, primary_key, key, String.class);
+        return ezqlTable.getSingleValue(column, primary_key, key);
     }
 
     @Override

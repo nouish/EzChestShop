@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.concurrent.TimeUnit;
 
@@ -66,10 +65,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.event.Level;
 
+import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public final class EzChestShop extends JavaPlugin {
+    private static EzChestShop INSTANCE;
     private static ExtendedLogger LOGGER;
 
     private static Economy economy = null;
@@ -106,7 +107,8 @@ public final class EzChestShop extends JavaPlugin {
         // Boolean.getBoolean() is poorly named, but returns true for the System.getProperty() with said name.
         // This is what we want. It can be toggled with the "-Dezchestshopreborn.developerMode=true" flag.
         developmentMode = Boolean.getBoolean("ezchestshopreborn.developerMode");
-        LOGGER = new ExtendedLogger(getSLF4JLogger(), this::isLoggable);
+        EzChestShop.LOGGER = new ExtendedLogger(getSLF4JLogger(), this::isLoggable);
+        EzChestShop.INSTANCE = this;
     }
 
     private boolean isLoggable(@NotNull Level level) {
@@ -394,17 +396,17 @@ public final class EzChestShop extends JavaPlugin {
         // Curious about adoptation considering how CoreProtect is distributed these days.
         metrics.addCustomChart(new SimplePie("intCoreProtect", () -> {
             PluginVersion plugin = findVersion("CoreProtect");
-            return plugin != null ? plugin.version() : "<unused>";
+            return plugin != null ? plugin.version() : null;
         }));
 
         metrics.addCustomChart(new SimplePie("intTowny", () -> {
             PluginVersion plugin = findVersion("Towny");
-            return plugin != null ? plugin.version() : "<unused>";
+            return plugin != null ? plugin.version() : null;
         }));
 
         metrics.addCustomChart(new SimplePie("intWorldGuard", () -> {
             PluginVersion plugin = findVersion("WorldGuard");
-            return plugin != null ? plugin.version() : "<unused>";
+            return plugin != null ? plugin.version() : null;
         }));
 
         metrics.addCustomChart(new DrilldownPie("playerLanguage", () -> {
@@ -527,7 +529,7 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     private @NotNull PluginCommand getCommandOrThrow(@NotNull String name) {
-        return Objects.requireNonNull(getCommand(name), () -> "Undefined command: " + name + ".");
+        return requireNonNull(getCommand(name), () -> "Undefined command: " + name + ".");
     }
 
     @Override
@@ -537,8 +539,9 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         // Plugin shutdown logic
-        if (scheduler != null)
+        if (scheduler != null) {
             scheduler.cancelTasks();
+        }
 
         LOGGER.info("Saving remaining items in SQL cache...");
         ShopContainer.saveSqlQueueCache();
@@ -569,8 +572,9 @@ public final class EzChestShop extends JavaPlugin {
         }
     }
 
+    @NotNull
     public static EzChestShop getPlugin() {
-        return getPlugin(EzChestShop.class);
+        return requireNonNull(EzChestShop.INSTANCE, "Plugin instance unavailable!");
     }
 
     private boolean setupEconomy() {

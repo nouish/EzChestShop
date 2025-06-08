@@ -160,9 +160,9 @@ public class WebhookSender {
         }
 
         sendDiscordWebhook(webhookData);
-
     }
 
+    @SuppressWarnings("unchecked")
     public static String configurationSectionToJsonString(ConfigurationSection section) {
         JSONObject jsonObject = new JSONObject();
         for (String key : section.getKeys(true)) {

@@ -27,6 +27,7 @@ public class EzqlRow {
         return results;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getValue(String id) {
         return (T) results.get(id);
     }

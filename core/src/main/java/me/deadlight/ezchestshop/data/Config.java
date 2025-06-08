@@ -18,7 +18,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class Config {
+public final class Config {
     private static final ExtendedLogger LOGGER = EzChestShop.logger();
 
     public static String currency;

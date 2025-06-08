@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.enums.Changes;
@@ -38,6 +37,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
@@ -49,9 +49,9 @@ import static net.kyori.adventure.text.Component.translatable;
 public class ShopContainer {
     private static final ExtendedLogger LOGGER = EzChestShop.logger();
     private static final Economy econ = EzChestShop.getEconomy();
-    private static HashMap<Location, EzShop> shopMap = new HashMap<>();
+    private static final HashMap<Location, EzShop> shopMap = new HashMap<>();
 
-    static DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     /**
      * Save all shops from the Database into memory,
@@ -59,7 +59,8 @@ public class ShopContainer {
      */
     public static void queryShopsToMemory() {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        shopMap = db.queryShops();
+        shopMap.clear();
+        shopMap.putAll(db.queryShops());
         LOGGER.info("Loaded and cached {} shops.", shopMap.size());
     }
 
@@ -108,9 +109,8 @@ public class ShopContainer {
         EzShop shop = new EzShop(loc, p, item, buyprice, sellprice, settings);
         shopMap.put(loc, shop);
 
-
         ItemMeta meta = item.getItemMeta();
-        World world = Preconditions.checkNotNull(loc.getWorld(), "Location cannot be in null world");
+        World world = requireNonNull(loc.getWorld(), "Location cannot be in null world");
         final String ownerName = p.getName();
         // Show buying price in string if dbuy is false, otherwise show "Disabled"
         final String priceBuy = dbuy ? "Disabled" : String.valueOf(buyprice);
@@ -119,7 +119,7 @@ public class ShopContainer {
         final String itemName = meta != null && meta.hasDisplayName() ? meta.getDisplayName() : item.getType().name();
         final String materialType = item.getType().name();
         // Display Current Time Like This: 2023/5/1 | 23:10:23
-        final String time = formatter.format(java.time.LocalDateTime.now()).replace("T", " | ");
+        final String time = DATE_TIME_FORMATTER.format(java.time.LocalDateTime.now()).replace("T", " | ");
         // Display shop location as this: world, x, y, z
         final String shopLocation = world.getName() + ", " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ();
 
