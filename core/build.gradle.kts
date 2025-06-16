@@ -13,7 +13,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // Shaded dependencies
-    api("com.github.Anon8281:UniversalScheduler:0.1.6")
+    api("com.github.Anon8281:UniversalScheduler:0.1.7")
     implementation("de.themoep:minedown:1.7.1-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:6.3.0")
     implementation("dev.triumphteam:triumph-gui:3.1.12")
