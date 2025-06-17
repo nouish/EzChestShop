@@ -13,7 +13,7 @@ import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.WebhookSender;
+import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
@@ -134,13 +134,8 @@ public class ShopContainer {
                 .append(text("."))
                 .build());
 
-        EzChestShop.getScheduler().runTaskAsynchronously(() -> {
-            try {
-                WebhookSender.sendDiscordNewShopAlert(ownerName, priceBuy, priceSell, itemName, materialType, time, shopLocation);
-            } catch (Exception e) {
-                LOGGER.warn("Discord webhook failed!", e);
-            }
-        });
+        EzChestShop.getScheduler().runTaskAsynchronously(
+                () -> DiscordWebhook.queueCreation(ownerName, priceBuy, priceSell, itemName, materialType, time, shopLocation));
     }
 
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {

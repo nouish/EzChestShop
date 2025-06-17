@@ -1,7 +1,9 @@
 package me.deadlight.ezchestshop.listeners;
 
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
@@ -11,7 +13,7 @@ import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.WebhookSender;
+import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -66,10 +68,10 @@ public class PlayerTransactionListener implements Listener {
         final String buyerName;
         final String sellerName;
         final String itemName = meta != null && meta.hasDisplayName() ? meta.getDisplayName() : event.getItemName();
-        final String price = String.valueOf(event.getPrice());
+        final String price = EzChestShop.getEconomy().format(event.getPrice());
         final String shopLocation = block.getWorld().getName() + ", " + block.getX() + ", " + block.getY() + ", " + block.getZ();
         final String time = DateTimeFormatter.ISO_DATE_TIME.format(event.getTime()).replace("T", " | ").replace("Z", "").replace("-", "/");
-        final String quantity = String.valueOf(event.getCount());
+        final String quantity = NumberFormat.getInstance(Locale.ENGLISH).format(event.getCount());
         final String ownerName = event.getOwner().getName();
 
         if (event.isBuy()) {
@@ -81,7 +83,7 @@ public class PlayerTransactionListener implements Listener {
         }
 
         EzChestShop.getScheduler().runTaskAsynchronously(
-                () -> WebhookSender.sendDiscordNewTransactionAlert(buyerName, sellerName, itemName, price, Config.currency, shopLocation, time, quantity, ownerName));
+                () -> DiscordWebhook.queueTransaction(buyerName, sellerName, itemName, price, Config.currency, shopLocation, time, quantity, ownerName));
     }
 
     private void logProfits(PlayerTransactEvent event) {

@@ -35,6 +35,7 @@ import me.deadlight.ezchestshop.listeners.UpdateChecker;
 import me.deadlight.ezchestshop.tasks.LoadedChunksTask;
 import me.deadlight.ezchestshop.utils.ASHologram;
 import me.deadlight.ezchestshop.utils.BlockOutline;
+import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.VersionUtil;
@@ -379,6 +380,7 @@ public final class EzChestShop extends JavaPlugin {
         Metrics metrics = new Metrics(this, EzChestShopConstants.BSTATS_PROJECT_ID);
         metrics.addCustomChart(new SimplePie("databaseType", () -> Config.database_type.getName()));
         metrics.addCustomChart(new SimplePie("updateNotification", () -> Config.notify_updates ? "Enabled" : "Disabled"));
+        metrics.addCustomChart(new SimplePie("discordWebhook", () -> DiscordWebhook.isEnabled() ? "Enabled" : "Disabled"));
         metrics.addCustomChart(new SimplePie("language", () -> Config.language));
         metrics.addCustomChart(new SingleLineChart("totalShopCount", () -> ShopContainer.getShops().size()));
 

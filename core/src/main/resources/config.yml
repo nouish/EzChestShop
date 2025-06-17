@@ -164,7 +164,7 @@ notification:
     #Enable Discord notifications
     enabled: false
     #Discord webhook url
-    webhook-url: "https://discord.com/api/webhooks/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    webhook-url: "https://discord.com/api/webhooks/xxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
     #Discord message template
     buy-sell-webhook:
       enabled: true
@@ -173,7 +173,7 @@ notification:
         content: null
         embeds: #placeholders: %BUYER%, %SELLER%, %ITEM_NAME%, %PRICE%, %CURRENCY%, %SHOP_LOCATION%, %OWNER%, %COUNT%, %TIME%
           - title: "New chest shop transaction is made!"
-            description: "Player %BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%."
+            description: "%BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%."
             url: "https://github.com/nouish/EzChestShop"
             color: 16753454
             fields:
@@ -209,7 +209,7 @@ notification:
         content: null
         embeds: #placeholders: %OWNER%, %BUYING_PRICE%, %SELLING_PRICE%, %ITEM_NAME%, %MATERIAL%, %TIME%, %SHOP_LOCATION%
           - title: New shop has been created!
-            description: "Player %OWNER% created a new shop for %ITEM_NAME%"
+            description: "%OWNER% created a new shop for %ITEM_NAME%"
             url: "https://github.com/nouish/EzChestShop"
             color: 16753454
             fields:

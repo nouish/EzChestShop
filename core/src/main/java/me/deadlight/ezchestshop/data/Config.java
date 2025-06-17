@@ -2,6 +2,9 @@ package me.deadlight.ezchestshop.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +16,7 @@ import java.util.Map;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Database;
+import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -93,7 +97,7 @@ public final class Config {
 
     public static boolean isDiscordNotificationEnabled;
 
-    public static String discordWebhookUrl;
+    public static URL discordWebhookUrl;
 
     public static boolean isBuySellWebhookEnabled;
 
@@ -203,11 +207,25 @@ public final class Config {
         logTransactions = config.getBoolean("shops.settings.log-transactions", true);
         //
         isDiscordNotificationEnabled = config.getBoolean("notification.discord.enabled", false);
-        discordWebhookUrl = config.getString("notification.discord.webhook-url", "");
         isBuySellWebhookEnabled = config.getBoolean("notification.discord.buy-sell-webhook.enabled", false);
         buySellWebhookTemplate = config.getConfigurationSection("notification.discord.buy-sell-webhook.template");
         isNewShopWebhookEnabled = config.getBoolean("notification.discord.new-shop-webhook.enabled", false);
         newShopWebhookTemplate = config.getConfigurationSection("notification.discord.new-shop-webhook.template");
+
+        String rawDiscordWebhookUrl = config.getString("notification.discord.webhook-url");
+        if (rawDiscordWebhookUrl == null
+                || rawDiscordWebhookUrl.equals(DiscordWebhook.WEBHOOK_EXAMPLE_URL)
+                // This was used in older versions of the plugin as an example:
+                || rawDiscordWebhookUrl.equals("https://discord.com/api/webhooks/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")) {
+            discordWebhookUrl = null;
+        } else {
+            try {
+                discordWebhookUrl = URI.create(rawDiscordWebhookUrl).toURL();
+            } catch (IllegalArgumentException | MalformedURLException e) {
+                LOGGER.warn("Invalid Discord webhook URL: {}", rawDiscordWebhookUrl, e);
+                discordWebhookUrl = null;
+            }
+        }
 
         shopCommandsEnabled = config.getBoolean("shops.commands.enabled");
         shopCommandManager = new ShopCommandManager();
@@ -216,7 +234,6 @@ public final class Config {
 
     //this one checks for the config.yml ima make one for language.yml
     public static void checkForConfigYMLupdate() throws IOException {
-
         YamlConfiguration fc = YamlConfiguration.loadConfiguration(new File(EzChestShop.getPlugin().getDataFolder(), "config.yml"));
 
         //1.5.0 config update
