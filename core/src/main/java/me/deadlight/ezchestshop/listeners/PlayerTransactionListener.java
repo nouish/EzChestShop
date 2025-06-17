@@ -83,7 +83,7 @@ public class PlayerTransactionListener implements Listener {
         }
 
         EzChestShop.getScheduler().runTaskAsynchronously(
-                () -> DiscordWebhook.queueTransaction(buyerName, sellerName, itemName, price, Config.currency, shopLocation, time, quantity, ownerName));
+                () -> DiscordWebhook.queueTransaction(buyerName, sellerName, itemName, price, shopLocation, time, quantity, ownerName));
     }
 
     private void logProfits(PlayerTransactEvent event) {

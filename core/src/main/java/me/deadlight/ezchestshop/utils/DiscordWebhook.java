@@ -119,7 +119,6 @@ public final class DiscordWebhook {
             String seller,
             String item_name,
             String price,
-            String currency,
             String shop_location,
             String time,
             String count,
@@ -137,7 +136,8 @@ public final class DiscordWebhook {
             .replace("%SELLER%", seller)
             .replace("%ITEM_NAME%", item_name)
             .replace("%PRICE%", price)
-            .replace("%CURRENCY%", currency)
+            // Replace outdated "%CURRENCY%" tag with empty string.
+            .replace("%CURRENCY%", "")
             .replace("%SHOP_LOCATION%", shop_location)
             .replace("%TIME%", time)
             .replace("%COUNT%", count)

@@ -171,9 +171,9 @@ notification:
         #Discord message template
       template:
         content: null
-        embeds: #placeholders: %BUYER%, %SELLER%, %ITEM_NAME%, %PRICE%, %CURRENCY%, %SHOP_LOCATION%, %OWNER%, %COUNT%, %TIME%
+        embeds: #placeholders: %BUYER%, %SELLER%, %ITEM_NAME%, %PRICE%, %SHOP_LOCATION%, %OWNER%, %COUNT%, %TIME%
           - title: "New chest shop transaction is made!"
-            description: "%BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE% %CURRENCY%."
+            description: "%BUYER% has bought %ITEM_NAME% from %SELLER% for %PRICE%."
             url: "https://github.com/nouish/EzChestShop"
             color: 16753454
             fields:
@@ -190,7 +190,7 @@ notification:
                 value: "%SELLER%"
                 inline: true
               - name: "Amount:"
-                value: "%COUNT% %ITEM_NAME%"
+                value: "%COUNT% × %ITEM_NAME%"
                 inline: true
               - name: "Time:"
                 value: "%TIME%"
