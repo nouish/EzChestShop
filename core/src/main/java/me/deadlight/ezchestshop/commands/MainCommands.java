@@ -21,6 +21,7 @@ import me.deadlight.ezchestshop.guis.SettingsGUI;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -56,13 +57,14 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class MainCommands implements CommandExecutor, TabCompleter {
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
     public static HashMap<UUID, ShopSettings> settingsHashMap = new HashMap<>();
     private enum SettingType { TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME, ROTATION }
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (sender instanceof Player player) {
 
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
+        if (sender instanceof Player player) {
             if (args.length > 0) {
                 String mainarg = args[0];
                 Block target = getCorrectBlock(player.getTargetBlockExact(6));
@@ -97,7 +99,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 try {
                                     createShop(player, args, target);
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    LOGGER.warn("Failed to create shop", e);
                                 }
                             } else {
                                 player.sendMessage(LanguageManager.getInstance().negativePrice());
@@ -130,7 +132,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         List<String> fList = new ArrayList<>();
         List<String> list_mainarg = Arrays.asList("create", "remove", "settings", "emptyshops", "version");
         List<String> list_create_1 = Collections.singletonList("[BuyPrice]");
@@ -139,8 +141,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         List<String> list_settings_admins_2 = Arrays.asList("add", "remove", "list", "clear");
         List<String> list_settings_paste_2 = Arrays.asList("toggle-message", "toggle-buying", "toggle-selling", "admins", "toggle-shared-income", "change-rotation");
         List<String> list_settings_change_rotation_2 = new ArrayList<>(Utils.rotations);
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             if (args.length == 1)
                 StringUtil.copyPartialMatches(args[0], list_mainarg, fList);
             if (args.length > 1) {
@@ -191,9 +192,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         List<String> adminList = new ArrayList<>();
                                         if (adminString != null && !adminString.equalsIgnoreCase("none")) {
                                             adminList = Arrays.stream(adminString.split("@"))
-                                                    .filter(s -> (s != null && !s.trim().equalsIgnoreCase("")))
+                                                    .filter(s -> !s.trim().equalsIgnoreCase(""))
                                                     .map(s -> Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
-                                                    .collect(Collectors.toList());
+                                                    .toList();
                                         }
                                         String[] last = args[3].split(",");
                                         List<String> online = Bukkit.getOnlinePlayers().stream()
@@ -224,7 +225,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         List<String> playerList = new ArrayList<>();
                                         if (adminString != null && !adminString.equalsIgnoreCase("none")) {
                                             playerList = Arrays.stream(adminString.split("@"))
-                                                    .filter(s -> (s != null && !s.trim().equalsIgnoreCase("")))
+                                                    .filter(s -> !s.trim().equalsIgnoreCase(""))
                                                     .map(s -> Bukkit.getOfflinePlayer(UUID.fromString(s)).getName())
                                                     .collect(Collectors.toList());
                                             playerList.removeAll(Arrays.asList(last));
@@ -251,10 +252,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     } else if (args[1].equalsIgnoreCase("sellprice") && args.length == 3) {
                         StringUtil.copyPartialMatches(args[2], list_create_2, fList);
                     }
-//                    else if (args[1].equalsIgnoreCase("transfer-ownership")) {
-//                        // If null is returned a list of online players will be suggested
-//                        return null;
-//                    }
                 }
             }
         }
@@ -284,7 +281,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 }
             }
 
-            if (blockState instanceof TileState) {
+            if (blockState instanceof TileState state) {
                 if (Utils.isApplicableContainer(target)) {
                     if (checkIfLocation(target.getLocation(), player)) {
                         if (EzChestShop.towny && Config.towny_integration_shops_only_in_shop_plots) {
@@ -299,7 +296,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                             }
                         }
 
-                        TileState state = (TileState) blockState;
                         PersistentDataContainer container = state.getPersistentDataContainer();
 
                         //owner (String) (player name)
@@ -433,7 +429,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
             }
         } else if (args.length >= 2) {
-
             String settingarg = args[1];
 
             if (settingarg.equalsIgnoreCase("copy")) {
@@ -547,45 +542,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     sendHelp(player);
                 }
             }
-            //TODO This setting is kinda broken rn:
-            // Imagine a player creating a shop buying dirt for 9999 cash.
-            // Then he transfers this shop to the richest player on the server and sells all of his dirt for 9999 cash a piece.
-            // He's just stolen all of this players cash.
-            // If we implement such a system we need a way for players to accept the shop and review if they actually want this shop.
-            // Until then this feature is only available as a admin command.
-
-//            else if (settingarg.equalsIgnoreCase("transfer-ownership")) {
-//                if (args.length == 3) {
-//
-//                    OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
-//
-//                    if (op != null && op.hasPlayedBefore()) {
-//                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
-//                        if (blockState != null) {
-//                            player.spigot().sendMessage(LanguageManager.getInstance().shopTransferConfirm(args[2], false)); // Confirmation message similar to the clearprofit message.
-//                        }
-//                    } else {
-//                        player.sendMessage(LanguageManager.getInstance().noPlayer());
-//                    }
-//
-//                } else if (args.length == 4 && args[3].equals("-confirm")) {
-//                    OfflinePlayer op = Bukkit.getOfflinePlayer(args[2]);
-//
-//                    if (op != null && op.hasPlayedBefore()) {
-//
-//                        BlockState blockState = getLookedAtBlockStateIfOwner(player, true, false, target);
-//                        if (blockState != null) {
-//                            ShopContainer.transferOwner(blockState, op);
-//                            player.sendMessage(LanguageManager.getInstance().shopTransferred(args[2]));
-//                        }
-//
-//                    } else {
-//                        player.sendMessage(LanguageManager.getInstance().noPlayer());
-//                    }
-//                } else {
-//                    sendHelp(player);
-//                }
-//            }
         }
     }
 
@@ -747,13 +703,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         data = data.replace("+", "");
                         List<UUID> oldData = (settings.getAdmins() == null || settings.getAdmins().equals("none")) ? new ArrayList<>() :
                                 new ArrayList<>(Arrays.asList(settings.getAdmins().split("@")))
-                                        .stream().map(UUID::fromString).collect(Collectors.toList());
+                                        .stream().map(UUID::fromString).toList();
                         List<UUID> newPlayers = Arrays.stream(data.split(","))
                                 .map(Bukkit::getOfflinePlayer)
                                 .filter(OfflinePlayer::hasPlayedBefore)
                                 .map(OfflinePlayer::getUniqueId)
                                 .filter(id -> !oldData.contains(id))
-                                .collect(Collectors.toList());
+                                .toList();
                         String newData = newPlayers.stream().map(UUID::toString).collect(Collectors.joining("@"));
                         if (!newData.equalsIgnoreCase("")) {
                             if (!newPlayers.contains(player.getUniqueId())) {
@@ -782,9 +738,9 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 .map(Bukkit::getOfflinePlayer)
                                 .filter(OfflinePlayer::hasPlayedBefore)
                                 .map(OfflinePlayer::getUniqueId)
-                                .collect(Collectors.toList());
+                                .toList();
                         if (!newPlayers.isEmpty()) {
-                            List<String> newData = newPlayers.stream().map(UUID::toString).collect(Collectors.toList());
+                            List<String> newData = newPlayers.stream().map(UUID::toString).toList();
                             oldData.removeAll(newData);
                             data = String.join("@", oldData);
                             player.sendMessage(LanguageManager.getInstance().sucAdminRemoved(newPlayers.stream()
@@ -1031,5 +987,4 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }, 1L);
         }
     }
-
 }
