@@ -38,6 +38,7 @@ tasks {
         relocate("de.themoep.minedown", "me.deadlight.ezchestshop.thirdparty.minedown")
         relocate("com.zaxxer.hikari", "me.deadlight.ezchestshop.thirdparty.hikari")
         relocate("org.bstats", "me.deadlight.ezchestshop.thirdparty.bstats")
+        relocate("org.json.simple", "me.deadlight.ezchestshop.thirdparty.jsonsimple")
     }
 
     assemble {

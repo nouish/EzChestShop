@@ -8,7 +8,7 @@ java {
 
 dependencies {
     // Provided dependencies
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
     compileOnly("org.apache.logging.log4j:log4j-core:2.24.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
@@ -18,6 +18,10 @@ dependencies {
     implementation("com.zaxxer:HikariCP:6.3.0")
     implementation("dev.triumphteam:triumph-gui:3.1.12")
     implementation("org.bstats:bstats-bukkit:3.1.0")
+    implementation("com.googlecode.json-simple:json-simple:1.1.1") {
+        because("Prior to Paper 1.21.6 this used to be provided. We should move away from it.")
+        exclude("junit").because("We don't want to bundle JUnit.")
+    }
 
     // Optional integrations
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.1.14")
