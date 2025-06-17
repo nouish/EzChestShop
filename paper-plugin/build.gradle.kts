@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":internal:v1_21_R1"))
     implementation(project(":internal:v1_21_R2"))
     implementation(project(":internal:v1_21_R3"))
+    implementation(project(":internal:v1_21_R6"))
 }
 
 gitProperties {
