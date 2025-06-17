@@ -33,11 +33,11 @@ tasks {
         exclude("META-INF/**")
         exclude("net/kyori/**")
 
-        relocate("com.github.Anon8281.universalScheduler", "me.deadlight.ezchestshop.internal.scheduler")
-        relocate("dev.triumphteam.gui", "me.deadlight.ezchestshop.internal.triumphgui")
-        relocate("de.themoep.minedown", "me.deadlight.ezchestshop.internal.minedown")
-        relocate("com.zaxxer.hikari", "me.deadlight.ezchestshop.internal.hikari")
-        relocate("org.bstats", "me.deadlight.ezchestshop.internal.bstats")
+        relocate("com.github.Anon8281.universalScheduler", "me.deadlight.ezchestshop.thirdparty.scheduler")
+        relocate("dev.triumphteam.gui", "me.deadlight.ezchestshop.thirdparty.triumphgui")
+        relocate("de.themoep.minedown", "me.deadlight.ezchestshop.thirdparty.minedown")
+        relocate("com.zaxxer.hikari", "me.deadlight.ezchestshop.thirdparty.hikari")
+        relocate("org.bstats", "me.deadlight.ezchestshop.thirdparty.bstats")
     }
 
     assemble {

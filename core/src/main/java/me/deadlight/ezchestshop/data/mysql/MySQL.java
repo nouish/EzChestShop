@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import com.zaxxer.hikari.HikariConfig;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
@@ -46,7 +47,7 @@ public class MySQL extends DatabaseManager {
     @Override
     public void load() {
         // Set the logger level for HikariCP to warn to reduce console noise.
-        Configurator.setLevel("me.deadlight.ezchestshop.internal.hikari", org.apache.logging.log4j.Level.WARN);
+        Configurator.setLevel(HikariConfig.class.getPackageName(), org.apache.logging.log4j.Level.WARN);
 
         //first connect to the database
 

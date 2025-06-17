@@ -46,7 +46,7 @@ public class SQLite extends DatabaseManager {
 
     public void initialize() {
         // Set the logger level for HikariCP to warn to reduce console noise.
-        Configurator.setLevel("me.deadlight.ezchestshop.internal.hikari", org.apache.logging.log4j.Level.WARN);
+        Configurator.setLevel(HikariConfig.class.getPackageName(), org.apache.logging.log4j.Level.WARN);
 
         File databaseFile = new File(plugin.getDataFolder(), dbname + ".db");
         HikariConfig config = new HikariConfig();
