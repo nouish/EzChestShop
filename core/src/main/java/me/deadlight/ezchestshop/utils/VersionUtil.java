@@ -19,6 +19,7 @@ public final class VersionUtil {
 
     public enum MinecraftVersion {
         // The 1.21.4 implementation is compatible with 1.21.5.
+        v1_21_6(4435, "1.21.6", "me.deadlight.ezchestshop.internal.v1_21_R3.NmsHandleImpl"), // Guess? Need reference build to confirm.
         v1_21_5(4325, "1.21.5", "me.deadlight.ezchestshop.internal.v1_21_R3.NmsHandleImpl"),
         v1_21_4(4189, "1.21.4", "me.deadlight.ezchestshop.internal.v1_21_R3.NmsHandleImpl"),
         // The 1.21.2 implementation is compatible with 1.21.2.
