@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
+import io.papermc.paper.ServerBuildInfo;
+import io.papermc.paper.ServerBuildInfo.StringRepresentation;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import me.deadlight.ezchestshop.commands.CommandCheckProfits;
 import me.deadlight.ezchestshop.commands.EcsAdmin;
@@ -108,7 +110,7 @@ public final class EzChestShop extends JavaPlugin {
         // Boolean.getBoolean() is poorly named, but returns true for the System.getProperty() with said name.
         // This is what we want. It can be toggled with the "-Dezchestshopreborn.developerMode=true" flag.
         developmentMode = Boolean.getBoolean("ezchestshopreborn.developerMode");
-        EzChestShop.LOGGER = new ExtendedLogger(getSLF4JLogger(), this::isLoggable);
+        EzChestShop.LOGGER = new ExtendedLogger(org.slf4j.LoggerFactory.getLogger(getLogger().getName()), this::isLoggable);
         EzChestShop.INSTANCE = this;
     }
 
@@ -160,8 +162,7 @@ public final class EzChestShop extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (Bukkit.getName().equalsIgnoreCase("Spigot")) {
-            // Use JUL logger because Spigot doesn't have getSLF4JLogger().
+        if (!isPaperPlatform()) {
             getLogger().log(java.util.logging.Level.SEVERE,
                     """
 
@@ -177,7 +178,6 @@ public final class EzChestShop extends JavaPlugin {
         }
 
         MinecraftVersion minecraftVersion = VersionUtil.getMinecraftVersion().orElse(null);
-
         if (minecraftVersion == null) {
             OptionalInt dataVersion = VersionUtil.getDataVersion();
             String dataVersionInfo = dataVersion.isPresent() ? Integer.toString(dataVersion.getAsInt()) : "<Unknown>";
@@ -190,7 +190,12 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
-        LOGGER.info("Detected Minecraft version {} (Data version: {})", minecraftVersion.getVersion(), minecraftVersion.getDataVersion());
+        LOGGER.info("Detected Minecraft version {} (Data version: {})",
+                minecraftVersion.getVersion(),
+                minecraftVersion.getDataVersion());
+        LOGGER.info("Platform: {}/{}",
+                ServerBuildInfo.buildInfo().brandName(),
+                ServerBuildInfo.buildInfo().asString(StringRepresentation.VERSION_SIMPLE));
 
         scheduler = UniversalScheduler.getScheduler(this);
         saveDefaultConfig();
@@ -577,6 +582,15 @@ public final class EzChestShop extends JavaPlugin {
     @NotNull
     public static EzChestShop getPlugin() {
         return requireNonNull(EzChestShop.INSTANCE, "Plugin instance unavailable!");
+    }
+
+    private static boolean isPaperPlatform() {
+        try {
+            Class.forName("io.papermc.paper.ServerBuildInfo");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
     }
 
     private boolean setupEconomy() {
