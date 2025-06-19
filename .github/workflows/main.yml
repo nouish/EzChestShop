@@ -45,6 +45,6 @@ jobs:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
           curl -X POST \
-          -F "payload_json={\"content\": \"**Build Artifact:** ${{ env.VERSION }}\"}" \
+          -F "payload_json={\"content\": \"**Build Artifact:** ${{ env.VERSION }} (\`${{ github.sha }}\`)\"}" \
           -F "file=@paper-plugin/build/libs/EzChestShopReborn-${{ env.VERSION }}.jar" \
           "$DISCORD_WEBHOOK_URL"
