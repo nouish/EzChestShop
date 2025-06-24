@@ -11,7 +11,6 @@ import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
-import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.Instrument;
@@ -19,37 +18,44 @@ import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-public class PlayerJoinListener implements Listener {
+@ApiStatus.Internal
+public final class PlayerJoinListener implements Listener {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onAsyncPlayerPreLogin(@NotNull AsyncPlayerPreLoginEvent event) {
+        if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+            // We only need to prepare player data if the player is allowed to join.
+            return;
+        }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
+        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
+        UUID uuid = event.getUniqueId();
+
+        switch (Config.database_type) {
+            case MYSQL -> MySQL.playerTables.forEach(t -> {
+                if (db.hasTable(t) && !db.hasPlayer(t, uuid)) {
+                    db.preparePlayerData(t, uuid.toString());
+                }
+            });
+            case SQLITE -> SQLite.playerTables.forEach(t -> {
+                if (db.hasTable(t) && !db.hasPlayer(t, uuid)) {
+                    db.preparePlayerData(t, uuid.toString());
+                }
+            });
+            default -> throw new AssertionError("Unknown database implementation: " + Config.database_type);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Utils.nmsHandle.injectConnection(player);
-        DatabaseManager db = EzChestShop.getPlugin().getDatabase();
-        UUID uuid = event.getPlayer().getUniqueId();
-
-        EzChestShop.getScheduler().runTaskAsynchronously(() -> {
-            if (Config.database_type.equals(Database.MYSQL)) {
-                MySQL.playerTables.forEach(t -> {
-                    if (db.hasTable(t)) {
-                        if (!db.hasPlayer(t, uuid)) {
-                            db.preparePlayerData(t, uuid.toString());
-                        }
-                    }
-                });
-            } else if (Config.database_type.equals(Database.SQLITE)) {
-                SQLite.playerTables.forEach(t -> {
-                    if (db.hasTable(t)) {
-                        if (!db.hasPlayer(t, uuid)) {
-                            db.preparePlayerData(t, uuid.toString());
-                        }
-                    }
-                });
-            }
-        });
 
         if (Config.emptyShopNotificationOnJoin) {
             List<Block> blocks = Utils.getNearbyEmptyShopForAdmins(player);
@@ -90,5 +96,4 @@ public class PlayerJoinListener implements Listener {
             }, 80L);
         }
     }
-
 }

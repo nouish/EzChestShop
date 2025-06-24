@@ -20,7 +20,7 @@ public abstract class DatabaseManager {
     public abstract void setInt(String primary_key, String key, String column, String table, int data);
     public abstract void setBool(String primary_key, String key, String column, String table, Boolean data);
     public abstract void setDouble(String primary_key, String key, String column, String table, double data);
-      public abstract boolean hasPlayer(String table, UUID key);
+    public abstract boolean hasPlayer(String table, UUID key);
     public abstract boolean hasTable(String table);
     public abstract void preparePlayerData(String table, String uuid);
 
