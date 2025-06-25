@@ -31,20 +31,21 @@ jobs:
         run: |
           gradle clean build --no-daemon --console=plain
           echo "VERSION=$(gradle properties --no-daemon --console=plain -q | grep "^version:" | awk '{printf $2}')" >> $GITHUB_ENV
+          echo "SHORT_SHA=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_ENV
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: EzChestShopReborn-${{ env.VERSION }}
           path: |
-            paper-plugin/build/libs/EzChestShopReborn-*.jar
+            paper-plugin/build/libs/EzChestShopReborn-${{ env.VERSION }}.jar
 
       - name: Publish to Discord
-        if: github.repository == 'nouish/EzChestShop' && github.ref == 'refs/heads/main' && contains(env.VERSION, '-SNAPSHOT')
+        if: github.repository == 'nouish/EzChestShop' && github.ref == 'refs/heads/main' && contains(env.VERSION, '-dev')
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
           curl -X POST \
-          -F "payload_json={\"content\": \"**Build Artifact:** ${{ env.VERSION }} (\`${{ github.sha }}\`)\"}" \
+          -F "payload_json={\"content\": \"**Build Artifact:** ${{ env.VERSION }} (\`${{ env.SHORT_SHA }}\`)\"}" \
           -F "file=@paper-plugin/build/libs/EzChestShopReborn-${{ env.VERSION }}.jar" \
           "$DISCORD_WEBHOOK_URL"
