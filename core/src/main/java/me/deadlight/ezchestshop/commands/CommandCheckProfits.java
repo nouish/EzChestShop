@@ -17,21 +17,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
-public class CommandCheckProfits implements CommandExecutor, Listener, TabCompleter {
-
+@Internal
+public final class CommandCheckProfits implements CommandExecutor, Listener, TabCompleter {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (sender instanceof Player p) {
-            if (!p.hasPermission("ecs.checkprofits"))
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
+        if (sender instanceof Player player) {
+            if (!player.hasPermission("ecs.checkprofits")) {
                 return false;
+            }
 
             // Send stuff (multi pages), but first send a overview page. Then add a option
             // for details
-            PlayerContainer pc = PlayerContainer.get(p);
+            PlayerContainer pc = PlayerContainer.get(player);
             List<CheckProfitEntry> checkprofits = pc.getProfits().values().stream()
                     .filter(x -> x.getItem() != null)
                     .collect(Collectors.toList());
@@ -72,17 +75,17 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                             return x.getSellPrice();
                     }).sum();
                 }
-                p.spigot().sendMessage(LanguageManager.getInstance().checkProfitsLandingpage(p, buyCost, buyAmount, sellCost, sellAmount));
+                player.spigot().sendMessage(LanguageManager.getInstance().checkProfitsLandingpage(player, buyCost, buyAmount, sellCost, sellAmount));
             } else if (args.length == 1) {
                 if (args[0].equals("clear")) {
                     // Send message that asks to confirm
-                    p.spigot().sendMessage(LanguageManager.getInstance().confirmProfitClear());
+                    player.spigot().sendMessage(LanguageManager.getInstance().confirmProfitClear());
                 }
             } else if (args.length == 2) {
                 if (args[0].equals("clear") && args[1].equals("-confirm")) {
                     // Clear data & send cleared message
                     pc.clearProfits();
-                    p.sendMessage(LanguageManager.getInstance().confirmProfitClearSuccess());
+                    player.sendMessage(LanguageManager.getInstance().confirmProfitClearSuccess());
                 } else if (args[0].equals("p")) {
                     // ShopChest sc = ShopChest.getInstance();
                     int page;
@@ -99,34 +102,34 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
                     int pages = (int) Math.floor(checkprofits.size() / 4.0)
                             + ((checkprofits.size() % Config.command_checkprofit_lines_pp == 0) ? 0 : 1);// add 1 if not divideable by 4
                     if (page > pages || page < 1) {
-                        p.sendMessage(LanguageManager.getInstance().wrongInput());
+                        player.sendMessage(LanguageManager.getInstance().wrongInput());
                         return false;
                     }
-                    p.spigot().sendMessage(LanguageManager.getInstance().checkProfitsDetailpage(p, checkprofits, page, pages));
+                    player.spigot().sendMessage(LanguageManager.getInstance().checkProfitsDetailpage(player, checkprofits, page, pages));
                 }
             }
         }
         return false;
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent evt) {
-        Player p = evt.getPlayer();
-        if (!p.hasPermission("ecs.checkprofits"))
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (!player.hasPermission("ecs.checkprofits")) {
             return;
-        PlayerContainer pc = PlayerContainer.get(p);
+        }
+        PlayerContainer pc = PlayerContainer.get(player);
         List<CheckProfitEntry> checkprofits = pc.getProfits().values().stream()
-                .filter(x -> x.getItem() != null)
-                .toList();
-        if (checkprofits.isEmpty())
+            .filter(x -> x.getItem() != null)
+            .toList();
+        if (checkprofits.isEmpty() || checkprofits.getFirst().getItem() == null) {
             return;
-        else if (checkprofits.getFirst().getItem() == null)
-            return;
-        EzChestShop.getScheduler().runTaskLater(() -> p.spigot().sendMessage(LanguageManager.getInstance().joinProfitNotification()), 4L);
+        }
+        EzChestShop.getScheduler().runTaskLater(() -> player.spigot().sendMessage(LanguageManager.getInstance().joinProfitNotification()), 4L);
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         List<String> s1 = Arrays.asList("clear", "p");
         List<String> fList = Lists.newArrayList();
         if (sender instanceof Player p) {

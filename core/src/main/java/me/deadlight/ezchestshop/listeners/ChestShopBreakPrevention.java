@@ -13,13 +13,15 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
-public class ChestShopBreakPrevention implements Listener {
+@Internal
+public final class ChestShopBreakPrevention implements Listener {
 
     //BlockBreak of this section is handled in BlockBreakListener.java
-    @EventHandler
-    public void onExplosion(EntityExplodeEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityExplode(@NotNull EntityExplodeEvent event) {
         if (!Config.shopProtection) {
             return;
         }
@@ -29,22 +31,23 @@ public class ChestShopBreakPrevention implements Listener {
     }
 
 
-    @EventHandler
-    public void onBurn(BlockBurnEvent event) {
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onBlockBurn(@NotNull BlockBurnEvent event) {
         if (!Config.shopProtection) {
             return;
         }
+
         if (ShopContainer.isShop(event.getBlock().getLocation()) || Utils.isPartOfTheChestShop(event.getBlock()) != null) {
             event.setCancelled(true);
         }
-
     }
 
-    @EventHandler
-    public void onPistonExtend(BlockPistonExtendEvent event) {
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onBlockPistonExtend(@NotNull BlockPistonExtendEvent event) {
         if (!Config.shopProtection) {
             return;
         }
+
         for (Block block : event.getBlocks()) {
             if (ShopContainer.isShop(block.getLocation()) || Utils.isPartOfTheChestShop(block) != null) {
                 event.setCancelled(true);
@@ -53,11 +56,12 @@ public class ChestShopBreakPrevention implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPistonRetract(BlockPistonRetractEvent event) {
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onBlockPistonRetract(@NotNull BlockPistonRetractEvent event) {
         if (!Config.shopProtection) {
             return;
         }
+
         for (Block block : event.getBlocks()) {
             if (ShopContainer.isShop(block.getLocation()) || Utils.isPartOfTheChestShop(block) != null) {
                 event.setCancelled(true);
@@ -66,14 +70,13 @@ public class ChestShopBreakPrevention implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onInventoryMoveItem(@NotNull InventoryMoveItemEvent event) {
         if (!Config.shopProtection) {
             return;
         }
 
         Location location = event.getSource().getLocation();
-
         if (location == null) {
             return;
         }

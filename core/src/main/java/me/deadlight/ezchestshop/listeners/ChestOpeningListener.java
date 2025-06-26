@@ -35,9 +35,10 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
-public class ChestOpeningListener implements Listener {
-
+@Internal
+public final class ChestOpeningListener implements Listener {
     private final NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
     private final OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
     private final AdminShopGUI adminShopGUI = new AdminShopGUI();

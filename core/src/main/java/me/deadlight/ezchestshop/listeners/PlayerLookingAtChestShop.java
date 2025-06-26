@@ -29,6 +29,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -37,15 +38,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerLookingAtChestShop implements Listener {
-
     private final Map<Player, Location> map = new HashMap<>();
-
     private static final Map<Location, List<Player>> playershopmap = new HashMap<>();
 
-    @EventHandler
-    public void onLook(PlayerMoveEvent event) {
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerMove(@NotNull PlayerMoveEvent event) {
         Block target = event.getPlayer().getTargetBlockExact(5);
 
         if (target == null) {
@@ -66,8 +66,7 @@ public class PlayerLookingAtChestShop implements Listener {
 
             if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
                     || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
-
-                PersistentDataContainer rightone = null;
+                PersistentDataContainer rightone;
 
                 if (!leftchest.getPersistentDataContainer().isEmpty()) {
                     target = leftchest.getBlock();
@@ -297,5 +296,4 @@ public class PlayerLookingAtChestShop implements Listener {
         }
         return holoLoc;
     }
-
 }

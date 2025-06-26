@@ -19,17 +19,19 @@ import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 public class ChatListener implements Listener {
 
     public static final HashMap<UUID, ChatWaitObject> chatmap = new HashMap<>();
     public static final LanguageManager lm = LanguageManager.getInstance();
 
-    @EventHandler
-    public void onAsyncChat(AsyncChatEvent event) {
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onAsyncChat(@NotNull AsyncChatEvent event) {
         Player player = event.getPlayer();
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         if (chatmap.containsKey(player.getUniqueId())) {
@@ -73,7 +75,6 @@ public class ChatListener implements Listener {
             }
         }
     }
-
 
     // We are taking user input here, and are checking if the player played before.
     public boolean checkIfPlayerExists(String name) {
