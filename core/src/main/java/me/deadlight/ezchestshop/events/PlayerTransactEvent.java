@@ -17,6 +17,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerTransactEvent extends Event {
+    private static final HandlerList HANDLERS = new HandlerList();
+
     private OfflinePlayer owner;
     private OfflinePlayer customer;
     private double price;
@@ -27,9 +29,6 @@ public class PlayerTransactEvent extends Event {
     private int count;
     private List<UUID> admins;
     private Block containerBlock;
-
-
-    private static final HandlerList HANDLERS = new HandlerList();
 
     @Override
     public HandlerList getHandlers() {
@@ -53,7 +52,6 @@ public class PlayerTransactEvent extends Event {
         this.containerBlock = containerBlock;
     }
 
-
     public OfflinePlayer getOwner() {
         return this.owner;
     }
@@ -65,6 +63,7 @@ public class PlayerTransactEvent extends Event {
     public double getPrice() {
         return this.price;
     }
+
     public LocalDateTime getTime() {
         return this.time;
     }
@@ -80,6 +79,7 @@ public class PlayerTransactEvent extends Event {
     public String getItemName() {
         return this.itemName;
     }
+
     public int getCount() {
         return this.count;
     }
@@ -87,6 +87,7 @@ public class PlayerTransactEvent extends Event {
     public List<UUID> getAdminsUUID() {
         return this.admins;
     }
+
     public Block getContainerBlock() {
         return this.containerBlock;
     }
