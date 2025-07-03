@@ -8,29 +8,26 @@ import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.PlayerContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
-import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.ApiStatus.Internal;
-import org.jetbrains.annotations.NotNull;
 
-@Internal
-public final class PlayerTransactionListener implements Listener {
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerTransact(@NotNull PlayerTransactEvent event) {
+public class PlayerTransactionListener implements Listener {
+    @EventHandler
+    public void onTransaction(PlayerTransactEvent event) {
         logProfits(event);
         sendDiscordWebhook(event);
         if (((TileState) event.getContainerBlock().getState(false)).getPersistentDataContainer().getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
@@ -64,7 +61,7 @@ public final class PlayerTransactionListener implements Listener {
         }
     }
 
-    public void sendDiscordWebhook(@NotNull PlayerTransactEvent event) {
+    public void sendDiscordWebhook(PlayerTransactEvent event) {
         ItemMeta meta = event.getItem().getItemMeta();
         Block block = event.getContainerBlock();
 
@@ -89,7 +86,7 @@ public final class PlayerTransactionListener implements Listener {
                 () -> DiscordWebhook.queueTransaction(buyerName, sellerName, itemName, price, shopLocation, time, quantity, ownerName));
     }
 
-    private void logProfits(@NotNull PlayerTransactEvent event) {
+    private void logProfits(PlayerTransactEvent event) {
         Double price = event.getPrice();
         Integer count = event.getCount();
         // These next 4 are interesting:
@@ -117,4 +114,5 @@ public final class PlayerTransactionListener implements Listener {
         }
         // ItemStack,BuyAmount,BuyPrice,SellAmount,SellPrice
     }
+
 }

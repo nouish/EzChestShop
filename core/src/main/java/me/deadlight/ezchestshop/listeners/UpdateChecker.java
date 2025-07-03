@@ -20,10 +20,8 @@ import me.deadlight.ezchestshop.version.BuildInfo;
 import me.deadlight.ezchestshop.version.GitHubUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.openUrl;
@@ -37,8 +35,8 @@ public class UpdateChecker implements Listener {
     private static final HashMap<GuiData.GuiType, List<List<String>>> overlappingItems = new HashMap<>();
     private static final HashMap<GuiData.GuiType, Integer> requiredOverflowRows = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
         if (player.isOp()) {
@@ -205,4 +203,5 @@ public class UpdateChecker implements Listener {
             }
         }
     }
+
 }

@@ -27,7 +27,6 @@ import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -36,18 +35,15 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.ApiStatus.Internal;
-import org.jetbrains.annotations.NotNull;
 
-@Internal
-public final class BlockPistonExtendListener implements Listener {
+public class BlockPistonExtendListener implements Listener {
     private static final HashMap<String, String> lockMap = new HashMap<>();
     private static final List<String> lockList = new ArrayList<>();
     private static final HashMap<String, PersistentDataContainer> lockContainerMap = new HashMap<>();
     private static final HashMap<String, Location> lockLocationMap = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onBlockPistonExtend(@NotNull BlockPistonExtendEvent event) {
+    @EventHandler
+    public void onExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
             if (Tag.SHULKER_BOXES.isTagged(block.getType())) {
                 BlockState blockState = block.getState(false);
@@ -140,8 +136,8 @@ public final class BlockPistonExtendListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onInventoryPickupItem(@NotNull InventoryPickupItemEvent event) {
+    @EventHandler
+    public void InventoryItemPickup(InventoryPickupItemEvent event) {
         Item item = event.getItem();
         ItemStack itemStack = item.getItemStack();
         if (Tag.SHULKER_BOXES.isTagged(itemStack.getType())) {
@@ -179,6 +175,7 @@ public final class BlockPistonExtendListener implements Listener {
             }
         }
     }
+
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
