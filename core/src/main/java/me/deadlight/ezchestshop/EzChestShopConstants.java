@@ -1,5 +1,7 @@
 package me.deadlight.ezchestshop;
 
+import java.util.UUID;
+
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 @ApiStatus.Internal
 public final class EzChestShopConstants {
     public static final int BSTATS_PROJECT_ID = 23732;
+
+    public static final boolean API_ENABLED = true;
+
+    public static final UUID EMPTY_UUID = new UUID(0L, 0L);
 
     public static final String REPOSITORY = "nouish/EzChestShop";
     public static final String DISCORD_LINK = "https://discord.gg/invite/gjV6BgKxFV";

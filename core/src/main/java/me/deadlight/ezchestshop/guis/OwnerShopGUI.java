@@ -8,6 +8,7 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.api.PlayerOpenShopEvent;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -32,16 +33,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class OwnerShopGUI {
     public OwnerShopGUI() {}
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock, boolean isAdmin) {
         LanguageManager lm = LanguageManager.getInstance();
         String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-        if (rawId == null) {
-            throw new NullPointerException("Null owner id");
-        }
-        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
+        UUID ownerId = UUID.fromString(checkNotNull(rawId));
+        OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(ownerId);
         String shopOwner = offlinePlayerOwner.getName();
         if (shopOwner == null) {
             boolean result = Utils.reInstallNamespacedKeyValues(data, containerBlock.getLocation());
@@ -55,6 +56,17 @@ public class OwnerShopGUI {
             if (shopOwner == null) {
                 player.sendMessage(lm.chestShopProblem());
                 System.out.println("EzChestShop ERROR: Shop owner is STILL null. Please report this to the EzChestShop developer for furthur investigation.");
+                return;
+            }
+        }
+
+        if (EzChestShopConstants.API_ENABLED) {
+            PlayerOpenShopEvent openShopEvent =
+                    new PlayerOpenShopEvent(player, ownerId, containerBlock.getLocation().clone(), PlayerOpenShopEvent.View.OWNER);
+            Bukkit.getServer().getPluginManager().callEvent(openShopEvent);
+
+            if (openShopEvent.isCancelled()) {
+                EzChestShop.logger().debug("Shop open cancelled by external plugin.");
                 return;
             }
         }

@@ -15,8 +15,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
-public class PlayerTransactEvent extends Event {
+@Internal
+public final class PlayerTransactEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private OfflinePlayer owner;

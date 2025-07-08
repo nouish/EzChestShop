@@ -10,10 +10,12 @@ import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.api.PlayerShopTransactionEvent;
+import me.deadlight.ezchestshop.api.PlayerShopTransactionEvent.Type;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
-import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.DiscordWebhook;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
@@ -282,6 +284,23 @@ public class ShopContainer {
             return;
         }
 
+        if (EzChestShopConstants.API_ENABLED) {
+            Location location = containerBlock.getLocation().clone();
+            ItemStack item = thatItem.clone();
+            PlayerShopTransactionEvent event =
+                    new PlayerShopTransactionEvent(player, owner.getUniqueId(), location, Type.BUY, item, count, price, false);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                LOGGER.debug("Buy transaction cancelled by external plugin.");
+                return;
+            }
+
+            // Update count and price
+            count = event.getCount();
+            price = event.getPrice();
+        }
+
         if (!Utils.containsAtLeast(blockInventory, thatItem, count)) {
             player.sendMessage(lm.outofStock());
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE, 0.5f, 0.5f);
@@ -344,6 +363,23 @@ public class ShopContainer {
         final var logger = EzChestShop.getPlugin().getComponentLogger();
         LanguageManager lm = LanguageManager.getInstance();
         ItemStack thatItem = tthatItem.clone();
+
+        if (EzChestShopConstants.API_ENABLED) {
+            Location location = containerBlock.getLocation().clone();
+            ItemStack item = thatItem.clone();
+            PlayerShopTransactionEvent event =
+                    new PlayerShopTransactionEvent(player, owner.getUniqueId(), location, Type.SELL, item, count, price, false);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                LOGGER.debug("Sell transaction cancelled by external plugin.");
+                return;
+            }
+
+            // Update count and price
+            count = event.getCount();
+            price = event.getPrice();
+        }
 
         if (!Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
             player.sendMessage(lm.notEnoughItemToSell());
@@ -414,6 +450,23 @@ public class ShopContainer {
         ItemStack thatItem = tthatItem.clone();
         LanguageManager lm = LanguageManager.getInstance();
 
+        if (EzChestShopConstants.API_ENABLED) {
+            Location location = containerBlock.getLocation().clone();
+            ItemStack item = thatItem.clone();
+            PlayerShopTransactionEvent event =
+                    new PlayerShopTransactionEvent(player, EzChestShopConstants.EMPTY_UUID, location, Type.BUY, item, count, price, true);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                LOGGER.debug("Server buy transaction cancelled by external plugin.");
+                return;
+            }
+
+            // Update count and price
+            count = event.getCount();
+            price = event.getPrice();
+        }
+
         //check for money
         if (!hasBalance(Bukkit.getOfflinePlayer(player.getUniqueId()), price)) {
             player.sendMessage(lm.cannotAfford());
@@ -470,6 +523,23 @@ public class ShopContainer {
         final var logger = EzChestShop.getPlugin().getComponentLogger();
         LanguageManager lm = LanguageManager.getInstance();
         ItemStack thatItem = tthatItem.clone();
+
+        if (EzChestShopConstants.API_ENABLED) {
+            Location location = containerBlock.getLocation().clone();
+            ItemStack item = thatItem.clone();
+            PlayerShopTransactionEvent event =
+                    new PlayerShopTransactionEvent(player, EzChestShopConstants.EMPTY_UUID, location, Type.SELL, item, count, price, true);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                LOGGER.debug("Server sell transaction cancelled by external plugin.");
+                return;
+            }
+
+            // Update count and price
+            count = event.getCount();
+            price = event.getPrice();
+        }
 
         if (!Utils.containsAtLeast(player.getInventory(), thatItem, count)) {
             player.sendMessage(lm.notEnoughItemToSell());

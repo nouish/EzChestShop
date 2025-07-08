@@ -4,8 +4,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 //only trigger via piston movement
+@Internal
 public final class ShulkerShopDropEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
