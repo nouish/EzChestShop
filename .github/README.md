@@ -39,6 +39,7 @@ Find more information on the [projects wiki](https://github.com/nouish/EzChestSh
 
 | Minecraft version |  | Status |
 |-------------------|--|--|
+| Minecraft 1.21.8  | ✅️ | |
 | Minecraft 1.21.7  | ✅️ | |
 | Minecraft 1.21.6  | ✅️ | |
 | Minecraft 1.21.5  | ✅ | |
