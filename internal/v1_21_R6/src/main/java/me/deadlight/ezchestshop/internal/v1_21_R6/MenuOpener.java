@@ -1,6 +1,6 @@
 package me.deadlight.ezchestshop.internal.v1_21_R6;
 
-import java.util.Objects;
+import java.util.List;
 
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import net.minecraft.core.BlockPos;
@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 public class MenuOpener {
 
     public static void openMenu(SignMenuFactory.Menu menu, Player player) {
-        Objects.requireNonNull(player, "player");
         if (!player.isOnline()) {
             return;
         }
@@ -39,11 +38,12 @@ public class MenuOpener {
         CompoundTag backText = new CompoundTag();
         ListTag backMessages = new ListTag();
         ListTag frontMessages = new ListTag();
+        List<String> text = menu.getText();
 
-
-        for (int line = 0; line < SignMenuFactory.SIGN_LINES; line++) {
-            String text = menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "";
-            StringTag nbtString = StringTag.valueOf(text);
+        for (int i = 0; i < Math.min(text.size(), SignMenuFactory.SIGN_LINES); i++) {
+            String rawLine = text.get(i);
+            String line = menu.color(rawLine);
+            StringTag nbtString = StringTag.valueOf(line);
 
             // Assuming you want to set the same text for both back and front
             backMessages.add(nbtString);
