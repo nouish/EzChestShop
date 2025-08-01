@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,7 +59,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -382,56 +380,59 @@ public final class Utils {
     /**
      * Get the max permission level of a permission object (e.g. player)
      *
-     * @param permissible a object using the Permissible System e.g. a Player.
+     * @param player a object using the Permissible System e.g. a Player.
      * @param permission  a Permission String to check e.g. ecs.shops.limit.
      * @return the maximum int found, unless user is an Operator or has the
      * ecs.admin permission.
      * Then the returned result will be -1
      */
-    public static int getMaxPermission(Permissible permissible, String permission) {
-        return getMaxPermission(permissible, permission, 0);
+    public static int getMaxPermission(Player player, String permission) {
+        return getMaxPermission(player, permission, 0);
     }
 
     /**
      * Get the max permission level of a permission object (e.g. player)
      *
-     * @param permissible a object using the Permissible System e.g. a Player.
-     * @param permission  a Permission String to check e.g. ecs.shops.limit.
+     * @param player a object using the Permissible System e.g. a Player.
+     * @param basePermission  a Permission String to check e.g. ecs.shops.limit.
      * @param defaultMax  the default max value to return if no permission is found
      * @return the maximum int found, unless user is an Operator or has the
      * ecs.admin permission.
      * Then the returned result will be -1
      */
-    public static int getMaxPermission(Permissible permissible, String permission, int defaultMax) {
-        if (permissible.isOp() || permissible.hasPermission("ecs.admin"))
+    public static int getMaxPermission(Player player, String basePermission, int defaultMax) {
+        if (player.isOp() || player.hasPermission("ecs.admin")) {
             return -1;
+        }
 
-        final AtomicInteger max = new AtomicInteger(defaultMax);
+        int result = defaultMax;
 
-        permissible.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission)
-                .map(String::toLowerCase).filter(value -> value.startsWith(permission))
-                .map(value -> value.replace(permission, "")).forEach(value -> {
-                    if (value.equalsIgnoreCase("*")) {
-                        max.set(-1);
-                        return;
-                    }
+        for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            String permission = effectivePermission.getPermission().toLowerCase(Locale.ROOT);
 
-                    if (max.get() == -1)
-                        return;
+            if (!permission.startsWith(basePermission)) {
+                continue;
+            }
 
-                    try {
-                        int amount = Integer.parseInt(value);
 
-                        if (amount > max.get())
-                            max.set(amount);
-                    } catch (NumberFormatException ignored) {
-                    }
-                });
+            String rawValue = permission.substring(basePermission.length());
 
-        return max.get();
+            if (rawValue.equals("*")) {
+                result = -1;
+                break;
+            }
+
+            try {
+                int value = Integer.parseInt(rawValue);
+                if (value > result) {
+                    result = value;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        return result;
     }
-
-    //
 
     /**
      * Split a String by "_" and capitalize each First word, then join them together
