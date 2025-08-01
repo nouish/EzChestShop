@@ -71,7 +71,9 @@ public final class Config {
     public static boolean check_for_removed_shops;
 
     public static String language;
-    public static boolean debug_logging;
+
+    public static boolean logging_debug_enabled;
+    public static boolean logging_trace_enabled;
 
     public static boolean notify_updates;
     public static boolean notify_overlapping_gui_items;
@@ -182,7 +184,10 @@ public final class Config {
             }
         }
 
-        debug_logging = config.getBoolean("debug.logging");
+
+        logging_debug_enabled = config.getBoolean("advanced.logging.debug");
+        logging_trace_enabled = config.getBoolean("advanced.logging.trace");
+
         notify_updates = config.getBoolean("other.notify-op-of-updates");
         notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
         notify_overflowing_gui_items = config.getBoolean("other.notify-op-of-overflowing-gui-items");

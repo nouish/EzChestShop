@@ -88,7 +88,6 @@ public final class EzChestShop extends JavaPlugin {
     private static TaskScheduler scheduler;
 
     private boolean started = false;
-    private final boolean developmentMode;
 
     /**
      * Is this the first time EzChestShopReborn is running on this server?
@@ -107,17 +106,14 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     public EzChestShop() {
-        // Boolean.getBoolean() is poorly named, but returns true for the System.getProperty() with said name.
-        // This is what we want. It can be toggled with the "-Dezchestshopreborn.developerMode=true" flag.
-        developmentMode = Boolean.getBoolean("ezchestshopreborn.developerMode");
         EzChestShop.LOGGER = new ExtendedLogger(org.slf4j.LoggerFactory.getLogger(getLogger().getName()), this::isLoggable);
         EzChestShop.INSTANCE = this;
     }
 
     private boolean isLoggable(@NotNull Level level) {
         return switch (level) {
-            case TRACE -> developmentMode;
-            case DEBUG -> developmentMode || Config.debug_logging;
+            case TRACE -> Config.logging_trace_enabled;
+            case DEBUG -> Config.logging_debug_enabled;
             default -> true; // All other levels are already logged by default.
         };
     }
