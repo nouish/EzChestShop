@@ -61,7 +61,6 @@ public class MainCommands implements CommandExecutor, TabCompleter {
     public static HashMap<UUID, ShopSettings> settingsHashMap = new HashMap<>();
     private enum SettingType { TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME, ROTATION }
 
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (sender instanceof Player player) {
@@ -74,6 +73,11 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         if (Utils.isNumeric(args[1]) && Utils.isNumeric(args[2])) {
                             if (isPositive(Double.parseDouble(args[1])) && isPositive(Double.parseDouble(args[2]))) {
                                 if (Config.permissions_create_shop_enabled) {
+                                    LOGGER.trace(
+                                        "Shop limits are enabled - checking status for {} (world name: '{}')",
+                                        player.getName(),
+                                        player.getWorld().getName()
+                                    );
                                     // first check the world, if nothing is found return -2
                                     int maxShopsWorld = Utils.getMaxPermission(player,
                                             "ecs.shops.limit." + player.getWorld().getName() + ".", -2);
@@ -81,20 +85,35 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         // if nothing is found for the world, check the default permission
                                         int maxShops = Utils.getMaxPermission(player, "ecs.shops.limit.");
                                         maxShops = maxShops == -1 ? 10000 : maxShops;
-                                        int shops = ShopContainer.getShopCount(player);
-                                        if (shops >= maxShops) {
+                                        int shopCount = ShopContainer.getShopCount(player);
+                                        if (shopCount >= maxShops) {
+                                            LOGGER.debug(
+                                                "{} hit the global limit ({}/{}) and could not create a new shop.",
+                                                player.getName(),
+                                                shopCount,
+                                                maxShops
+                                            );
                                             player.sendMessage(LanguageManager.getInstance().maxShopLimitReached(maxShops));
                                             return false;
                                         }
                                     } else {
                                         // there is a world limit, so check it
                                         maxShopsWorld = maxShopsWorld == -1 ? 10000 : maxShopsWorld;
-                                        int shops = ShopContainer.getShopCount(player, player.getWorld());
-                                        if (shops >= maxShopsWorld) {
+                                        int shopCount = ShopContainer.getShopCount(player, player.getWorld());
+                                        if (shopCount >= maxShopsWorld) {
+                                            LOGGER.debug(
+                                                "{} hit the limit in world '{}' ({}/{}) and could not create a new shop here.",
+                                                player.getName(),
+                                                player.getWorld().getName(),
+                                                shopCount,
+                                                maxShopsWorld
+                                            );
                                             player.sendMessage(LanguageManager.getInstance().maxShopLimitReached(maxShopsWorld));
                                             return false;
                                         }
                                     }
+                                } else {
+                                    LOGGER.trace("Skipped shop limit check for {} (feature disabled)", player.getName());
                                 }
                                 try {
                                     createShop(player, args, target);

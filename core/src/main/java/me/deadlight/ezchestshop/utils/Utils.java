@@ -30,6 +30,7 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
+import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -69,6 +70,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Utils {
     private Utils() {}
+
+    private static final ExtendedLogger LOGGER = EzChestShop.logger();
 
     public static List<Object> onlinePackets = new ArrayList<>();
     public static final List<String> rotations = List.of("up", "north", "east", "south", "west", "down");
@@ -402,6 +405,7 @@ public final class Utils {
      */
     public static int getMaxPermission(Player player, String basePermission, int defaultMax) {
         if (player.isOp() || player.hasPermission("ecs.admin")) {
+            LOGGER.trace("Skipped '{}' permission check for {} (returning -1).", basePermission, player.getName());
             return -1;
         }
 
@@ -414,6 +418,7 @@ public final class Utils {
                 continue;
             }
 
+            LOGGER.trace("Found permission node '{}' for {}.", permission, player.getName());
 
             String rawValue = permission.substring(basePermission.length());
 
@@ -428,9 +433,11 @@ public final class Utils {
                     result = value;
                 }
             } catch (NumberFormatException ignored) {
+                LOGGER.debug("Invalid '{}' permission value: {}", basePermission, rawValue);
             }
         }
 
+        LOGGER.trace("Returning {} as the optimal value for {} ('{}')", result, player.getName(), basePermission);
         return result;
     }
 
