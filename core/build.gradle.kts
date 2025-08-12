@@ -29,7 +29,7 @@ dependencies {
 
     // Optional integrations
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.2.1")
-    compileOnly("net.coreprotect:coreprotect:22.4")
+    compileOnly("net.coreprotect:coreprotect:23.0")
     compileOnly("com.github.Slimefun:Slimefun4:RC-37")
     compileOnly("net.alex9849.advancedregionmarket:advancedregionmarket:3.5.5")
     compileOnly("me.clip:placeholderapi:2.11.6")
