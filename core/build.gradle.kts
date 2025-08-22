@@ -23,7 +23,7 @@ dependencies {
     // Shaded dependencies
     api("com.github.Anon8281:UniversalScheduler:0.1.7")
     implementation("de.themoep:minedown:1.7.1-SNAPSHOT")
-    implementation("com.zaxxer:HikariCP:7.0.1")
+    implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("dev.triumphteam:triumph-gui:3.1.12")
     implementation("org.bstats:bstats-bukkit:3.1.0")
 
