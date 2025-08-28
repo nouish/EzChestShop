@@ -1,8 +1,7 @@
 package me.deadlight.ezchestshop.internal.v1_21_R3;
 
-import java.util.Objects;
-
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
+import me.deadlight.ezchestshop.utils.VersionUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -16,10 +15,12 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class MenuOpener {
+    private static final int MINECRAFT_1_21_5 = 4325;
 
     public static void openMenu(SignMenuFactory.Menu menu, Player player) {
-        Objects.requireNonNull(player, "player");
         if (!player.isOnline()) {
             return;
         }
@@ -39,11 +40,15 @@ public class MenuOpener {
         CompoundTag backText = new CompoundTag();
         ListTag backMessages = new ListTag();
         ListTag frontMessages = new ListTag();
+        List<String> text = menu.getText();
 
-
-        for (int line = 0; line < SignMenuFactory.SIGN_LINES; line++) {
-            String text = menu.getText().size() > line ? String.format(SignMenuFactory.NBT_FORMAT, menu.color(menu.getText().get(line))) : "";
-            StringTag nbtString = StringTag.valueOf(text);
+        for (int i = 0; i < Math.min(text.size(), SignMenuFactory.SIGN_LINES); i++) {
+            String rawLine = text.get(i);
+            String coloredLine = menu.color(rawLine);
+            // The internals changed in Minecraft 1.21.5
+            StringTag nbtString = VersionUtil.getDataVersion().orElse(-1) == MINECRAFT_1_21_5
+                    ? StringTag.valueOf(coloredLine)
+                    : StringTag.valueOf(String.format(SignMenuFactory.NBT_FORMAT, coloredLine));
 
             // Assuming you want to set the same text for both back and front
             backMessages.add(nbtString);
