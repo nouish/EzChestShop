@@ -22,7 +22,7 @@ shop-gui:
     disabled-title: "&cZakázané"
     disabled-lore:
       - "&7Táto funkcia je zakázaná"
-      - " &7najiteľom obchodu."
+      - " &7majiteľom obchodu."
 transactions:
   transactionButtonTitle: "&aZáznam o transakciách"
   backToSettingsButton: "&eNaspäť na nastavenia"
