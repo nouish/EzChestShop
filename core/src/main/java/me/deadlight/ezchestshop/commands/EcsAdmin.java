@@ -1,23 +1,10 @@
 package me.deadlight.ezchestshop.commands;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
@@ -32,14 +19,12 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -49,7 +34,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -57,11 +41,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-
-import static net.kyori.adventure.text.Component.text;
 
 public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
@@ -214,9 +195,6 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                 }
                             }
                         }
-                    } else if (firstarg.equalsIgnoreCase("debug")) {
-                        generateAndUploadLogs(player);
-
                     } else {
                         sendHelp(player);
                     }
@@ -246,12 +224,11 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> fList = new ArrayList<>();
-        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands", "debug");
+        List<String> list_firstarg = Arrays.asList("create", "reload", "remove", "help", "transfer-ownership", "configure-guis", "shop-commands");
         List<String> list_create_1 = Arrays.asList("[BuyPrice]");
         List<String> list_create_2 = Arrays.asList("[SellPrice]");
         List<String> list_transfer_2 = Arrays.asList("-confirm");
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (sender instanceof Player p) {
             List<String> list_shop_commands_1;
             if (p.getTargetBlockExact(6) != null) {
                 list_shop_commands_1 = Arrays.asList(Utils.LocationRoundedtoString(p.getTargetBlockExact(6).getLocation(), 0));
@@ -621,345 +598,4 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
         }
         return target;
     }
-
-
-    private void generateAndUploadLogs(Player player) {
-        //we gonna get some info about plugin, server, and logs and send it to the API server
-        EzChestShop ecsInstance = EzChestShop.getPlugin();
-
-        //MC Version
-        String mcVersion = Bukkit.getVersion();
-        //Plugin Version
-        String pluginVersion = ecsInstance.getDescription().getVersion();
-        //Server Version
-        String serverVersion = Bukkit.getServer().getVersion();
-        //Server Software (Spigot, Paper, etc)
-        String serverSoftware = Bukkit.getServer().getName();
-        //whether if the server is in offline mode or not
-        boolean offlineMode = Bukkit.getServer().getOnlineMode();
-        //whether if it got vault or not
-        boolean vault = Bukkit.getServer().getPluginManager().getPlugin("Vault") != null;
-        //whether if it got slimefun or not
-        boolean slimefun = EzChestShop.slimefun;
-        //whether if it got worldguard or not
-        boolean worldguard = EzChestShop.worldguard;
-        //get list of plugins
-        List<String> plugins = new ArrayList<>();
-        for (Plugin plugin : Bukkit.getServer().getPluginManager().getPlugins()) {
-            plugins.add(plugin.getName() + " " + plugin.getDescription().getVersion());
-        }
-
-        //get list of worlds
-        List<String> worlds = new ArrayList<>();
-        for (World world : Bukkit.getServer().getWorlds()) {
-            worlds.add(world.getName());
-        }
-        //online players
-        int onlinePlayers = Bukkit.getServer().getOnlinePlayers().size();
-
-        //number of shops
-        int numberOfShops = ShopContainer.getShops().size();
-
-        //put them all in a JSON object and send it to the API server
-
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("mcVersion", mcVersion);
-        jsonObject.addProperty("pluginVersion", pluginVersion);
-        jsonObject.addProperty("serverVersion", serverVersion);
-        jsonObject.addProperty("serverSoftware", serverSoftware);
-        jsonObject.addProperty("offlineMode", offlineMode);
-        jsonObject.addProperty("vault", vault);
-        jsonObject.addProperty("slimefun", slimefun);
-        jsonObject.addProperty("worldguard", worldguard);
-        jsonObject.addProperty("economy", true); // previously supported "xp-based-economy".
-        jsonObject.addProperty("plugins", plugins.toString());
-        jsonObject.addProperty("worlds", worlds.toString());
-        jsonObject.addProperty("onlinePlayers", onlinePlayers);
-        jsonObject.addProperty("numberOfShops", numberOfShops);
-
-        JsonObject ourConfig = new JsonObject();
-        FileConfiguration config = EzChestShop.getPlugin().getConfig();
-
-        for (String key : config.getKeys(true)) {
-            if (config.isConfigurationSection(key)) {
-                continue; // Skip keys that are sections themselves, only consider leaf keys
-            }
-
-            String[] keyParts = key.split("\\.");
-            JsonObject currentObject = ourConfig;
-
-            for (int i = 0; i < keyParts.length - 1; i++) {
-                String part = keyParts[i];
-                if (!currentObject.has(part)) {
-                    currentObject.add(part, new JsonObject());
-                }
-                currentObject = currentObject.getAsJsonObject(part);
-            }
-
-            String lastPart = keyParts[keyParts.length - 1];
-            if (config.isList(key)) {
-                JsonArray jsonArray = new JsonArray();
-                List<?> list = config.getList(key);
-                for (Object item : list) {
-                    jsonArray.add(item.toString());
-                }
-                currentObject.add(lastPart, jsonArray);
-            } else {
-                currentObject.addProperty(lastPart, config.get(key).toString());
-            }
-        }
-
-        // Now we gonna censor specific values
-        String[] censoredKeys = {
-                "database.mysql.ip", "database.mysql.port", "database.mysql.tables-prefix",
-                "database.mysql.database", "database.mysql.username", "database.mysql.password",
-                "database.mysql.max-pool", "database.mysql.ssl", "notification.discord.webhook-url"
-        };
-
-        for (String censoredKey : censoredKeys) {
-            String[] keyParts = censoredKey.split("\\.");
-            JsonObject currentObject = ourConfig;
-
-            for (int i = 0; i < keyParts.length - 1; i++) {
-                currentObject = currentObject.getAsJsonObject(keyParts[i]);
-            }
-
-            currentObject.addProperty(keyParts[keyParts.length - 1], "censored");
-        }
-
-        jsonObject.add("config", ourConfig);
-
-        //now we gotta put any bukkit generated errors in the latest.log file into the logs field, anything that is related to EzChestShop
-        //we gonna use the grep command to do that
-        File latestLog = new File(Bukkit.getServer().getWorldContainer().getAbsolutePath() + "/logs/latest.log");
-        if (latestLog.exists()) {
-            try {
-                // The reader of the logs will load each individual line.
-                BufferedReader reader = new BufferedReader(new FileReader(latestLog));
-                String line;
-
-                // lines contains anything ecs related. If it's a error message, it will start with [ecserror], it's an
-                // error and we'll include the full error message and stacktrace from the errors map.
-                List<String> lines = new ArrayList<>();
-
-                // This pattern will match any time in the format of 00:00:00, which is a format used by the majority of
-                // loggers like paper, puprur, spigot, bukkit, etc (at least Elito thinks that's what determines the format)
-                Pattern pattern = Pattern.compile("(\\d{2}:\\d{2}:\\d{2})");
-
-                // The following variables are used to keep track of the current error we are looking at.
-                String currentTime = null;
-                String latestTime = null;
-                String currentKey = null; // key for the error map => first line of an error msg
-                boolean lookingForError = false;
-                boolean currentECSrelated = false; // only search for ecs related errors
-                // Similar errors will be skipped, but we need to make sure we don't skip errors just based on their key,
-                // cause the stacktrace might be different.
-                boolean currentMarkedForSkipCauseSimilar = false;
-                boolean currentWasSimilar = true; // if the current error key is similar to existing error keys
-                // List of keys the current errors matches with. Will be filled with similar errors at first, then
-                // non-matching errors will be removed until we found a match, or it's a new error (list empty).
-                List<String> matchingKeys = new ArrayList<>();
-
-                // Collecting the lines of the current error
-                List<String> currentError = null;
-
-                // These two maps keep track of the errors and how many times they have been repeated.
-                HashMap<String, List<String>> errors = new HashMap<>();
-                HashMap<String, Integer> errorCounter = new HashMap<>();
-
-
-                // Read each line of the log file
-                while ((line = reader.readLine()) != null) {
-
-                    // get the time matching this regex \d{2}:\d{2}:\d{2}
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.find()) {
-                        // if the line contained a timestamp, update the currentTime.
-                        currentTime = matcher.group(1);
-                    }
-                    // save the stuff or increase the error counter if the time changed
-                    if (currentTime != null && !currentTime.equals(latestTime)) {
-
-                        if (lookingForError && currentECSrelated) {
-                            // check if the current error was marked for skipping cause it's similar to existing errors
-                            if (currentMarkedForSkipCauseSimilar) {
-                                if (currentWasSimilar) {
-                                    // if previous run checks say it's similar just increase the count
-                                    errorCounter.put(currentKey, errorCounter.get(currentKey) + 1);
-                                } else {
-                                    // otherwise we need to find a new key for the error
-                                    if (!matchingKeys.isEmpty()) {
-                                        // if the previous checks already found identical errors, just get the first one
-                                        // we may have others, but those are more likely duplicates, so just take the
-                                        // first one.
-                                        currentKey = matchingKeys.get(0);
-                                    } else {
-                                        // if we haven't found a similar one, generate a new key with a unique number
-                                        int i = 1;
-                                        while (errors.containsKey(currentKey + " (" + i + ")")) {
-                                            i++;
-                                        }
-                                        currentKey = currentKey + " (" + i + ")";
-                                    }
-
-                                    // now that we have potentially modified our key, we need to save it as a new entry
-                                    // or increase the counter if it already exists.
-                                    if (errors.containsKey(currentKey)) {
-                                        errorCounter.put(currentKey, errorCounter.get(currentKey) + 1);
-                                    } else {
-                                        // save key
-                                        errors.put(currentKey, currentError);
-                                        errorCounter.put(currentKey, 1);
-                                        lines.add("[ecserror]" + currentKey);
-                                    }
-                                }
-                                // reset the current (skip related) error variables
-                                currentWasSimilar = true;
-                                currentMarkedForSkipCauseSimilar = false;
-                            } else {
-                                // save the key as there is no similar error problem.
-                                errors.put(currentKey, currentError);
-                                errorCounter.put(currentKey, 1);
-                                lines.add("[ecserror]" + currentKey);
-                            }
-                        }
-                        // reset the current error variables
-                        matchingKeys.clear();
-                        lookingForError = false;
-                        currentKey = null;
-                        currentECSrelated = false;
-                    }
-                    // If the line contains this regex: .*\d{2}:\d{2}:\d{2}.*(ERROR|WARN)
-                    // then it's an error or warning, so we add it to the logs
-                    if (currentTime != null && line.matches(".*\\d{2}:\\d{2}:\\d{2}.*(ERROR|WARN).*")) {
-
-                        if (currentKey == null) {
-                            // make error lines comparable by removing the time
-                            String newKey = line.replaceAll("\\d{2}:\\d{2}:\\d{2}", "");
-                            if (errors.containsKey(newKey)) {
-                                // error start already exists, so mark it and note all possible matching keys
-                                currentMarkedForSkipCauseSimilar = true;
-                                matchingKeys.add(newKey);
-                                int i = 1;
-                                while (errors.containsKey(newKey + " (" + i + ")")) {
-                                    matchingKeys.add(newKey + " (" + i + ")");
-                                    i++;
-                                }
-                            }
-                            // start a new error and continue to skip the rest of the checks
-                            currentKey = newKey;
-                            currentError = new ArrayList<>();
-                            currentError.add(currentKey);
-                            latestTime = currentTime;
-                            lookingForError = true;
-                            continue;
-                        }
-                    }
-
-                    // Check if it's a related log or error piece, then add it to the correct list.
-                    boolean ecsRelatedCheck = line.contains("EzChestShop") || line.contains("ECS") ||
-                            line.contains("DeadLight") || line.contains("ezchestshop");
-                    if (lookingForError) {
-                        // the line is part of an error, so we add it to the current error list
-                        if (ecsRelatedCheck) {
-                            // the line is related to EzChestShop, so we need to check for similar errors and definitely
-                            // mark the error/stacktrace to be included in the logs.
-                            if (currentMarkedForSkipCauseSimilar) {
-                                // Check if the error is identical to existing errors, even to ones with a key offset.
-                                // We do that by removing the entry from the matchingKeys list if a previous error doesn't
-                                // contain the current line. (All identical errors must have the same ECS related errors)
-                                if (!errors.get(currentKey).contains(line)) {
-                                    currentWasSimilar = false;
-                                    matchingKeys.remove(currentKey);
-                                }
-                                int i = 1;
-                                while (errors.containsKey(currentKey + " (" + i + ")")) {
-                                    if (!errors.get(currentKey + " (" + i + ")").contains(line)) {
-                                        matchingKeys.remove(currentKey + " (" + i + ")");
-                                    }
-                                    i++;
-                                }
-                            }
-                            currentECSrelated = true;
-                        }
-                        currentError.add(line);
-                    } else if (ecsRelatedCheck) {
-                        // the line is not an error, but it's related to EzChestShop, so we add it to the logs
-                        lines.add(line);
-                    }
-
-                    // At the end of the loop set the latestTime to the currentTime if it's not null
-                    if (currentTime != null) {
-                        latestTime = currentTime;
-                    }
-                }
-                reader.close();
-
-
-                // Collect the results and format them nicely!
-                JsonArray logs = new JsonArray();
-                for (String log : lines) {
-                    if (log.startsWith("[ecserror]") && errors.containsKey(log.substring(10))) {
-                        JsonObject errorObject = new JsonObject();
-                        JsonArray error = new JsonArray();
-                        for (String logLine : errors.get(log.substring(10))) {
-                            error.add(logLine.replace("\\t", "    "));
-                        }
-                        errorObject.add("errorLogs", error);
-                        errorObject.addProperty("count", errorCounter.get(log.substring(10)));
-                        logs.add(errorObject);
-                    } else {
-                        logs.add(log);
-                    }
-                }
-
-                jsonObject.add("logs", logs);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Create a new JsonObject and put the existing jsonObject inside the "data" field
-        JsonObject payload = new JsonObject();
-        payload.add("data", jsonObject);
-
-
-        try {
-            URL url = new URL("https://debug.exl.ink/log");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-
-            // Write the JSON data to the request body
-            try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = payload.toString().getBytes(StandardCharsets.UTF_8); // use payload instead of jsonObject
-                os.write(input, 0, input.length);
-            }
-
-            // Read the response
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
-
-                // Check if the field "status" is "ok" in the response, if so, then it's successful
-                if (response.toString().contains("\"status\":\"ok\"")) {
-                    // We get the "uuid" field from the response, and send it to the player
-                    String uuid = response.toString().split("\"uuid\":\"")[1].split("\"")[0];
-                    player.sendMessage(ChatColor.GREEN + "Logs uploaded successfully!");
-                    player.sendMessage(ChatColor.GREEN + "This is the link to the logs: " + ChatColor.AQUA + "https://debug.exl.ink/log/" + uuid);
-                } else {
-                    player.sendMessage(ChatColor.RED + "Something went wrong while uploading the logs!");
-                }
-            }
-        } catch (IOException e) {
-            EzChestShop.logger().info("Failed to upload debug information - enable debug logging for more information.");
-            EzChestShop.logger().debug("Error uploading debug information", e);
-            player.sendMessage(text("Something went wrong while uploading the logs!", NamedTextColor.RED));
-        }
-    }
-
 }
