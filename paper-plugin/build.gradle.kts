@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     id("com.gradleup.shadow") version "9.1.0"
-    id("com.gorylenko.gradle-git-properties") version "2.5.2"
+    id("com.gorylenko.gradle-git-properties") version "2.5.3"
 }
 
 dependencies {
