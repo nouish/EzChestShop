@@ -25,17 +25,20 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-public class NonOwnerShopGUI {
+public final class ShopGUI {
+    private ShopGUI() {}
 
-    public NonOwnerShopGUI() {}
-
-    public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
+    public static void showGUI(Player player, PersistentDataContainer data, Block containerBlock, boolean isAdmin) {
         LanguageManager lm = LanguageManager.getInstance();
         String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
         Preconditions.checkNotNull(rawId);
@@ -67,7 +70,11 @@ public class NonOwnerShopGUI {
 
         Gui gui = Gui.gui()
                 .rows(container.getRows())
-                .title(Component.text(lm.guiNonOwnerTitle(shopOwner)))
+                .title(Component.text(player.hasPermission("ecs.admin")
+                        ? lm.guiAdminTitle(shopOwner)
+                        : offlinePlayerOwner.getUniqueId().equals(player.getUniqueId()) || isAdmin
+                                ? lm.guiOwnerTitle(shopOwner)
+                                : lm.guiNonOwnerTitle(shopOwner)))
                 .disableAllInteractions()
                 .create();
         gui.getFiller().fill(container.getBackground());
@@ -119,8 +126,12 @@ public class NonOwnerShopGUI {
                     if (disabledSell) {
                         return;
                     }
+                    if (offlinePlayerOwner.getUniqueId().equals(player.getUniqueId())) {
+                        player.sendMessage(lm.selfTransaction());
+                        return;
+                    }
                     ShopContainer.sellItem(containerBlock, sellPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
-                    showGUI(player, data, containerBlock);
+                    showGUI(player, data, containerBlock, isAdmin);
                 });
 
                 Utils.addItemIfEnoughSlots(gui, sellItemStack.getSlot(), sellItem);
@@ -147,8 +158,12 @@ public class NonOwnerShopGUI {
                     if (disabledBuy) {
                         return;
                     }
+                    if (offlinePlayerOwner.getUniqueId().equals(player.getUniqueId())) {
+                        player.sendMessage(lm.selfTransaction());
+                        return;
+                    }
                     ShopContainer.buyItem(containerBlock, buyPrice * finalAmount, finalAmount, mainitem, player, offlinePlayerOwner, data);
-                    showGUI(player, data, containerBlock);
+                    showGUI(player, data, containerBlock, isAdmin);
                 });
 
                 Utils.addItemIfEnoughSlots(gui, buyItemStack.getSlot(), buyItem);
@@ -164,13 +179,97 @@ public class NonOwnerShopGUI {
             }
         });
 
+        if (player.hasPermission("ecs.admin") && container.hasItem("admin-view")) {
+            ContainerGuiItem guiStorageItem = container.getItem("admin-view").setName(lm.buttonAdminView());
+            GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
+                event.setCancelled(true);
+                Block theBlock = player.getWorld().getBlockAt(containerBlock.getLocation());
+                if (theBlock.getState(false) instanceof TileState state) {
+                    PersistentDataContainer pdc = state.getPersistentDataContainer();
+                    if (!pdc.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                        // https://www.youtube.com/watch?v=Kbllpg9PGJw
+                        EzChestShop.logger().warn("{} attempted to duplicate items!", player.getName());
+                        player.closeInventory();
+                        return;
+                    }
+                }
+
+                Inventory lastinv = Utils.getBlockInventory(theBlock);
+                if (lastinv == null) {
+                    player.closeInventory();
+                    return;
+                }
+
+                if (lastinv instanceof DoubleChestInventory) {
+                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder(false);
+                    lastinv = doubleChest.getInventory();
+                }
+
+                if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
+                    player.openInventory(lastinv);
+                }
+            });
+
+            //containerBlock storage
+            Utils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
+        } else if ((offlinePlayerOwner.getUniqueId().equals(player.getUniqueId()) || isAdmin) && container.hasItem("storage")) {
+            ContainerGuiItem guiStorageItem = container.getItem("storage").setName(lm.buttonAdminView());
+            GuiItem storageGUI = new GuiItem(guiStorageItem.getItem(), event -> {
+                event.setCancelled(true);
+                Block theBlock = player.getWorld().getBlockAt(containerBlock.getLocation());
+                if (theBlock.getState(false) instanceof TileState state) {
+                    PersistentDataContainer pdc = state.getPersistentDataContainer();
+                    if (!pdc.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                        // https://www.youtube.com/watch?v=Kbllpg9PGJw
+                        EzChestShop.logger().warn("{} attempted to duplicate items!", player.getName());
+                        player.closeInventory();
+                        return;
+                    }
+                }
+
+                Inventory lastinv = Utils.getBlockInventory(theBlock);
+                if (lastinv == null) {
+                    player.closeInventory();
+                    return;
+                }
+
+                if (lastinv instanceof DoubleChestInventory) {
+                    DoubleChest doubleChest = (DoubleChest) lastinv.getHolder(false);
+                    lastinv = doubleChest.getInventory();
+                }
+
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 0.5f);
+                player.openInventory(lastinv);
+            });
+
+            //containerBlock storage
+            Utils.addItemIfEnoughSlots(gui, guiStorageItem.getSlot(), storageGUI);
+        }
+
+        //settings item
+        if ((offlinePlayerOwner.getUniqueId().equals(player.getUniqueId()) || isAdmin || player.hasPermission("ecs.admin")) && container.hasItem("settings")) {
+            ContainerGuiItem settingsItemStack = container.getItem("settings");
+            settingsItemStack.setName(lm.settingsButton());
+            GuiItem settingsGui = new GuiItem(settingsItemStack.getItem(), event -> {
+                event.setCancelled(true);
+                //opening the settigns menu
+                SettingsGUI settingsGUI = new SettingsGUI();
+                settingsGUI.showGUI(player, containerBlock, isAdmin);
+                player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 0.5f, 0.5f);
+            });
+            //settings item
+            Utils.addItemIfEnoughSlots(gui, settingsItemStack.getSlot(), settingsGui);
+        }
+
         if (container.hasItem("custom-buy-sell")) {
             List<String> possibleCounts = Utils.calculatePossibleAmount(Bukkit.getOfflinePlayer(player.getUniqueId()), offlinePlayerOwner, player.getInventory().getStorageContents(), Utils.getBlockInventory(containerBlock).getStorageContents(), buyPrice, sellPrice, mainitem);
             ContainerGuiItem customBuySellItemStack = container.getItem("custom-buy-sell").setName(lm.customAmountSignTitle()).setLore(lm.customAmountSignLore(possibleCounts.get(0), possibleCounts.get(1)));
-
             GuiItem guiSignItem = new GuiItem(customBuySellItemStack.getItem(), event -> {
                 event.setCancelled(true);
-                if (event.isRightClick()) {
+                if (offlinePlayerOwner.getUniqueId().equals(player.getUniqueId())) {
+                    player.sendMessage(lm.selfTransaction());
+                } else if (event.isRightClick()) {
                     //buy
                     if (disabledBuy) {
                         player.sendMessage(lm.disabledBuyingMessage());
@@ -248,7 +347,7 @@ public class NonOwnerShopGUI {
         gui.open(player);
     }
 
-    private ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
+    private static ItemStack disablingCheck(ItemStack mainItem, boolean disabling) {
         if (disabling) {
             //disabled Item
             ItemStack disabledItemStack = new ItemStack(Material.BARRIER, mainItem.getAmount());
