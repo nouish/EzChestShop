@@ -9,10 +9,8 @@ import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
-import me.deadlight.ezchestshop.guis.AdminShopGUI;
-import me.deadlight.ezchestshop.guis.NonOwnerShopGUI;
-import me.deadlight.ezchestshop.guis.OwnerShopGUI;
 import me.deadlight.ezchestshop.guis.ServerShopGUI;
+import me.deadlight.ezchestshop.guis.ShopGUI;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -38,11 +36,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 public class ChestOpeningListener implements Listener {
-
-    private final NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
-    private final OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-    private final AdminShopGUI adminShopGUI = new AdminShopGUI();
-
     // We don't ignore cancelled events because we may have to ignore
     // permission plugins that register on LOWEST priority anyway.
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -139,17 +132,7 @@ public class ChestOpeningListener implements Listener {
             }
             // At this point it is clear that some shop will open, so run opening commands here.
             Config.shopCommandManager.executeCommands(player, loc, ShopCommandManager.ShopType.SHOP, ShopCommandManager.ShopAction.OPEN, null);
-            if (player.hasPermission("ecs.admin") || player.hasPermission("ecs.admin.view")) {
-                adminShopGUI.showGUI(player, dataContainer, chestblock);
-                return;
-            }
-
-            if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
-                ownerShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
-            } else {
-                //not owner show default
-                nonOwnerShopGUI.showGUI(player, dataContainer, chestblock);
-            }
+            ShopGUI.showGUI(player, dataContainer, chestblock, isAdmin);
         }
     }
 

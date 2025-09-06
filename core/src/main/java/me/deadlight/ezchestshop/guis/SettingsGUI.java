@@ -25,7 +25,6 @@ import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -384,37 +383,16 @@ public class SettingsGUI {
                     return;
                 }
 
-                if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin) {
-                    if (player.hasPermission("ecs.admin")) {
-                        AdminShopGUI adminShopGUI = new AdminShopGUI();
-                        adminShopGUI.showGUI(player, dataContainer, containerBlock);
-                        return;
-                    }
-                    //owner show special gui
-                    OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
-                    ownerShopGUI.showGUI(player, dataContainer, containerBlock, isAdmin);
+                if (player.getUniqueId().toString().equalsIgnoreCase(owneruuid) || isAdmin || player.hasPermission("ecs.admin")) {
+                    ShopGUI.showGUI(player, dataContainer, containerBlock, isAdmin);
                 } else {
-                    //the only scenario that remains is when that person has an admin permission
-                    //just in case, i check again for player's permission
-                    if (player.hasPermission("ecs.admin")) {
-                        AdminShopGUI adminShopGUI = new AdminShopGUI();
-                        adminShopGUI.showGUI(player, dataContainer, containerBlock);
-                    } else {
-                        player.closeInventory();
-                    }
+                    player.closeInventory();
                 }
             });
             Utils.addItemIfEnoughSlots(gui, backItemStack.getSlot(), backItem);
         }
 
         gui.open(player);
-    }
-
-    private Material grayGreenChooser(boolean data) {
-        if (data) {
-            return Material.LIME_DYE;
-        }
-        return Material.GRAY_DYE;
     }
 
     private List<String> toggleMessageChooser(boolean data, LanguageManager lm) {
@@ -497,16 +475,7 @@ public class SettingsGUI {
         return lores;
      }
 
-     private boolean checkIfOn(Material itemMat) {
-        if (itemMat.equals(Material.LIME_DYE)) {
-            return true;
-        } else {
-            return false;
-        }
-
-     }
-
-     private boolean changePrice(BlockState blockState, boolean isBuy, double price, Player player, Block containerBlock) {
+    private boolean changePrice(BlockState blockState, boolean isBuy, double price, Player player, Block containerBlock) {
          EzShop shop = ShopContainer.getShop(blockState.getLocation());
          // Enforce buy > sell.
          if (Config.settings_buy_greater_than_sell) {
