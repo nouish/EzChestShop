@@ -1,7 +1,6 @@
 package me.deadlight.ezchestshop.utils;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipException;
 
 import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.guis.Gui;
@@ -64,7 +64,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,16 +116,8 @@ public final class Utils {
      * @param item
      * @return
      */
-    public static String encodeItem(ItemStack item) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (BukkitObjectOutputStream os = new BukkitObjectOutputStream(baos)) {
-                os.writeObject(item);
-            }
-            return Base64.getEncoder().encodeToString(baos.toByteArray());
-        } catch (IOException ex) {
-            System.out.println(ex);
-            return null;
-        }
+    public static String encodeItem(@NotNull ItemStack item) {
+        return Base64.getEncoder().encodeToString(item.serializeAsBytes());
     }
 
     /**
@@ -135,16 +126,27 @@ public final class Utils {
      * @param encodedItem
      * @return
      */
-    public static ItemStack decodeItem(String encodedItem) {
+    public static ItemStack decodeItem(@NotNull String encodedItem) {
         byte[] buf = Base64.getDecoder().decode(encodedItem);
+
+        try {
+            return ItemStack.deserializeBytes(buf);
+        } catch (RuntimeException e) {
+            // ZipException is thrown when attempting to deserialize legacy (undocumented)
+            if (!(e.getCause() instanceof ZipException)) {
+                LOGGER.warn("Failed to decode with ItemStack::deserializeBytes()", e);
+            }
+            // Fall through to legacy implementation
+        }
 
         try (ByteArrayInputStream io = new ByteArrayInputStream(buf);
              BukkitObjectInputStream in = new BukkitObjectInputStream(io)) {
             return (ItemStack) in.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
-            System.out.println(ex);
-            return null;
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.warn("Unable to deserialize ItemStack: {}", encodedItem, e);
         }
+
+        throw new IllegalArgumentException("Failed to deserialize ItemStack: " + encodedItem);
     }
 
     /**
