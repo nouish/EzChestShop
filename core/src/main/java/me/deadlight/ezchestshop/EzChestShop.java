@@ -21,7 +21,8 @@ import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.gui.GuiData;
-import me.deadlight.ezchestshop.integrations.AdvancedRegionMarket;
+import me.deadlight.ezchestshop.integrations.AdvancedRegionMarketIntegration;
+import me.deadlight.ezchestshop.integrations.CoreProtectIntegration;
 import me.deadlight.ezchestshop.listeners.BlockBreakListener;
 import me.deadlight.ezchestshop.listeners.BlockPistonExtendListener;
 import me.deadlight.ezchestshop.listeners.BlockPlaceListener;
@@ -47,8 +48,6 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.version.BuildInfo;
 import me.deadlight.ezchestshop.version.GitHubUtil;
-import net.coreprotect.CoreProtect;
-import net.coreprotect.CoreProtectAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -56,7 +55,6 @@ import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -81,10 +79,6 @@ public final class EzChestShop extends JavaPlugin {
     public static boolean towny = false;
     public static boolean worldguard = false;
     public static boolean advancedregionmarket = false;
-    private static boolean coreProtect;
-
-    private static CoreProtectAPI coreProtectAPI;
-
     private static TaskScheduler scheduler;
 
     private boolean started = false;
@@ -260,15 +254,7 @@ public final class EzChestShop extends JavaPlugin {
             LOGGER.info("Towny integration enabled.");
         }
 
-        Plugin coPlugin = getServer().getPluginManager().getPlugin("CoreProtect");
-        // Must check if null first, because the class CoreProtect will otherwise be unavailable on classpath.
-        //noinspection ConditionCoveredByFurtherCondition
-        if (coPlugin != null && coPlugin instanceof CoreProtect co) {
-            coreProtectAPI = co.getAPI();
-            coreProtect = true;
-            LOGGER.info("CoreProtect integration enabled.");
-        }
-
+        CoreProtectIntegration.installIfEnabled();
         registerListeners();
         registerCommands();
         registerTabCompleters();
@@ -305,17 +291,6 @@ public final class EzChestShop extends JavaPlugin {
 
         // The plugin started without encountering unrecoverable problems.
         started = true;
-    }
-
-    public void tellCoreProtectToTrackChangesAt(@NotNull Player player, @NotNull Location location) {
-        if (!coreProtect || !Config.coreprotect_integration || coreProtectAPI == null) {
-            // CoreProtect integration disabled.
-            return;
-        }
-
-        // This indicates to CoreProtect that it should track changes to the inventory at this
-        // location immediately following this call.
-        coreProtectAPI.logContainerTransaction(player.getName(), location);
     }
 
     private void checkForUpdates() {
@@ -513,7 +488,7 @@ public final class EzChestShop extends JavaPlugin {
         }
         //This is for integration with AdvancedRegionMarket
         if (advancedregionmarket) {
-            pluginManager.registerEvents(new AdvancedRegionMarket(), this);
+            pluginManager.registerEvents(new AdvancedRegionMarketIntegration(), this);
         }
     }
 

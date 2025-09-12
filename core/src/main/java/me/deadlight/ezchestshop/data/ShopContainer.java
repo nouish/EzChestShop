@@ -12,8 +12,9 @@ import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
-import me.deadlight.ezchestshop.utils.Utils;
+import me.deadlight.ezchestshop.integrations.CoreProtectIntegration;
 import me.deadlight.ezchestshop.utils.DiscordWebhook;
+import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
@@ -314,7 +315,7 @@ public class ShopContainer {
 
         //For the transaction event
         thatItem.setAmount(count);
-        EzChestShop.getPlugin().tellCoreProtectToTrackChangesAt(player, containerBlock.getLocation());
+        CoreProtectIntegration.expectInventoryChange(player, containerBlock.getLocation());
         Utils.removeItem(blockInventory, thatItem);
         transfer(Bukkit.getOfflinePlayer(player.getUniqueId()), owner, price);
         sharedIncomeCheck(data, price);
@@ -370,7 +371,7 @@ public class ShopContainer {
             return;
         }
 
-        EzChestShop.getPlugin().tellCoreProtectToTrackChangesAt(player, containerBlock.getLocation());
+        CoreProtectIntegration.expectInventoryChange(player, containerBlock.getLocation());
         int stacks = (int) Math.ceil(count / (double) thatItem.getMaxStackSize());
         int maxSize = thatItem.getMaxStackSize();
 

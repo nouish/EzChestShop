@@ -8,9 +8,10 @@ import net.alex9849.arm.events.UnsellRegionEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.ApiStatus;
 
-public class AdvancedRegionMarket implements Listener {
-
+@ApiStatus.Internal
+public final class AdvancedRegionMarketIntegration implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void handleRegionUnsell(UnsellRegionEvent event) {
         WGRegion region = event.getRegion().getRegion();
@@ -32,5 +33,4 @@ public class AdvancedRegionMarket implements Listener {
             }
         }
     }
-
 }
