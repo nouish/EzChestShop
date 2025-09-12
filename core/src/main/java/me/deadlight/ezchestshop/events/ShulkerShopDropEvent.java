@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 //only trigger via piston movement
 public final class ShulkerShopDropEvent extends Event {
@@ -13,6 +14,7 @@ public final class ShulkerShopDropEvent extends Event {
     private final Location previousShulkerLocation;
 
     @Override
+    @NotNull
     public HandlerList getHandlers() {
         return HANDLERS;
     }

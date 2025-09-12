@@ -4,21 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EzqlRow {
-
-
-    private Map<String, Object> results = new HashMap<>();
+    private final Map<String, Object> results = new HashMap<>();
 
     public EzqlRow(Object... objects) {
-        if(objects.length%2 !=0)
-            return;
+        if (objects.length % 2 != 0) return;
 
-        for (int i = 0; i < objects.length; i+=2) {
-            if(objects.length > i+1){
-
+        for (int i = 0; i < objects.length; i += 2) {
+            if (objects.length > i + 1) {
                 String key = (String) objects[i];
-                Object value = objects[i+1];
-
-                addValue(key,value);
+                Object value = objects[i + 1];
+                addValue(key, value);
             }
         }
     }
@@ -36,14 +31,8 @@ public class EzqlRow {
         results.put(id, object);
     }
 
-    public void removeValue(String id) {
-        results.remove(id);
-    }
-
     @Override
     public String toString() {
-        return "EzqlResultRow{" +
-                "results=" + results +
-                '}';
+        return "EzqlResultRow{" + "results=" + results + '}';
     }
 }

@@ -148,7 +148,7 @@ public class ShopSettings {
     }
 
     public ShopSettings setCustomMessages(List<String> customMessages) {
-        String newMessages = customMessages.stream().collect(Collectors.joining("#,#"));
+        String newMessages = String.join("#,#", customMessages);
         if (!newMessages.equals(this.customMessages)) {
             if (newMessages.isEmpty()) {
                 customMessagesTotal.get(assignedShop.getOwnerID()).remove(assignedShop.getLocation());
@@ -164,12 +164,12 @@ public class ShopSettings {
     public static Map<Location, String> getAllCustomMessages(String owner) {
         List<EzShop> ezShops = ShopContainer.getShopFromOwner(UUID.fromString(owner)).stream()
                 .filter(ezShop -> !ezShop.getSettings().customMessages.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
 
         Map<Location, String> stringMap = new HashMap<>();
 
         for (EzShop ezShop : ezShops) {
-            stringMap.put(ezShop.getLocation(), ezShop.getSettings().customMessages.get(0));
+            stringMap.put(ezShop.getLocation(), ezShop.getSettings().customMessages.getFirst());
         }
 
         return stringMap;

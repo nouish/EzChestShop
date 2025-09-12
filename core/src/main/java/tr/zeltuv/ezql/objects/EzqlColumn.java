@@ -1,23 +1,25 @@
 package tr.zeltuv.ezql.objects;
 
-public class EzqlColumn{
+public class EzqlColumn {
+    private final DataType dataType;
+    private final String name;
+    private final int length;
+    private final boolean primary;
 
-    private DataType dataType;
-    private String name;
-    private int length;
-    private boolean primary;
+    public static EzqlColumn get(DataType dataType, String name, int length, boolean primary) {
+        return new EzqlColumn(dataType, name, length, primary);
+    }
 
-    public static EzqlColumn get(DataType dataType, String name, int length, boolean primary){
-        return new EzqlColumn(dataType,name,length,primary);
+    public static EzqlColumn get(DataType dataType, String name, int length) {
+        return new EzqlColumn(dataType, name, length, false);
     }
-    public static EzqlColumn get(DataType dataType, String name, int length){
-        return new EzqlColumn(dataType,name,length,false);
+
+    public static EzqlColumn get(DataType dataType, String name, boolean primary) {
+        return new EzqlColumn(dataType, name, 0, primary);
     }
-    public static EzqlColumn get(DataType dataType, String name, boolean primary){
-        return new EzqlColumn(dataType,name,0,primary);
-    }
-    public static EzqlColumn get(DataType dataType, String name){
-        return new EzqlColumn(dataType,name,0,false);
+
+    public static EzqlColumn get(DataType dataType, String name) {
+        return new EzqlColumn(dataType, name, 0, false);
     }
 
     private EzqlColumn(DataType dataType, String name, int length, boolean primary) {
@@ -42,5 +44,4 @@ public class EzqlColumn{
     public boolean isPrimary() {
         return primary;
     }
-
 }

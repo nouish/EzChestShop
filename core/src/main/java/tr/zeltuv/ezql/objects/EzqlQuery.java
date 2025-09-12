@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class EzqlQuery {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
 
     private final EzqlDatabase database;
 

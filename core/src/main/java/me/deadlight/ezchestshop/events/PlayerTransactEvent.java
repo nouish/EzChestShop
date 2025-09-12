@@ -15,22 +15,24 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerTransactEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private OfflinePlayer owner;
-    private OfflinePlayer customer;
-    private double price;
-    private LocalDateTime time;
-    private boolean isBuy;
-    private ItemStack item;
-    private String itemName;
-    private int count;
-    private List<UUID> admins;
-    private Block containerBlock;
+    private final OfflinePlayer owner;
+    private final OfflinePlayer customer;
+    private final double price;
+    private final LocalDateTime time;
+    private final boolean isBuy;
+    private final ItemStack item;
+    private final String itemName;
+    private final int count;
+    private final List<UUID> admins;
+    private final Block containerBlock;
 
     @Override
+    @NotNull
     public HandlerList getHandlers() {
         return HANDLERS;
     }
@@ -39,7 +41,8 @@ public class PlayerTransactEvent extends Event {
         return HANDLERS;
     }
 
-    public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer, double price, boolean isBuy, ItemStack item, int count, List<UUID> admins, Block containerBlock) {
+    public PlayerTransactEvent(OfflinePlayer owner, OfflinePlayer customer,
+            double price, boolean isBuy, ItemStack item, int count, List<UUID> admins, Block containerBlock) {
         this.owner = owner;
         this.customer = customer;
         this.price = price;
