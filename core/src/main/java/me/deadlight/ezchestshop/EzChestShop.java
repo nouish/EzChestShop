@@ -167,6 +167,11 @@ public final class EzChestShop extends JavaPlugin {
             return;
         }
 
+        if (!Compatibility.verify()) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         MinecraftVersion minecraftVersion = VersionUtil.getMinecraftVersion().orElse(null);
         if (minecraftVersion == null) {
             OptionalInt dataVersion = VersionUtil.getDataVersion();
