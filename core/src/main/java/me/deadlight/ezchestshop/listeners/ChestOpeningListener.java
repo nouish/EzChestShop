@@ -13,6 +13,7 @@ import me.deadlight.ezchestshop.guis.AdminShopGUI;
 import me.deadlight.ezchestshop.guis.NonOwnerShopGUI;
 import me.deadlight.ezchestshop.guis.OwnerShopGUI;
 import me.deadlight.ezchestshop.guis.ServerShopGUI;
+import me.deadlight.ezchestshop.integrations.CoreProtectIntegration;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -36,8 +37,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class ChestOpeningListener implements Listener {
+    private static final Logger LOGGER = EzChestShop.logger();
 
     private final NonOwnerShopGUI nonOwnerShopGUI= new NonOwnerShopGUI();
     private final OwnerShopGUI ownerShopGUI = new OwnerShopGUI();
@@ -98,6 +101,17 @@ public class ChestOpeningListener implements Listener {
         }
 
         if (dataContainer != null && dataContainer.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+            // If CoreProtect integration is enabled and the player is
+            // in inspect mode, we don't want to open the shop UI.
+            if (CoreProtectIntegration.isInspectEnabledFor(event.getPlayer())) {
+                LOGGER.trace("{} inspected chest shop at {}, {}, {} (CoreProtect integration).",
+                        event.getPlayer().getName(),
+                        loc.getBlockX(),
+                        loc.getBlockY(),
+                        loc.getBlockZ());
+                return;
+            }
+
             event.setCancelled(true);
             // Load old shops into the Database when clicked
             if (!ShopContainer.isShop(loc)) {
