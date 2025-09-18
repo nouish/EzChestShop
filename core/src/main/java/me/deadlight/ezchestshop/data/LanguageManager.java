@@ -876,6 +876,10 @@ public final class LanguageManager {
         return Utils.colorify(getString("command-messages.emptyShopHightLighted.enabled").replace("%emptyCount%", "" + shopCount));
     }
 
+    public String featureDisabled() {
+        return Utils.colorify(getString("other.feature-disabled"));
+    }
+
     //checkprofits.
     public BaseComponent[] checkProfitsLandingpage(Player player, double buyCost, int buyAmount, double sellCost, int sellAmount) {
         double balance = EzChestShop.getEconomy() == null ? 0.0 : EzChestShop.getEconomy().getBalance(player);

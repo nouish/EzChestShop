@@ -24,10 +24,14 @@ import org.jetbrains.annotations.NotNull;
 public class CommandCheckProfits implements CommandExecutor, Listener, TabCompleter {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (sender instanceof Player p) {
             if (!p.hasPermission("ecs.checkprofits"))
                 return false;
+            if (!Config.enableCheckProfits) {
+                p.sendMessage(LanguageManager.getInstance().featureDisabled());
+                return false;
+            }
 
             // Send stuff (multi pages), but first send a overview page. Then add a option
             // for details
@@ -112,7 +116,7 @@ public class CommandCheckProfits implements CommandExecutor, Listener, TabComple
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
         Player p = evt.getPlayer();
-        if (!p.hasPermission("ecs.checkprofits"))
+        if (!p.hasPermission("ecs.checkprofits") || !Config.enableCheckProfits)
             return;
         PlayerContainer pc = PlayerContainer.get(p);
         List<CheckProfitEntry> checkprofits = pc.getProfits().values().stream()

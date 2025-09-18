@@ -339,6 +339,7 @@ hologram:
   item-enchantment: "&b%enchantment% &e%level-roman%"
   item-enchantment-more: "&7і &e%amount% &7більше!"
 other:
+  feature-disabled: "&cЦя функція не активована на цьому сервері."
   update-notifications: "&c[&eEzChestShop&c] &eВиявлено нову версію: &b%new_version%&e! Ви все ще використовуєте &c%current_version%&e!"
   overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eУ вашому налаштованому графічному інтерфейсі є переповнені елементи! Переконайтеся, що ці елементи знаходяться в достатньо великому графічному інтерфейсі: &c%overflow%"
   overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eУ вашому налаштованому графічному інтерфейсі є елементи, що збігаються! Ось список незвичайних елементів, що перекриваються: &c%overlap%"

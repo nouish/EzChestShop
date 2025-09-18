@@ -365,6 +365,7 @@ hologram:
   item-enchantment: "&b%enchantment% &e%level-roman%"
   item-enchantment-more: "&7và hơn &e%amount% &7thứ khác!"
 other:
+  feature-disabled: "&cThis feature is not enabled for this server."
   update-notifications: "&c[&eEzChestShop&c] &eĐã phát hiện phiên bản mới:
     &b%new_version%&e! Bạn vẫn đang sử dụng bản &c%current_version%&e!"
   overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eBạn có quá nhiều vật

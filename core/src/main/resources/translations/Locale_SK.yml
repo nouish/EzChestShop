@@ -339,6 +339,7 @@ hologram:
   item-enchantment: "&b%enchantment% &e%level-roman%"
   item-enchantment-more: "&7a ešte &e%amount% &7naviac!"
 other:
+  feature-disabled: "&cThis feature is not enabled for this server."
   update-notifications: "&c[&eEzChestShop&c] &eBola zistená nová verzia: &b%new_version%&e! Ešte stále používaš verziu: &c%current_version%&e!"
   overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eMáš presahujúce veci vo svojom prispôsobenom GUI! Uisti sa, že tieto veci sú v dostatočne veľkom GUI: &c%overflow%"
   overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eMáš prekrývajúce sa veci vo svojom prispôsobenom GUI! Tu je zoznam neobvykle sa prekrývajúcich vecí: &c%overlap%"

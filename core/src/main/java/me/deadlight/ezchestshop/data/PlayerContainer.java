@@ -67,6 +67,12 @@ public final class PlayerContainer {
 
     public void updateProfits(String id, ItemStack item, Integer buyAmount, Double buyPrice, Double buyUnitPrice, Integer sellAmount,
                               Double sellPrice, Double sellUnitPrice) {
+        if (!Config.enableCheckProfits) {
+            // Feature is disabled.
+            // The database uses a single column to store data, so it will eventually hit the limit (MySQL) or just keep growing (SQLite).
+            // This option exists so server operators can disable the feature and effectively ignore the issue.
+            return;
+        }
         if (checkProfits == null) {
             checkProfits = getProfits();
         }

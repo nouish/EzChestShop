@@ -96,6 +96,7 @@ public final class Config {
     public static boolean shopProtection;
     public static boolean emptyShopNotificationOnJoin;
     public static boolean logTransactions;
+    public static boolean enableCheckProfits;
 
     public static boolean isDiscordNotificationEnabled;
 
@@ -210,6 +211,7 @@ public final class Config {
         shopProtection = config.getBoolean("protection.prevent-shop-destruction", true);
         emptyShopNotificationOnJoin = config.getBoolean("notification.notify-empty-shop-on-join", true);
         logTransactions = config.getBoolean("shops.settings.log-transactions", true);
+        enableCheckProfits = config.getBoolean("shops.settings.enable-check-profits", true);
         //
         isDiscordNotificationEnabled = config.getBoolean("notification.discord.enabled", false);
         isBuySellWebhookEnabled = config.getBoolean("notification.discord.buy-sell-webhook.enabled", false);
