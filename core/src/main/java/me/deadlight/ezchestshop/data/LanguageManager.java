@@ -42,9 +42,20 @@ public final class LanguageManager {
 
     private static FileConfiguration languageConfig;
     private static final ImmutableSet<String> SUPPORTED_LOCALES = ImmutableSet.of(
-            "Locale_EN", "Locale_DE", "Locale_ES", "Locale_CN",
-            "Locale_FA", "Locale_PL", "Locale_TR", "Locale_UA",
-            "Locale_VI", "Locale_SK", "Locale_RU");
+        "Locale_CN",
+        "Locale_DE",
+        "Locale_EN",
+        "Locale_ES",
+        "Locale_FA",
+        "Locale_FR",
+        "Locale_NO",
+        "Locale_PL",
+        "Locale_RU",
+        "Locale_SK",
+        "Locale_TR",
+        "Locale_UA",
+        "Locale_VI"
+    );
 
     public static ImmutableSet<String> getSupportedLanguages() {
         return SUPPORTED_LOCALES;

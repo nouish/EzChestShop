@@ -1,0 +1,348 @@
+# plugin uses this file in order to display messages in plugin
+# For hologram messages, you have to check config.yml
+# NOTE: DO NOT USE TAB in yml file as it can cause serious performance problems og it sometimes can break the plugin
+# Don't forget to rate if you liked EzChestShop
+shop-gui:
+  initialbuyprice: "&aKjøpspris: &e%buyprice% %currency%"
+  initialsellprice: "&cSalgspris: &e%sellprice% %currency%"
+  admin-title: "&c%shopowner%'s Kistebutikk &4(Admin)"
+  nonowner-title: "&c%shopowner%'s Kistebutikk"
+  owner-title: "&c%shopowner%'s Kistebutikk"
+  adminshop-title: "&cAdministrasjonsbutikk"
+  buttons:
+    sellX-title: "&cSelg %amount%x"
+    sellX-lore:
+      - "&7Selg for &e%price% %currency%"
+    buyX-title: "&aKjøp %amount%x"
+    buyX-lore:
+      - "&7Kjøp for &e%price% %currency%"
+    adminview: "&cAdministratorvisning"
+    storage: "&eLager"
+    settings: "&bInnstillinger"
+    disabled-title: "&cDeaktivert"
+    disabled-lore:
+      - "&7Dette alternativet har blitt deaktivert av butikkens eier."
+
+transactions:
+  transactionButtonTitle: "&aTransaksjonslogger"
+  backToSettingsButton: "&eTilbake til innstillinger"
+  PaperTitleBuy: "&aKjøp | %player%"
+  PaperTitleSell: "&cSalg | %player%"
+  PaperLoreBuy:
+    - "&7Totalpris: %price%"
+    - " &7Antall: %count%"
+    - " &7Transaksjonstype: &aKjøpte fra deg"
+    - " &e%time%"
+  PaperLoreSell:
+    - "&7Totalpris: %price%"
+    - " &7Antall: %count%"
+    - " &7Transaksjonstype: &cSolgte til deg"
+    - " &e%time%"
+  lessthanminute: "&eMindre enn ett minutt siden"
+  minutesago: "&e%minutes% minutt(er) siden"
+  hoursago: "&e%hours% time(r) siden"
+  daysago: "&e%days% dag(er) siden"
+  player-inform-buy: "&7[&aECS&7] &b%player% &7kjøpte &e%amount%x &7av &d%item% &7for &a%price%%currency%"
+  player-inform-sell: "&7[&aECS&7] &b%player% &7solgte &e%amount%x &7av &d%item% &7for &a%price%%currency%"
+
+settings:
+  GuiTitle: "&cInnstillinger"
+  statusOn: "&aAktivert"
+  statusOff: "&cDeaktivert"
+  buttons:
+    toggleTransactions:
+      Title: "&eVeksle transaksjonsmeldinger"
+      Lore:
+        - "&7Nåværende status: %status%"
+        - " &7Hvis aktivert, vil du motta"
+        - " &7transaksjonsmeldinger i chat"
+        - " &7hver gang noen kjøper eller selger"
+        - " &7varer i denne butikken."
+    disableBuying:
+      Title: "&eDeaktiver kjøp"
+      Lore:
+        - "&7Nåværende status: %status%"
+        - " &7Hvis aktivert, kan ikke spillere"
+        - " &7kjøpe varer fra denne butikken."
+    disableSelling:
+      Title: "&eDeaktiver salg"
+      Lore:
+        - "&7Nåværende status: %status%"
+        - " &7Hvis aktivert, kan ikke spillere"
+        - " &7selge varer til denne butikken."
+    shopAdmins:
+      Title: "&eButikkadministratorer"
+      nobodyStatusAdmins: "&aIngen"
+      Lore:
+        - "&7Du kan legge til eller fjerne administratorer"
+        - "&7for denne kistebutikken. Administratorer kan"
+        - "&7få tilgang til lager og de fleste innstillinger"
+        - "&7(unntatt inntektsdeling og"
+        - "&7administrasjon av admins)."
+        - " &aVenstreklikk &7for å legge til admin"
+        - " &cHøyreklikk &7for å fjerne admin"
+        - " &7Nåværende administratorer: %admins%"
+    sharedIncome:
+      Title: "&eDelt inntekt"
+      Lore:
+        - "&7Nåværende status: %status%"
+        - " &7Hvis aktivert, vil bare salgsfortjeneste"
+        - " &7deles med administratorer."
+    hologramRotation:
+      Title: "&eHologramrotasjon"
+      Lore:
+        - "&7Nåværende rotasjon:"
+        - "%rotations%"
+        - " &aVenstre &7/ &cHøyre &7klikk for å bla"
+        - " &7gjennom alle tilgjengelige rotasjoner."
+    changePrices:
+      Title: "&eEndre kjøps-/salgspriser"
+      Lore:
+        - "&7Juster kjøps- eller salgspris"
+        - " &d "
+        - " &cVenstreklikk &7= Endre salg"
+        - " &aHøyreklikk &7= Endre kjøp"
+      SignPlaceholderBuy:
+        - ""
+        - "&a^^ &7Skriv inn &a^^"
+        - " &7din nye"
+        - " &akjøps &7pris!"
+      SignPlaceholderSell:
+        - ""
+        - "&c^^ &7Skriv inn &c^^"
+        - " &7din nye"
+        - " &csalgs &7pris!"
+    hologramMessage:
+      Title: "&eEgendefinerte hologrammeldinger"
+      Lore:
+        - "&cVenstreklikk for å legge til en ny"
+        - "&cHologram-melding."
+        - "&aHøyreklikk for å administrere"
+        - "&aeksisterende meldinger."
+        - " &d "
+        - "&8Tilgjengelige linjer: %lineNumbers%"
+        - "<ifhasmax>&8Du kan legge til %messagesleft% flere melding(er)!</ifhasmax>"
+      LoreMaxReached:
+        - "&cDu kan bare ha"
+        - "&c%maxLines% linjer!"
+        - "&7Klikk her for å administrere"
+        - "&7dine hologrammeldinger."
+      LoreEdit:
+        - "&cVenstreklikk for å redigere denne"
+        - "&cHologram-meldingen."
+        - "&aHøyreklikk for å administrere"
+        - "&aeksisterende meldinger."
+        - " &d "
+        - "&8Tilgjengelige linjer: %lineNumbers%"
+        - "<ifhasmax>&8Du kan legge til %messagesleft% flere melding(er)!</ifhasmax>"
+      SignPlaceholderTexts: "###############"
+    other:
+      backToShopGuiButton: "&eTilbake til butikk"
+      latestTransactionsTitle: "&aSiste transaksjoner"
+  chat:
+    toggleTransactions:
+      MessageOn: "&7Transaksjonsmeldinger: &aAktivert"
+      MessageOff: "&7Transaksjonsmeldinger: &cDeaktivert"
+    disableBuying:
+      MessageOn: "&7Kjøp: &aAktivert"
+      MessageOff: "&7Kjøp: &cDeaktivert"
+    disableSelling:
+      MessageOn: "&7Salg: &aAktivert"
+      MessageOff: "&7Salg: &cDeaktivert"
+    shopAdmins:
+      addingAdminWaiting: "&eSkriv inn navnet på spilleren du vil legge til som admin."
+      removingAdminWaiting: "&eSkriv inn navnet på spilleren du vil fjerne som admin."
+      selfAdmin: "&cDu kan ikke legge til eller fjerne deg selv som admin!"
+      sucAdminAdded: "&a%player% &7ble lagt til som admin."
+      alreadyAdmin: "&cDen spilleren er allerede admin!"
+      noPlayer: "&cDen spilleren finnes ikke eller har aldri vært på denne serveren."
+      sucAdminRemoved: "&a%player% &7ble fjernet som admin."
+      notInAdminList: "&cDen spilleren er ikke admin!"
+      clearedAdmins: "&cAlle administratorer er fjernet fra denne butikken."
+    sharedIncome:
+      MessageOn: "&7Delt inntekt: &aAktivert"
+      MessageOff: "&7Delt inntekt: &cDeaktivert"
+    copy-paste:
+      copiedShopSettings: "[&6Kopierte &7butikkinnstillinger!](%settings%)"
+      pastedShopSettings: "&eButikkinnstillinger limt inn!"
+    hologramRotation:
+      rotateHologramInChat: "&7Hologramrotasjon: %rotation%"
+      rotation:
+        Up: "&aOpp"
+        North: "&aNord"
+        East: "&aØst"
+        South: "&aSør"
+        West: "&aVest"
+        Down: "&aNed"
+    protection:
+      cannotDestroyShop: "&cDu kan ikke ødelegge denne butikken!"
+
+# Custom Messages Manager
+customMessageManager:
+  GuiTitle: "&cBehandling av hologrammeldinger"
+  ConfirmDeleteGuiTitle: "&cBekreft sletting"
+  buttons:
+    previousPage:
+      Title: "&eForrige"
+      Lore:
+    nextPage:
+      Title: "&eNeste"
+      Lore:
+    shopEntry:
+      Title: "&7%shopitem% Shop"
+      UnkownTitle: "&cUkjent butikk"
+      Lore:
+        - "&7Posisjon: &eX:%x%, Y:%y%, Z:%z%"
+        - ""
+        - "&eHologrammeldinger:"
+        - "&7%hologram-messages%"
+        - ""
+        - "&cVenstreklikk for å slette"
+        - "&cdenne meldingen!"
+        - "&aHøyreklikk for å redigere"
+        - "&adenne meldingen!"
+    confirmDelete:
+      Title: "&cBekreft sletting?"
+      Lore:
+        - "&7Du er i ferd med å slette"
+        - "&7denne hologrammeldingen."
+        - "&7Denne handlingen kan ikke angres!"
+        - "&cKlikk for å bekrefte."
+    backToCustomMessageManager:
+      Title: "&eTilbake til hologrambehandler"
+      Lore:
+    modifyCurrentHologram:
+      Title: "&eEndre nåværende hologram"
+      Lore:
+        - "&cVenstreklikk for å slette"
+        - "&cdenne meldingen!"
+        - "&aHøyreklikk for å redigere"
+        - "&adenne meldingen!"
+
+# Custom Buy/Sell
+customBuySell:
+  gui-customAmountSign-title: "&eTilpasset kjøp/salg"
+  gui-customAmountSign-lore:
+    - "&7Kjøp eller selg et tilpasset antall"
+    - " &d "
+    - " &cVenstreklikk = Tilpasset salg"
+    - " &aHøyreklikk = Tilpasset kjøp"
+    - " &d "
+    - " &7Du kan selge &e%sellcount%"
+    - " &7eller kjøpe &e%buycount% &7av denne gjenstanden."
+  signEditorGui:
+    buy:
+      - "&a^^ Maks: %max% ^^"
+      - " &bSkriv inn ønsket"
+      - " &bantall"
+    sell:
+      - "&c^^ Maks: %max% ^^"
+      - " &bSkriv inn ønsket"
+      - " &bantall"
+  errors:
+    buyingIsDisabled: "&cKjøp er deaktivert i denne butikken."
+    sellingIsDisabled: "&cSalg er deaktivert i denne butikken."
+    wrongInput: "&cUgyldig inndata (eller for stort). Vennligst skriv inn et gyldig tall!"
+    enterTheAmount: "&eVennligst skriv inn antallet på skiltet."
+    unsupportedInteger: "&cAntallet må være større enn null."
+
+shop-messages:
+  successful-buy: "&aDu kjøpte denne gjenstanden for &e%price% %currency%&a!"
+  fullinv: "&cInventaret ditt er fullt!"
+  cannotafford: "&cDu har ikke råd til dette kjøpet."
+  outofstock: "&cDenne butikken er tom for varer!"
+  successful-sell: "&aDu solgte gjenstanden(e) dine for &e%price% %currency%&a!"
+  shopcannotafford: "&cDenne butikken har ikke nok midler."
+  notenoughitemtosell: "&cDu har ikke nok av denne gjenstanden å selge!"
+  chestisFull: "&cButikkisten er full."
+  selftransaction: "&cDu kan ikke hogle med din egen butikk!"
+  openingShopProblem: "&cDet oppstod et problem med å åpne denne butikken. Contact an admin og check the console."
+  joinEmptyShopActionBar: "&b%emptyCount% &ctomme butikker i nærheten av deg!"
+
+command-messages:
+  negativeprice: "&cUgyldig pris: den må være positiv."
+  notenoughargs: "&cIkke nok argumenter! \n&7Bruk: &e/ecs create <kjøpspris> <salgspris>"
+  consolenotallowed: "&cDu kan ikke kjøre denne kommandoen fra konsollen."
+  help:
+    - "&bEz&cChestShop &7Plugin av Dead_Light & ElitoGame©"
+    - "&7- &c/ecs create <Kjøpspris> <Salgspris> &7| Lag en butikk ved å se på en kiste mens du holder gjenstanden du vil selge."
+    - "&7- &c/ecs remove &7| Fjerner butikken du ser på."
+    - "&7- &c/ecs settings <innstilling> &7| Administrer butikkinnstillinger (kopi, lim inn, administratorer, veksle alternativer)."
+    - "&eInnstillinger: &7[kopi, lim inn, admins, toggle-buying, toggle-selling, toggle-message, toggle-shared-income, change-rotation]"
+    - "&7- &c/ecs emptyshops &7| Viser tomme butikker i nærheten."
+    - "&7Enkelt, ikke sant? :)"
+  help-admin-view-addition:
+    - "&cAdminhjelp:"
+    - "&7- &c/ecsadmin"
+  adminhelp:
+    - "&cAdminhjelp:"
+    - "&7- &c/&eecsadmin remove &7| Fjerner butikken du ser på."
+    - "&7- &c/&eecsadmin reload &7| Laster plugin-konfigurasjoner på nytt."
+    - "&7- &c/&eecsadmin create <Kjøp> <Salg> &7| Oppretter en administratorbutikk."
+    - "&7- &c/&eecsadmin transfer-ownership <spiller> &7| Overfører en butikk til en annen spiller."
+    - "&7Trenger du hjelp? Bli med på vår [&bDiscord](%discord_link% Klikk for å bli med på vår support-Discord!)&7."
+  alreadyashop: "&cDenne beholderen er allerede en butikk!"
+  shopcreated: "&aDu har opprettet en kistebutikk!"
+  holdsomething: "&cVennligst hold en gjenstand i hovedhånden din!"
+  notallowdtocreate: "&cDu kan ikke opprette eller fjerne en butikk på dette stedet."
+  notchest: "&cDen blokken er ikke en kiste eller en støttet beholder."
+  lookatchest: "&cDu må se på en kiste."
+  csremoved: "&eDenne kistebutikken ble fjernet."
+  notowner: "&cDu er ikke eieren av denne butikken!"
+  notachestorcs: "&cDen blokken er verken en kiste eller en butikk."
+  maxShopLimitReached: "&cDu har nådd maksimal butikkgrense: %shoplimit%!"
+  slimeFunBlockNotSupported: "&cBeklager, du kan ikke bruke denne kommandoen på en Slimefun-blokk. Bruk en vanlig kiste/beholder."
+  buypriceGreaterThanSellRequired: "&cKjøpsprisen må være høyere enn salgsprisen!"
+  invalidShopItem: "&cDenne gjenstanden kan ikke brukes til å opprette en butikk her."
+  shopTransferConfirm: "&eEr du sikker på at du vil permanent overføre denne butikken til %player%? [&2&l[✔]](Klikk for å bekrefte overføringen! run_command=/ecs settings transfer-ownership %player% -confirm)"
+  shopTransferred: "&aDu har overført denne butikken til %player%!"
+  buyPriceUpdated: "&aKjøpspris oppdatert!"
+  sellPriceUpdated: "&cSalgspris oppdatert!"
+  emptyShopHightLighted:
+    enabled: "&aFremheving aktivert! &eNærliggende tomme butikker du eier er nå markert. \n&eTotalt antall nærliggende tomme butikker: &b%emptyCount%"
+    disabled: "&cFremheving deaktivert! &eDine tomme butikker vil ikke lenger være markert."
+
+checkprofits:
+  landing-menu:
+    - '&e========================================'
+    - '&7Totale salgsinntekter: &6%currency%%income% &7fra &6%sales% &7salg.'
+    - '&7Totale kjøpskostnader: &6%currency%%cost% &7fra &6%purchases% &7kjøp.'
+    - '&7Totalt: &6%currency%%total%'
+    - '&7Balanse: &6%currency%%balance%'
+    - '[&bKlikk her](Klikk for detaljer! run_command=/checkprofits p 1) &7for en detaljert rapport.'
+    - '&7Tøm rapport: [&c[X]](Klikk for å tømme! run_command=/checkprofits clear)'
+  details-menu:
+    header:
+      - "&e----- &6Butikkens fortjenesterapport &e-----"
+    content:
+      - " &e- &6%item%"
+      - "    &7Salg: [&e%sales%x %currency%%income%](Enhet: %unit_income%) &7Kjøp: [&e%purchases%x %currency%%cost%](Enhet: %unit_cost%)"
+    footer:
+      - "&6%button_previous%&7 Side %page%/%pages% &6%button_next% &7| Skriv \"[&6/cp p <side>](Klikk for å lime inn suggest_command=/cp p )&7\""
+    hover-extra:
+      button-next: "Neste"
+      button-previous: "Forrige"
+  confirm-clear:
+    - "&eVil du virkelig tømme alle fortjenestedata? [&2&l[✔]](Klikk for å bekrefte! run_command=/checkprofits clear -confirm)"
+  confirm-clear-success: "&cAlle fortjenestedata er tømt!"
+  join-notification:
+    - "[&bKlikk her](Klikk for å sjekke fortjeneste run_command=/checkprofits) &efor å se butikkens fortjeneste."
+
+shulkershop-dropped-lore:
+  - "&eShulkerboksbutikk:"
+  - " &7Eier: &6%owner%"
+  - " &7Gjenstand: &6%item%"
+  - " &7Kjøp: &6%currency%%buy_price%"
+  - " &7Selg: &6%currency%%sell_price%"
+hologram:
+  shop-empty: "&cDenne butikken er tom!"
+  shulkerbox-item: "&7%item% x&e%amount%"
+  shulkerbox-item-more: "&7og &e%amount% &7mer!"
+  item-enchantment: "&b%enchantment% &e%level-roman%"
+  item-enchantment-more: "&7og &e%amount% &7mer!"
+other:
+  feature-disabled: "&cDenne funksjonen er ikke aktivert på denne serveren."
+  update-notifications: "&c[&eEzChestShop&c] &eNy versjon tilgjengelig: &b%new_version%&e! Du bruker &c%current_version%&e."
+  overflowing-gui-items-notification: "&c[&eEzChestShop&c] &eDu har for mange tilpassede gjenstander i GUI-en din! Sørg for at GUI-en er stor nok: &c%overflow%"
+  overlapping-gui-items-notification: "&c[&eEzChestShop&c] &eNoen tilpassede gjenstander i GUI-en overlapper! Konfliktende gjenstander: &c%overlap%"
+  no-breaking-while-viewing: "&cDu kan ikke ødelegge en butikk mens den er i bruk!"
