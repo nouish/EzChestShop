@@ -99,10 +99,6 @@ public final class Utils {
 
     /**
      * Store a ItemStack into a persistent Data Container using Base64 encoding.
-     *
-     * @param item
-     * @param data
-     * @throws IOException
      */
     public static void storeItem(ItemStack item, PersistentDataContainer data) {
         String encodedItem = encodeItem(item);
@@ -113,9 +109,6 @@ public final class Utils {
 
     /**
      * Encode a ItemStack into a Base64 encoded String
-     *
-     * @param item
-     * @return
      */
     public static String encodeItem(ItemStack item) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -131,9 +124,6 @@ public final class Utils {
 
     /**
      * Decode a ItemStack from Base64 into a ItemStack
-     *
-     * @param encodedItem
-     * @return
      */
     public static ItemStack decodeItem(String encodedItem) {
         byte[] buf = Base64.getDecoder().decode(encodedItem);
@@ -150,10 +140,6 @@ public final class Utils {
     /**
      * Convert a Item to a Text Compount. Used in Text Component Builders to show
      * items in chat.
-     *
-     * @param itemStack
-     * @return
-     * @category ItemUtils
      */
     public static String itemStackToSnbt(@NotNull ItemStack itemStack) {
         // This implementation is temporary before moving to Adventure API, and is simply to avoid
@@ -171,9 +157,6 @@ public final class Utils {
 
     /**
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
-     *
-     * @param block
-     * @return
      */
     public static Inventory getBlockInventory(Block block) {
         if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
@@ -189,8 +172,6 @@ public final class Utils {
     /**
      * Check if the given Block is a Shulker box (dye check)
      *
-     * @param block
-     * @return
      * @deprecated Use {@link Tag#isTagged(Keyed)} on {@link Tag#SHULKER_BOXES} instead.
      */
     @Deprecated
@@ -201,8 +182,6 @@ public final class Utils {
     /**
      * Check if the given Material is a Shulker box (dye check)
      *
-     * @param type
-     * @return
      * @deprecated Use {@link Tag#isTagged(Keyed)} on {@link Tag#SHULKER_BOXES} instead.
      */
     @Deprecated
@@ -212,9 +191,6 @@ public final class Utils {
 
     /**
      * Check if the given Block is a applicable Shop.
-     *
-     * @param block
-     * @return
      */
     public static boolean isApplicableContainer(Block block) {
         return isApplicableContainer(block.getType());
@@ -270,9 +246,6 @@ public final class Utils {
 
     /**
      * Convert a Location to a String
-     *
-     * @param loc
-     * @return
      */
     public static String LocationtoString(Location loc) {
         if (loc == null)
@@ -288,10 +261,6 @@ public final class Utils {
     /**
      * Convert a Location to a String with the Location rounded as defined via the
      * decimal argument
-     *
-     * @param loc
-     * @param decimals
-     * @return
      */
     public static String LocationRoundedtoString(Location loc, int decimals) {
         if (loc == null)
@@ -312,9 +281,6 @@ public final class Utils {
 
     /**
      * Convert a String to a Location
-     *
-     * @param sloc
-     * @return
      */
     public static Location StringtoLocation(@Nullable String sloc) {
         if (sloc == null)
@@ -340,9 +306,6 @@ public final class Utils {
 
     /**
      * Check if a String can be safely converted into a numeric value.
-     *
-     * @param strNum
-     * @return
      */
     public static boolean isNumeric(String strNum) {
         if (strNum == null) {
@@ -439,9 +402,6 @@ public final class Utils {
     /**
      * Split a String by "_" and capitalize each First word, then join them together
      * via " "
-     *
-     * @param string
-     * @return
      */
     public static String capitalizeFirstSplit(String string) {
         string = string.toLowerCase(Locale.ENGLISH);
@@ -772,7 +732,7 @@ public final class Utils {
     public static OptionalInt tryParseInt(@Nullable String str) {
         try {
             // Integer.parseInt(String) will throw NumberFormatException for null.
-            //noinspection DataFlowIssue
+            // noinspection DataFlowIssue
             int value = Integer.parseInt(str);
             return OptionalInt.of(value);
         } catch (NumberFormatException ignored) {
@@ -811,11 +771,6 @@ public final class Utils {
      * Apply hex color coding to a String. possibility to add a special start or end
      * tag to the String.
      * Versions below 1.16 will only get the last hex color symbol applied to them.
-     *
-     * @param startTag
-     * @param endTag
-     * @param message
-     * @return
      */
     public static String translateHexColorCodes(String startTag, String endTag, String message) {
         final Pattern hexPattern = Pattern.compile(startTag + "([A-Fa-f0-9]{6})" + endTag);
@@ -965,12 +920,6 @@ public final class Utils {
 
     public static List<Block> getNearbyEmptyShopForAdmins(Player player) {
         List<Block> emptyShops = new ArrayList<>();
-        //We gonna check the area the maximum of 5 chunks away from the player
-        //We gonna check if the shop is for the owner or its admins
-        //We gonna check if the shop is empty
-        //We gonna check if the shop inventory has at least 1 item required for the shop
-        //We gonna check if the buy is enabled for the shop (Basically if shop owner is selling)
-
         //first we get the shops
         List<EzShop> shops = ShopContainer.getShops();
         //then we check if the shop is for the owner or its admins
