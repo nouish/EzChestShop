@@ -21,7 +21,6 @@ import me.deadlight.ezchestshop.guis.SettingsGUI;
 import me.deadlight.ezchestshop.utils.BlockOutline;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
@@ -55,9 +54,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class MainCommands implements CommandExecutor, TabCompleter {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
     public static HashMap<UUID, ShopSettings> settingsHashMap = new HashMap<>();
     private enum SettingType { TOGGLE_MSG, DBUY, DSELL, ADMINS, SHAREINCOME, ROTATION }
 

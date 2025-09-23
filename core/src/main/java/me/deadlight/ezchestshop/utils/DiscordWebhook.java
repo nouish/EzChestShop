@@ -13,17 +13,17 @@ import com.google.common.net.HttpHeaders;
 import io.papermc.paper.ServerBuildInfo;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.ApiStatus;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
 
 @ApiStatus.Internal
 public final class DiscordWebhook {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
     private static final Queue<JSONObject> messageQueue = new ArrayBlockingQueue<>(128);
 
     private static final long PERIOD_DELAY_IN_SECONDS = 5;

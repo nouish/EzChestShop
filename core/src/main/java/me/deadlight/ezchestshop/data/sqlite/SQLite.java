@@ -25,14 +25,14 @@ import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLColumn;
 import me.deadlight.ezchestshop.data.sqlite.structure.SQLTable;
 import me.deadlight.ezchestshop.utils.Utils;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.Location;
+import org.slf4j.Logger;
 
 public class SQLite extends DatabaseManager {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
 
     private final String dbname;
     private final EzChestShop plugin;

@@ -43,7 +43,6 @@ import me.deadlight.ezchestshop.utils.FloatingItem;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.VersionUtil;
 import me.deadlight.ezchestshop.utils.VersionUtil.MinecraftVersion;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.version.BuildInfo;
@@ -64,7 +63,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.event.Level;
+import org.slf4j.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.Component.text;
@@ -72,7 +71,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public final class EzChestShop extends JavaPlugin {
     private static EzChestShop INSTANCE;
-    private static ExtendedLogger LOGGER;
+    private static Logger LOGGER;
 
     private static Economy economy = null;
     public static boolean slimefun = false;
@@ -95,21 +94,13 @@ public final class EzChestShop extends JavaPlugin {
         return scheduler;
     }
 
-    public static ExtendedLogger logger() {
+    public static Logger logger() {
         return LOGGER;
     }
 
     public EzChestShop() {
-        EzChestShop.LOGGER = new ExtendedLogger(org.slf4j.LoggerFactory.getLogger(getLogger().getName()), this::isLoggable);
+        EzChestShop.LOGGER = org.slf4j.LoggerFactory.getLogger(getLogger().getName());
         EzChestShop.INSTANCE = this;
-    }
-
-    private boolean isLoggable(@NotNull Level level) {
-        return switch (level) {
-            case TRACE -> Config.logging_trace_enabled;
-            case DEBUG -> Config.logging_debug_enabled;
-            default -> true; // All other levels are already logged by default.
-        };
     }
 
     @Override

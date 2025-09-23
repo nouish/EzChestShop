@@ -16,7 +16,6 @@ import me.deadlight.ezchestshop.integrations.CoreProtectIntegration;
 import me.deadlight.ezchestshop.utils.DiscordWebhook;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.deadlight.ezchestshop.utils.objects.ShopSettings;
 import me.deadlight.ezchestshop.utils.objects.SqlQueue;
@@ -37,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.slf4j.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.Component.text;
@@ -48,7 +48,7 @@ import static net.kyori.adventure.text.Component.translatable;
  */
 
 public class ShopContainer {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
     private static final Economy econ = EzChestShop.getEconomy();
     private static final HashMap<Location, EzShop> shopMap = new HashMap<>();
 

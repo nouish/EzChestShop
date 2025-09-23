@@ -30,7 +30,6 @@ import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.data.mysql.MySQL;
 import me.deadlight.ezchestshop.data.sqlite.SQLite;
 import me.deadlight.ezchestshop.enums.Database;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -65,11 +64,12 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 public final class Utils {
     private Utils() {}
 
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
 
     public static List<Object> onlinePackets = new ArrayList<>();
     public static final List<String> rotations = List.of("up", "north", "east", "south", "west", "down");

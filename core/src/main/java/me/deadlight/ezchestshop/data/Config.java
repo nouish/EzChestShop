@@ -17,13 +17,13 @@ import java.util.Map;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.enums.Database;
 import me.deadlight.ezchestshop.utils.DiscordWebhook;
-import me.deadlight.ezchestshop.utils.logging.ExtendedLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.slf4j.Logger;
 
 public final class Config {
-    private static final ExtendedLogger LOGGER = EzChestShop.logger();
+    private static final Logger LOGGER = EzChestShop.logger();
 
     public static String currency;
     public static boolean showholo;
@@ -71,9 +71,6 @@ public final class Config {
     public static boolean check_for_removed_shops;
 
     public static String language;
-
-    public static boolean logging_debug_enabled;
-    public static boolean logging_trace_enabled;
 
     public static boolean notify_updates;
     public static boolean notify_overlapping_gui_items;
@@ -184,10 +181,6 @@ public final class Config {
                 LOGGER.warn("*** Unsupported language '{}'. Using default language instead: '{}' ***", oldLanguage, language);
             }
         }
-
-
-        logging_debug_enabled = config.getBoolean("advanced.logging.debug");
-        logging_trace_enabled = config.getBoolean("advanced.logging.trace");
 
         notify_updates = config.getBoolean("other.notify-op-of-updates");
         notify_overlapping_gui_items = config.getBoolean("other.notify-op-of-overlapping-gui-items");
