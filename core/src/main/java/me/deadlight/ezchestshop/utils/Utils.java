@@ -37,10 +37,8 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -138,24 +136,6 @@ public final class Utils {
     }
 
     /**
-     * Convert a Item to a Text Compount. Used in Text Component Builders to show
-     * items in chat.
-     */
-    public static String itemStackToSnbt(@NotNull ItemStack itemStack) {
-        // This implementation is temporary before moving to Adventure API, and is simply to avoid
-        // using libraries to handle this.
-        String components;
-        if (itemStack.hasItemMeta()) {
-            components = Validate.notNull(itemStack.getItemMeta(), "ItemMeta must not be null").getAsString();
-        } else {
-            components = "{}";
-        }
-
-        return String.format(Locale.ROOT, "{components:%s,count:%d,id:\"%s\"}",
-                components, itemStack.getAmount(), itemStack.getType().getKey());
-    }
-
-    /**
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
      */
     public static Inventory getBlockInventory(Block block) {
@@ -167,26 +147,6 @@ public final class Utils {
             return ((ShulkerBox) block.getState(false)).getInventory();
         } else
             return null;
-    }
-
-    /**
-     * Check if the given Block is a Shulker box (dye check)
-     *
-     * @deprecated Use {@link Tag#isTagged(Keyed)} on {@link Tag#SHULKER_BOXES} instead.
-     */
-    @Deprecated
-    public static boolean isShulkerBox(@NotNull Block block) {
-        return Tag.SHULKER_BOXES.isTagged(block.getType());
-    }
-
-    /**
-     * Check if the given Material is a Shulker box (dye check)
-     *
-     * @deprecated Use {@link Tag#isTagged(Keyed)} on {@link Tag#SHULKER_BOXES} instead.
-     */
-    @Deprecated
-    public static boolean isShulkerBox(@NotNull Material type) {
-        return Tag.SHULKER_BOXES.isTagged(type);
     }
 
     /**
@@ -799,6 +759,7 @@ public final class Utils {
         };
     }
 
+    @SuppressWarnings("deprecation")
     public static void sendVersionMessage(Player player) {
         player.spigot().sendMessage(
                 new ComponentBuilder("EzChestShopReborn v" + EzChestShop.getPlugin().getDescription().getVersion())
@@ -969,8 +930,9 @@ public final class Utils {
 
     public static void sendActionBar(Player player, String message) {
         // Apply color codes to the message using ChatColor.translateAlternateColorCodes
-        String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(coloredMessage));
+        // noinspection deprecation
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message)));
     }
 
     public static boolean reInstallNamespacedKeyValues(PersistentDataContainer container, Location containerLocation) {
