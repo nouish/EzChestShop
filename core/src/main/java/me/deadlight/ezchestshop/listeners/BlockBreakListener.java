@@ -16,7 +16,6 @@ import me.deadlight.ezchestshop.utils.worldguard.FlagRegistry;
 import me.deadlight.ezchestshop.utils.worldguard.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -42,11 +41,9 @@ public class BlockBreakListener implements Listener {
         if (Utils.blockBreakMap.containsKey(event.getPlayer().getName())) {
             Collection<Entity> entityList = event.getBlock().getLocation().getWorld().getNearbyEntities(event.getBlock().getLocation(), 2, 2 ,2);
 
-            for (Entity en : entityList) {
-                if (en instanceof Item item) {
-                    if (item.getItemStack().getType() == Material.CHEST || item.getItemStack().getType() == Material.TRAPPED_CHEST) {
-                        en.remove();
-                    }
+            for (Entity entity : entityList) {
+                if (entity instanceof Item item && EzChestShopConstants.TAG_CHEST.contains(item.getItemStack().getType())) {
+                    entity.remove();
                 }
             }
 

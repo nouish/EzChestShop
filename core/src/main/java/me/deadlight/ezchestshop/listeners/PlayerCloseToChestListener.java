@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
@@ -225,7 +226,7 @@ public class PlayerCloseToChestListener implements Listener {
         if (event.isCancelled())
             return;
         Block block = event.getBlockPlaced();
-        if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) {
+        if (!EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
             return;
         }
 

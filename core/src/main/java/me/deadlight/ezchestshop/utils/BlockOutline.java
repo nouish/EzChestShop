@@ -3,6 +3,7 @@ package me.deadlight.ezchestshop.utils;
 import java.util.concurrent.ThreadLocalRandom;
 
 import me.deadlight.ezchestshop.EzChestShop;
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.DoubleChest;
@@ -59,7 +60,7 @@ public class BlockOutline {
 
     private void checkForDoubleChestShop() {
         //check if the block is a chest and if it is a double chest
-        if (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST)) {
+        if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
             //now we check if its a double chest instance
             Inventory blockInv = Utils.getBlockInventory(block);
             if (blockInv instanceof DoubleChestInventory) {

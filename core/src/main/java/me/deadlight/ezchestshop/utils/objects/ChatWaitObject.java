@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.utils.objects;
 
+import me.deadlight.ezchestshop.EzChestShopConstants;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Barrel;
@@ -31,7 +32,7 @@ public class ChatWaitObject {
     }
 
     private PersistentDataContainer getDataContainer(BlockState state, Material type) {
-        if (type == Material.CHEST || type == Material.TRAPPED_CHEST) {
+        if (EzChestShopConstants.TAG_CHEST.contains(type)) {
             return ((Chest) state).getPersistentDataContainer();
         } else if (type == Material.BARREL) {
             return ((Barrel) state).getPersistentDataContainer();

@@ -531,12 +531,9 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                 }
             }
             if (blockState instanceof TileState) {
-
                 if (Utils.isApplicableContainer(target)) {
-
                     if (checkIfLocation(target.getLocation(), player)) {
-
-                        if (target.getType() == Material.CHEST || target.getType() == Material.TRAPPED_CHEST) {
+                        if (EzChestShopConstants.TAG_CHEST.contains(target.getType())) {
                             Inventory inventory = Utils.getBlockInventory(target);
                             if (Utils.getBlockInventory(target) instanceof DoubleChestInventory) {
                                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);

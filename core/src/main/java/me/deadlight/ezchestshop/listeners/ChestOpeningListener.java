@@ -77,7 +77,7 @@ public class ChestOpeningListener implements Listener {
         TileState state = (TileState) chestblock.getState(false);
         Inventory inventory = Utils.getBlockInventory(chestblock);
 
-        if (clickedType == Material.CHEST || clickedType == Material.TRAPPED_CHEST) {
+        if (EzChestShopConstants.TAG_CHEST.contains(clickedType)) {
             if (inventory instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
                 Chest chestleft = (Chest) doubleChest.getLeftSide(false);

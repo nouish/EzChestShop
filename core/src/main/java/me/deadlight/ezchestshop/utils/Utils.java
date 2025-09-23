@@ -176,7 +176,7 @@ public final class Utils {
      * @return
      */
     public static Inventory getBlockInventory(Block block) {
-        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
+        if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
             return ((Chest) block.getState(false)).getInventory();
         } else if (block.getType() == Material.BARREL) {
             return ((Barrel) block.getState(false)).getInventory();
@@ -220,15 +220,10 @@ public final class Utils {
         return isApplicableContainer(block.getType());
     }
 
-    /**
-     * Check if the given Material is a applicable Shop.
-     *
-     * @param type
-     * @return
-     */
     public static boolean isApplicableContainer(Material type) {
-        return (type == Material.CHEST && Config.container_chests)
-                || (type == Material.TRAPPED_CHEST && Config.container_trapped_chests)
+        // Check trapped chest first, because TAG_CHEST contains trapped chests _and_ other chests.
+        return (type == Material.TRAPPED_CHEST && Config.container_trapped_chests)
+                || (EzChestShopConstants.TAG_CHEST.contains(type) && Config.container_chests)
                 || (type == Material.BARREL && Config.container_barrels)
                 || (Tag.SHULKER_BOXES.isTagged(type) && Config.container_shulkers);
     }
@@ -872,7 +867,7 @@ public final class Utils {
         TileState state = (TileState) block.getState(false);
         Inventory inventory = Utils.getBlockInventory(block);
 
-        if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST) {
+        if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
             if (inventory instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
                 Chest chestleft = (Chest) doubleChest.getLeftSide(false);
@@ -925,7 +920,7 @@ public final class Utils {
     }
 
     public static EzShop isPartOfTheChestShop(@NotNull Block block) {
-        if (block.getType() != Material.CHEST && block.getType() != Material.TRAPPED_CHEST) {
+        if (!EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
             return null;
         }
 
