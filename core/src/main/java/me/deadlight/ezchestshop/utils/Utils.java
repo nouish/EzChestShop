@@ -619,74 +619,75 @@ public final class Utils {
             return false;
         } else if (stack1 == stack2) {
             return true;
-        } else {
-            if (stack1.getType() == Material.FIREWORK_ROCKET && stack2.getType() == Material.FIREWORK_ROCKET) {
-                FireworkMeta meta1 = (FireworkMeta) stack1.getItemMeta();
-                FireworkMeta meta2 = (FireworkMeta) stack2.getItemMeta();
-                if (meta1 != null && meta2 != null) {
-                    if (meta1.getEffects().size() != meta2.getEffects().size()) {
-                        return false;
-                    }
-                    if (meta1.getPower() != meta2.getPower()) {
-                        return false;
-                    }
-                    for (int i = 0; i < meta1.getEffects().size(); i++) {
-                        if (!meta1.getEffects().get(i).equals(meta2.getEffects().get(i))) {
-                            return false;
-                        }
-                    }
-                    if (meta1.hasDisplayName() != meta2.hasDisplayName()) {
-                        return false;
-                    } else if (meta1.hasDisplayName()) {
-                        if (!meta1.getDisplayName().equals(meta2.getDisplayName())) {
-                            return false;
-                        }
-                    }
-
-                    if (meta1.hasLore() != meta2.hasLore()) {
-                        return false;
-                    } else if (meta1.hasLore()) {
-                        if (!meta1.getLore().equals(meta2.getLore())) {
-                            return false;
-                        }
-                    }
-
-                    if (meta1.hasCustomModelData() != meta2.hasCustomModelData()) {
-                        return false;
-                    } else if (meta1.hasCustomModelData()) {
-                        if (meta1.getCustomModelData() != meta2.getCustomModelData()) {
-                            return false;
-                        }
-                    }
-
-                    if (meta1.hasEnchants() != meta2.hasEnchants()) {
-                        return false;
-                    } else if (meta1.hasEnchants()) {
-                        if (!meta1.getEnchants().equals(meta2.getEnchants())) {
-                            return false;
-                        }
-                    }
-
-                    if (!meta1.getItemFlags().equals(meta2.getItemFlags())) {
-                        return false;
-                    }
-                    if (meta1.getAttributeModifiers() != null) {
-                        if (!meta1.getAttributeModifiers().equals(meta2.getAttributeModifiers())) {
-                            return false;
-                        }
-                    } else if (meta2.getAttributeModifiers() != null) {
-                        return false;
-                    }
-
-                    if (meta1.isUnbreakable() != meta2.isUnbreakable()) {
-                        return false;
-                    }
-                }
-            } else if (!stack1.isSimilar(stack2)) {
+        } else if (stack1.getType() == Material.FIREWORK_ROCKET
+                && stack2.getType() == Material.FIREWORK_ROCKET
+                && stack1.getItemMeta() instanceof FireworkMeta meta1
+                && stack2.getItemMeta() instanceof FireworkMeta meta2) {
+            if (meta1.getEffects().size() != meta2.getEffects().size()) {
                 return false;
             }
-            return true;
+
+            if (meta1.getPower() != meta2.getPower()) {
+                return false;
+            }
+
+            for (int i = 0; i < meta1.getEffects().size(); i++) {
+                if (!meta1.getEffects().get(i).equals(meta2.getEffects().get(i))) {
+                    return false;
+                }
+            }
+
+            if (meta1.hasDisplayName() != meta2.hasDisplayName()) {
+                return false;
+            } else if (meta1.hasDisplayName()) {
+                if (!meta1.getDisplayName().equals(meta2.getDisplayName())) {
+                    return false;
+                }
+            }
+
+            if (meta1.hasLore() != meta2.hasLore()) {
+                return false;
+            } else if (meta1.hasLore()) {
+                if (!meta1.getLore().equals(meta2.getLore())) {
+                    return false;
+                }
+            }
+
+            if (meta1.hasCustomModelData() != meta2.hasCustomModelData()) {
+                return false;
+            } else if (meta1.hasCustomModelData()) {
+                if (meta1.getCustomModelData() != meta2.getCustomModelData()) {
+                    return false;
+                }
+            }
+
+            if (meta1.hasEnchants() != meta2.hasEnchants()) {
+                return false;
+            } else if (meta1.hasEnchants()) {
+                if (!meta1.getEnchants().equals(meta2.getEnchants())) {
+                    return false;
+                }
+            }
+
+            if (!meta1.getItemFlags().equals(meta2.getItemFlags())) {
+                return false;
+            }
+
+            if (meta1.getAttributeModifiers() != null) {
+                if (!meta1.getAttributeModifiers().equals(meta2.getAttributeModifiers())) {
+                    return false;
+                }
+            } else if (meta2.getAttributeModifiers() != null) {
+                return false;
+            }
+
+            if (meta1.isUnbreakable() != meta2.isUnbreakable()) {
+                return false;
+            }
+        } else {
+            return stack1.isSimilar(stack2);
         }
+        return true;
     }
 
     public static OptionalInt tryParseInt(@Nullable String str) {
