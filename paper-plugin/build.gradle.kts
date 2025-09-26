@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("com.gradleup.shadow") version "9.2.1"
+    id("com.gradleup.shadow") version "9.2.2"
     id("com.gorylenko.gradle-git-properties") version "2.5.3"
 }
 
