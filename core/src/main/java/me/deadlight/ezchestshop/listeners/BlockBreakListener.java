@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import io.papermc.paper.block.TileStateInventoryHolder;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.EzChestShopConstants;
 import me.deadlight.ezchestshop.data.Config;
@@ -19,6 +20,8 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
@@ -28,12 +31,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class BlockBreakListener implements Listener {
+    private static final Logger LOGGER = EzChestShop.logger();
     private static final LanguageManager lm = LanguageManager.getInstance();
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -129,11 +136,13 @@ public class BlockBreakListener implements Listener {
                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
                         player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                         event.setCancelled(true);
+                        return;
                     }
                 } else {
                     if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_SHOP, player)) {
                         player.spigot().sendMessage(lm.notAllowedToCreateOrRemove(player));
                         event.setCancelled(true);
+                        return;
                     }
                 }
             }
@@ -146,10 +155,59 @@ public class BlockBreakListener implements Listener {
                     if (!shop.getOwnerID().equals(player.getUniqueId())) {
                         event.setCancelled(true);
                         player.sendMessage(lm.cannotDestroyShop());
+                        return;
                     }
                 }
+            }
+
+            if (isShopBusy(event.getBlock())) {
+                event.setCancelled(true);
+                event.getPlayer().sendMessage(lm.noBreakingWhileShopOpen());
+                return;
             }
         }
     }
 
+    /**
+     * Check if there is anybody currently viewing the stock.
+     */
+    private boolean isShopBusy(@NotNull Block block) {
+        // We check for active viewers first (actual chest stock, not shop GUI).
+        if (block.getState(false) instanceof TileStateInventoryHolder inventoryHolder) {
+            Inventory inventory = inventoryHolder.getInventory();
+            if (inventory.getHolder(false) instanceof DoubleChest doubleChest
+                    && doubleChest.getLeftSide(false) instanceof Chest leftSide
+                    && doubleChest.getRightSide(false) instanceof Chest rightSide) {
+                if (!leftSide.getInventory().getViewers().isEmpty()) {
+                    return true;
+                } else if (!rightSide.getInventory().getViewers().isEmpty()) {
+                    return true;
+                }
+            } else if (!inventory.getViewers().isEmpty()) {
+                return true;
+            }
+        }
+
+        // We then also check everyone's active inventories.
+        // This is because there is always the chance somebody turned a single chest
+        // into a double chest, leaving some other player with an "outdated" single inventory.
+        Location location = block.getLocation();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().getHolder(false) instanceof Chest chest) {
+                if (chest.getInventory().getHolder(false) instanceof DoubleChest doubleChest
+                        && doubleChest.getLeftSide(false) instanceof Chest leftSide
+                        && doubleChest.getRightSide(false) instanceof Chest rightSide) {
+                    if (location.equals(leftSide.getLocation())) {
+                        return true;
+                    } else if (location.equals(rightSide.getLocation())) {
+                        return true;
+                    }
+                } else if (location.equals(chest.getLocation())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
