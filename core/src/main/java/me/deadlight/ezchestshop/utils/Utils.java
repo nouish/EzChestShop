@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,6 +94,26 @@ public final class Utils {
             nmsHandle = (NmsHandle) clazz.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new AssertionError(e);
+        }
+    }
+
+    private static final AtomicBoolean WARN_ON_ENTITY_ID_EXCEPTION = new AtomicBoolean();
+
+    /**
+     * UnsafeValues: Use this when sending custom packets, so that there are no collisions on the client or server.
+     */
+    public static int nextEntityId() {
+        try {
+            // noinspection deprecation
+            return Bukkit.getUnsafe().nextEntityId();
+        } catch (Exception e) {
+            // Methods in org.bukkit.UnsafeValues could change or be removed, so we anticipate this and provide a fallback.
+            if (!WARN_ON_ENTITY_ID_EXCEPTION.getAndSet(true)) {
+                LOGGER.warn("WARNING: Failed to get a safe entity ID; randomly generated IDs will be used as fallback.");
+                LOGGER.warn("Please report this with your server version and logs:", e);
+            }
+            // Fallback is the previous implementation default, but this could result in collisions.
+            return ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
         }
     }
 
