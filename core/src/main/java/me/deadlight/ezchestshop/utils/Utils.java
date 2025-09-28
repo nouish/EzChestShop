@@ -136,8 +136,8 @@ public final class Utils {
                 os.writeObject(item);
             }
             return Base64.getEncoder().encodeToString(baos.toByteArray());
-        } catch (IOException ex) {
-            System.out.println(ex);
+        } catch (IOException e) {
+            LOGGER.warn("Exception while trying to encode item: {}", item, e);
             return null;
         }
     }
@@ -151,8 +151,8 @@ public final class Utils {
         try (ByteArrayInputStream io = new ByteArrayInputStream(buf);
              BukkitObjectInputStream in = new BukkitObjectInputStream(io)) {
             return (ItemStack) in.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
-            System.out.println(ex);
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.warn("Exception while trying to decode item: {}", encodedItem, e);
             return null;
         }
     }

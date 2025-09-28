@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.EzChestShop;
@@ -31,15 +30,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.slf4j.Logger;
 
-public class ServerShopGUI {
+public final class ServerShopGUI {
+    private static final Logger LOGGER = EzChestShop.logger();
+
     public ServerShopGUI() {
     }
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = LanguageManager.getInstance();
         String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-        Preconditions.checkNotNull(rawId);
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
         String shopOwner = offlinePlayerOwner.getName();
         if (shopOwner == null) {
@@ -53,7 +54,12 @@ public class ServerShopGUI {
             shopOwner = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
             if (shopOwner == null) {
                 player.sendMessage(lm.chestShopProblem());
-                System.out.println("EzChestShop ERROR: Shop owner is STILL null. Please report this to the EzChestShop developer for furthur investigation.");
+                LOGGER.warn("Unable to resolve player name for {} at {}, {}, {} (admin shop).",
+                        rawId,
+                        containerBlock.getLocation().getBlockX(),
+                        containerBlock.getLocation().getBlockY(),
+                        containerBlock.getLocation().getBlockZ()
+                );
                 return;
             }
         }
@@ -107,7 +113,7 @@ public class ServerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException ignored) {}
                 }
 
                 ContainerGuiItem sellItemStack = container.getItem(key).setLore(lm.buttonSellXLore(sellPrice * amount, amount)).setName(lm.buttonSellXTitle(amount));
@@ -135,7 +141,7 @@ public class ServerShopGUI {
                 } else {
                     try {
                         amount = Integer.parseInt(amountString);
-                    } catch (NumberFormatException e) {}
+                    } catch (NumberFormatException ignored) {}
                 }
 
                 ContainerGuiItem buyItemStack = container.getItem(key).setLore(lm.buttonBuyXLore(buyPrice * amount, amount)).setName(lm.buttonBuyXTitle(amount));
