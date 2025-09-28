@@ -23,11 +23,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.slf4j.Logger;
 
 public class ChatListener implements Listener {
-
+    private static final Logger LOGGER = EzChestShop.logger();
+    private static final LanguageManager lm = LanguageManager.getInstance();
     public static final HashMap<UUID, ChatWaitObject> chatmap = new HashMap<>();
-    public static final LanguageManager lm = LanguageManager.getInstance();
 
     @EventHandler
     public void onAsyncChat(AsyncChatEvent event) {
@@ -75,7 +76,6 @@ public class ChatListener implements Listener {
         }
     }
 
-
     // We are taking user input here, and are checking if the player played before.
     public boolean checkIfPlayerExists(String name) {
         Player player = Bukkit.getPlayer(name);
@@ -99,13 +99,21 @@ public class ChatListener implements Listener {
         List<UUID> admins = Utils.getAdminsList(((TileState) chest.getState(false)).getPersistentDataContainer());
         if (!admins.contains(answerUUID)) {
             admins.add(answerUUID);
+            String formattedName = Objects.requireNonNullElse(target.getName(), answer);
+            LOGGER.info("{} made {} a shop admin at {}, {}, {}.",
+                    player.getName(),
+                    formattedName,
+                    chest.getLocation().getBlockX(),
+                    chest.getLocation().getBlockY(),
+                    chest.getLocation().getBlockZ()
+            );
             String adminsString = convertListUUIDtoString(admins);
             TileState state = ((TileState) chest.getState(false));
             PersistentDataContainer data = state.getPersistentDataContainer();
             data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
             ShopContainer.getShopSettings(chest.getLocation()).setAdmins(adminsString);
-            player.sendMessage(lm.sucAdminAdded(Objects.requireNonNullElse(target.getName(), answer)));
+            player.sendMessage(lm.sucAdminAdded(formattedName));
         } else {
             player.sendMessage(lm.alreadyAdmin());
         }
@@ -118,11 +126,19 @@ public class ChatListener implements Listener {
         if (admins.contains(answerUUID)) {
             TileState state = ((TileState) chest.getState(false));
             admins.remove(answerUUID);
+            String formattedName = Objects.requireNonNullElse(target.getName(), answer);
+            LOGGER.info("{} removed {} as shop admin at {}, {}, {}.",
+                    player.getName(),
+                    formattedName,
+                    chest.getLocation().getBlockX(),
+                    chest.getLocation().getBlockY(),
+                    chest.getLocation().getBlockZ()
+            );
             if (admins.isEmpty()) {
                 PersistentDataContainer data = state.getPersistentDataContainer();
                 data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
                 state.update();
-                player.sendMessage(lm.sucAdminRemoved(Objects.requireNonNullElse(target.getName(), answer)));
+                player.sendMessage(lm.sucAdminRemoved(formattedName));
                 return;
             }
             String adminsString = convertListUUIDtoString(admins);
@@ -130,7 +146,7 @@ public class ChatListener implements Listener {
             data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
             ShopContainer.getShopSettings(chest.getLocation()).setAdmins(adminsString);
-            player.sendMessage(lm.sucAdminRemoved(Objects.requireNonNullElse(target.getName(), answer)));
+            player.sendMessage(lm.sucAdminRemoved(formattedName));
         } else {
             player.sendMessage(lm.notInAdminList());
         }
