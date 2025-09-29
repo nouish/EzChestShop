@@ -37,10 +37,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 public class BlockBreakListener implements Listener {
-    private static final Logger LOGGER = EzChestShop.logger();
     private static final LanguageManager lm = LanguageManager.getInstance();
 
     @EventHandler(priority = EventPriority.NORMAL)
