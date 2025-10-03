@@ -205,7 +205,6 @@ public final class DiscordWebhook {
     }
 
     private static String userAgent() {
-        //noinspection UnstableApiUsage
         return String.format(Locale.ENGLISH, "%s/%s %s/%s",
             EzChestShop.getPlugin().getName(),
             EzChestShop.getPlugin().getPluginMeta().getVersion(),

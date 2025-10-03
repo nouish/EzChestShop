@@ -9,6 +9,7 @@ dependencyResolutionManagement {
         maven("https://repo.papermc.io/repository/maven-public/") {
             content {
                 includeGroup("io.papermc.paper")
+                includeGroup("net.kyori")
                 includeGroup("net.md-5")
             }
         }

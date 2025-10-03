@@ -329,7 +329,7 @@ public final class EzChestShop extends JavaPlugin {
         // Just used as return type for getEconomyProvider().
     }
 
-    @SuppressWarnings({"deprecation", "ConstantExpression", "UnstableApiUsage", "ConstantValue"})
+    @SuppressWarnings({"deprecation", "ConstantExpression", "ConstantValue"})
     @Nullable
     private static PluginVersion findVersion(@Nullable Plugin plugin) {
         if (plugin == null) {

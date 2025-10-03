@@ -50,10 +50,8 @@ final class Compatibility {
     private static boolean findClass(@NotNull String classname) {
         try {
             Class.forName(classname);
-            LOGGER.trace("Detected class: {}", classname);
             return true;
         } catch (ClassNotFoundException ignored) {
-            LOGGER.trace("No such class: {}", classname);
             return false;
         }
     }
