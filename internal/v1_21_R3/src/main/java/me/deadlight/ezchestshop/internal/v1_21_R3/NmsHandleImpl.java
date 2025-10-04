@@ -3,7 +3,6 @@ package me.deadlight.ezchestshop.internal.v1_21_R3;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import io.netty.channel.Channel;
@@ -35,8 +34,10 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.slf4j.Logger;
 
 public class NmsHandleImpl extends NmsHandle {
+    private static final Logger LOGGER = EzChestShop.logger();
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
     private static final Map<Integer, Entity> entities = new HashMap<>();
 
@@ -113,7 +114,7 @@ public class NmsHandleImpl extends NmsHandle {
             ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(entityID, e.getEntityData().getNonDefaultValues());
             ((CraftPlayer) player).getHandle().connection.send(packet);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn("Unable to rename entity", e);
         }
     }
 
@@ -171,21 +172,7 @@ public class NmsHandleImpl extends NmsHandle {
     public void injectConnection(Player player) {
         ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
         ChannelPipeline pipeline = nmsPlayer.connection.connection.channel.pipeline();
-        try {
-            pipeline.addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
-        } catch (NoSuchElementException ex) {
-            String cause = ex.getMessage();
-            if (cause != null && cause.contains("packet_handler")) {
-                EzChestShop.logger().warn("Unsupported server implementation! Unable to find Minecraft packet handler!");
-                EzChestShop.logger().warn("Found handlers:");
-                int count = 1;
-                for (var entry : pipeline) {
-                    EzChestShop.logger().warn("{}: {}", count, entry.getKey());
-                    count++;
-                }
-            }
-            throw ex;
-        }
+        pipeline.addBefore("packet_handler", "ecs_listener", new ChannelHandler(player));
     }
 
     @Override
