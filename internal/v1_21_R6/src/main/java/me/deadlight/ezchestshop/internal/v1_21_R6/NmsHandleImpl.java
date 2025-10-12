@@ -122,7 +122,7 @@ public class NmsHandleImpl extends NmsHandle {
     public void teleportEntity(Player player, int entityID, Location location) {
         ServerPlayer ServerPlayer = ((CraftPlayer) player).getHandle();
         Entity e = entities.get(entityID);
-        e.teleportTo(ServerPlayer.level(), location.getX(), location.getY(), location.getZ(), new HashSet<>(), 0, 0, false);
+        e.teleportTo(((CraftWorld) location.getWorld()).getHandle(), location.getX(), location.getY(), location.getZ(), new HashSet<>(), 0, 0, false);
         // not sure if it's needed
         ClientboundTeleportEntityPacket packet = new ClientboundTeleportEntityPacket(e.getId(), PositionMoveRotation.of(e), Set.of(), e.onGround());
         ServerPlayer.connection.send(packet);
