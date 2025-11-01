@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import com.palmergames.bukkit.towny.utils.ShopPlotUtil;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -323,7 +323,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         //item (String) (itemstack)
 
                         //already a shop
-                        if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) || ifItsADoubleChestShop(target) != null) {
+                        if (container.has(Constants.OWNER_KEY, PersistentDataType.STRING) || ifItsADoubleChestShop(target) != null) {
                             player.sendMessage(LanguageManager.getInstance().alreadyAShop());
                         } else {
                             //not a shop
@@ -352,16 +352,16 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                         (sellprice == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
                                         : (Config.settings_defaults_dsell ? 1 : 0);
 
-                                container.set(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
-                                container.set(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, buyprice);
-                                container.set(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, sellprice);
-                                container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, Config.settings_defaults_transactions ? 1 : 0);
-                                container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, isDbuy);
-                                container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, isDSell);
-                                container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
-                                container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
-                                container.set(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0);
-                                container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
+                                container.set(Constants.OWNER_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
+                                container.set(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, buyprice);
+                                container.set(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, sellprice);
+                                container.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, Config.settings_defaults_transactions ? 1 : 0);
+                                container.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, isDbuy);
+                                container.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, isDSell);
+                                container.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
+                                container.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
+                                container.set(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0);
+                                container.set(Constants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
 
                                 //msgtoggle 0/1
                                 //dbuy 0/1
@@ -405,20 +405,20 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             }
             //is the owner remove it
             PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
-            container.remove(EzChestShopConstants.OWNER_KEY);
-            container.remove(EzChestShopConstants.BUY_PRICE_KEY);
-            container.remove(EzChestShopConstants.SELL_PRICE_KEY);
-            container.remove(EzChestShopConstants.ITEM_KEY);
+            container.remove(Constants.OWNER_KEY);
+            container.remove(Constants.BUY_PRICE_KEY);
+            container.remove(Constants.SELL_PRICE_KEY);
+            container.remove(Constants.ITEM_KEY);
 
             //add new settings data later
             try {
-                container.remove(EzChestShopConstants.ENABLE_MESSAGE_KEY);
-                container.remove(EzChestShopConstants.DISABLE_BUY_KEY);
-                container.remove(EzChestShopConstants.DISABLE_SELL_KEY);
-                container.remove(EzChestShopConstants.ADMIN_LIST_KEY);
-                container.remove(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY);
-                container.remove(EzChestShopConstants.ENABLE_ADMINSHOP_KEY);
-                container.remove(EzChestShopConstants.ROTATION_KEY);
+                container.remove(Constants.ENABLE_MESSAGE_KEY);
+                container.remove(Constants.DISABLE_BUY_KEY);
+                container.remove(Constants.DISABLE_SELL_KEY);
+                container.remove(Constants.ADMIN_LIST_KEY);
+                container.remove(Constants.ENABLE_SHARED_INCOME_KEY);
+                container.remove(Constants.ENABLE_ADMINSHOP_KEY);
+                container.remove(Constants.ROTATION_KEY);
                 //msgtoggle 0/1
                 //dbuy 0/1
                 //dsell 0/1
@@ -602,12 +602,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             db.setString("location", sloc, "admins", "shopdata", admins);
             db.setBool("location", sloc, "shareIncome", "shopdata", settings.isShareincome());
             db.setString("location", sloc, "rotation", "shopdata", settings.getRotation());
-            container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
-            container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
-            container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
-            container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, admins);
-            container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
-            container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
+            container.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
+            container.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
+            container.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
+            container.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, admins);
+            container.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
+            container.set(Constants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
             ShopHologram shopHologram = ShopHologram.getHologram(blockState.getLocation(), player);
             shopHologram.updatePosition();
             shopHologram.updateDsell();
@@ -638,20 +638,20 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 switch (arg) {
                     case "toggle-message": {
                         db.setBool("location", sloc, "msgToggle", "shopdata", settings.isMsgtoggle());
-                        container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
+                        container.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
                         newSettings.setMsgtoggle(settings.isMsgtoggle());
                         break;
                     }
                     case "toggle-buying": {
                         db.setBool("location", sloc, "buyDisabled", "shopdata", settings.isDbuy());
-                        container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
+                        container.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
                         newSettings.setDbuy(settings.isDbuy());
                         ShopHologram.getHologram(blockState.getLocation(), player).updateDbuy();
                         break;
                     }
                     case "toggle-selling": {
                         db.setBool("location", sloc, "sellDisabled", "shopdata", settings.isDsell());
-                        container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
+                        container.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
                         newSettings.setDsell(settings.isDsell());
                         ShopHologram.getHologram(blockState.getLocation(), player).updateDsell();
                         break;
@@ -659,19 +659,19 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     case "admins": {
                         String admins = settings.getAdmins() == null ? "none" : settings.getAdmins();
                         db.setString("location", sloc, "admins", "shopdata", admins);
-                        container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, admins);
+                        container.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, admins);
                         newSettings.setAdmins(settings.getAdmins());
                         break;
                     }
                     case "toggle-shared-income": {
                         db.setBool("location", sloc, "shareIncome", "shopdata", settings.isShareincome());
-                        container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
+                        container.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
                         newSettings.setShareincome(settings.isShareincome());
                         break;
                     }
                     case "change-rotation": {
                         db.setString("location", sloc, "rotation", "shopdata", settings.getRotation());
-                        container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
+                        container.set(Constants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
                         ShopHologram.getHologram(blockState.getLocation(), player).updatePosition();
                         newSettings.setRotation(settings.getRotation());
                         break;
@@ -695,7 +695,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 case DBUY:
                     settings.setDbuy(data.isEmpty() ? !settings.isDbuy() : data.equals("true"));
                     db.setBool("location", sloc, "buyDisabled", "shopdata", settings.isDbuy());
-                    container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
+                    container.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, settings.isDbuy() ? 1 : 0);
                     if (settings.isDbuy()) {
                         player.sendMessage(LanguageManager.getInstance().disableBuyingOnInChat());
                     } else {
@@ -706,7 +706,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 case DSELL:
                     settings.setDsell(data.isEmpty() ? !settings.isDsell() : data.equals("true"));
                     db.setBool("location", sloc, "sellDisabled", "shopdata", settings.isDsell());
-                    container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
+                    container.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, settings.isDsell() ? 1 : 0);
                     if (settings.isDsell()) {
                         player.sendMessage(LanguageManager.getInstance().disableSellingOnInChat());
                     } else {
@@ -781,12 +781,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                     settings.setAdmins(data);
                     String admins = settings.getAdmins() == null ? "none" : settings.getAdmins();
                     db.setString("location", sloc, "admins", "shopdata", admins);
-                    container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, admins);
+                    container.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, admins);
                     break;
                 case TOGGLE_MSG:
                     settings.setMsgtoggle(!settings.isMsgtoggle());
                     db.setBool("location", sloc, "msgToggle", "shopdata", settings.isMsgtoggle());
-                    container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
+                    container.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, settings.isMsgtoggle() ? 1 : 0);
                     if (settings.isMsgtoggle()) {
                         player.sendMessage(LanguageManager.getInstance().toggleTransactionMessageOnInChat());
                     } else {
@@ -796,7 +796,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 case SHAREINCOME:
                     settings.setShareincome(!settings.isShareincome());
                     db.setBool("location", sloc, "shareIncome", "shopdata", settings.isShareincome());
-                    container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
+                    container.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, settings.isShareincome() ? 1 : 0);
                     if (settings.isShareincome()) {
                         player.sendMessage(LanguageManager.getInstance().sharedIncomeOnInChat());
                     } else {
@@ -806,7 +806,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 case ROTATION:
                     settings.setRotation(Utils.rotations.contains(data) ? data : Utils.getNextRotation(settings.getRotation()));
                     db.setString("location", sloc, "rotation", "shopdata", settings.getRotation());
-                    container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
+                    container.set(Constants.ROTATION_KEY, PersistentDataType.STRING, settings.getRotation());
                     player.sendMessage(LanguageManager.getInstance().rotateHologramInChat(settings.getRotation()));
                     ShopHologram.getHologram(blockState.getLocation(), player).updatePosition();
                     break;
@@ -851,8 +851,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                 Chest leftchest = (Chest) doubleChest.getLeftSide(false);
                 Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
-                if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
-                        || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                if (leftchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)
+                        || rightchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                     Chest rightone;
 
                     if (!leftchest.getPersistentDataContainer().isEmpty()) {
@@ -881,7 +881,7 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             if (blockState instanceof TileState) {
                 if (Utils.isApplicableContainer(target)) {
                     if (checkIfLocation(target.getLocation(), player)) {
-                        if (EzChestShopConstants.TAG_CHEST.contains(target.getType())) {
+                        if (Constants.TAG_CHEST.contains(target.getType())) {
                             Inventory inventory = Utils.getBlockInventory(target);
                             if (Utils.getBlockInventory(target) instanceof DoubleChestInventory) {
                                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
@@ -899,13 +899,13 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                         PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
                         Chest chkIfDCS = ifItsADoubleChestShop(target);
 
-                        if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) || chkIfDCS != null) {
+                        if (container.has(Constants.OWNER_KEY, PersistentDataType.STRING) || chkIfDCS != null) {
                             if (chkIfDCS != null) {
                                 BlockState newBlockState = chkIfDCS.getBlock().getState(false);
                                 container = ((TileState) newBlockState).getPersistentDataContainer();
                             }
 
-                            String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))).getName();
+                            String owner = Bukkit.getOfflinePlayer(UUID.fromString(container.get(Constants.OWNER_KEY, PersistentDataType.STRING))).getName();
 
                             if (player.getName().equalsIgnoreCase(owner)) {
                                 return blockState;
@@ -944,8 +944,8 @@ public class MainCommands implements CommandExecutor, TabCompleter {
             Chest leftchest = (Chest) doubleChest.getLeftSide(false);
             Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
-            if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
-                    || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+            if (leftchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                 if (!leftchest.getPersistentDataContainer().isEmpty()) {
                     target = leftchest.getBlock();
                 } else {

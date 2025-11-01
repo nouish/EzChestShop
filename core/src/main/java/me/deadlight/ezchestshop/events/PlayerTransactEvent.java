@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.utils.Utils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -96,15 +96,15 @@ public class PlayerTransactEvent extends Event {
     }
 
     public boolean isShareIncome() {
-        return getBoolean(containerBlock, EzChestShopConstants.ENABLE_SHARED_INCOME_KEY);
+        return getBoolean(containerBlock, Constants.ENABLE_SHARED_INCOME_KEY);
     }
 
     public double getBuyPrice() {
-        return getDouble(containerBlock, EzChestShopConstants.BUY_PRICE_KEY);
+        return getDouble(containerBlock, Constants.BUY_PRICE_KEY);
     }
 
     public double getSellPrice() {
-        return getDouble(containerBlock, EzChestShopConstants.SELL_PRICE_KEY);
+        return getDouble(containerBlock, Constants.SELL_PRICE_KEY);
     }
 
     private boolean getBoolean(Block containerBlock, NamespacedKey key) {

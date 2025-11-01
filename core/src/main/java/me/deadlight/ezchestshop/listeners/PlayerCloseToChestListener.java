@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
@@ -17,7 +17,6 @@ import me.deadlight.ezchestshop.utils.holograms.ShopHologram;
 import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
@@ -226,7 +225,7 @@ public class PlayerCloseToChestListener implements Listener {
         if (event.isCancelled())
             return;
         Block block = event.getBlockPlaced();
-        if (!EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
+        if (!Constants.TAG_CHEST.contains(block.getType())) {
             return;
         }
 

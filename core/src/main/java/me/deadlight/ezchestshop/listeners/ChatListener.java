@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.guis.SettingsGUI;
@@ -40,7 +40,7 @@ public class ChatListener implements Listener {
             ChatWaitObject waitObject = chatmap.get(player.getUniqueId());
             Block waitChest = waitObject.containerBlock;
             if (waitChest == null) return;
-            String owneruuid = waitObject.dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+            String owneruuid = waitObject.dataContainer.get(Constants.OWNER_KEY, PersistentDataType.STRING);
             if (message.equalsIgnoreCase(player.getName())) {
                 OfflinePlayer ofplayer = Bukkit.getOfflinePlayer(UUID.fromString(owneruuid));
                 if (player.getName().equalsIgnoreCase(ofplayer.getName())) {
@@ -110,7 +110,7 @@ public class ChatListener implements Listener {
             String adminsString = convertListUUIDtoString(admins);
             TileState state = ((TileState) chest.getState(false));
             PersistentDataContainer data = state.getPersistentDataContainer();
-            data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
+            data.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
             ShopContainer.getShopSettings(chest.getLocation()).setAdmins(adminsString);
             player.sendMessage(lm.sucAdminAdded(formattedName));
@@ -136,14 +136,14 @@ public class ChatListener implements Listener {
             );
             if (admins.isEmpty()) {
                 PersistentDataContainer data = state.getPersistentDataContainer();
-                data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
+                data.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
                 state.update();
                 player.sendMessage(lm.sucAdminRemoved(formattedName));
                 return;
             }
             String adminsString = convertListUUIDtoString(admins);
             PersistentDataContainer data = state.getPersistentDataContainer();
-            data.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
+            data.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, adminsString);
             state.update();
             ShopContainer.getShopSettings(chest.getLocation()).setAdmins(adminsString);
             player.sendMessage(lm.sucAdminRemoved(formattedName));

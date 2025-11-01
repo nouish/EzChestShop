@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableSet;
 import de.themoep.minedown.MineDown;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
@@ -802,7 +802,7 @@ public final class LanguageManager {
     }
 
     public BaseComponent[] cmdadminHelp() {
-        return MineDown.parse(new ArrayList<>(getList("command-messages.adminhelp")).stream().map(Utils::colorify).collect(Collectors.joining("\n")).replace("%discord_link%", EzChestShopConstants.DISCORD_LINK));
+        return MineDown.parse(new ArrayList<>(getList("command-messages.adminhelp")).stream().map(Utils::colorify).collect(Collectors.joining("\n")).replace("%discord_link%", Constants.DISCORD_LINK));
     }
 
     public String alreadyAShop() {
@@ -820,7 +820,7 @@ public final class LanguageManager {
     public BaseComponent[] notAllowedToCreateOrRemove(Player player) {
         ComponentBuilder compb = new ComponentBuilder(Utils.colorify(getString("command-messages.notallowdtocreate")));
         if (player.isOp() || player.hasPermission("ecs.admin")) {
-            compb.append(" [Hover for Server operator only infos]").color(net.md_5.bungee.api.ChatColor.RED).italic(true).event(new ClickEvent(ClickEvent.Action.OPEN_URL, EzChestShopConstants.DISCORD_LINK)).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("If you're unsure where this error originates from, check the following:").color(net.md_5.bungee.api.ChatColor.YELLOW).append(Utils.colorify("\n &b> &7Make sure the player can break blocks at this location. WorldGuard, " + "Spawn Protection or Region protection plugins like Grief Prevention, etc. my prevent this." + "\n &b> &7Make sure ECS's World Guard shop create/remove flags are set to allow (default)." + "\n &b> &7If you are using an Anti Cheat plugin it might interfere with our break" + " permission check and detects it as \"fast break\" hack. Disable this check if possible." + "\n &b> &7If you are using Towny by default shops can only be created in shop plots." + "If you want to allow shops to be created in the wilderness, " + "you can disable this in the config under the integrations section.")).color(net.md_5.bungee.api.ChatColor.GRAY).create()));
+            compb.append(" [Hover for Server operator only infos]").color(net.md_5.bungee.api.ChatColor.RED).italic(true).event(new ClickEvent(ClickEvent.Action.OPEN_URL, Constants.DISCORD_LINK)).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("If you're unsure where this error originates from, check the following:").color(net.md_5.bungee.api.ChatColor.YELLOW).append(Utils.colorify("\n &b> &7Make sure the player can break blocks at this location. WorldGuard, " + "Spawn Protection or Region protection plugins like Grief Prevention, etc. my prevent this." + "\n &b> &7Make sure ECS's World Guard shop create/remove flags are set to allow (default)." + "\n &b> &7If you are using an Anti Cheat plugin it might interfere with our break" + " permission check and detects it as \"fast break\" hack. Disable this check if possible." + "\n &b> &7If you are using Towny by default shops can only be created in shop plots." + "If you want to allow shops to be created in the wilderness, " + "you can disable this in the config under the integrations section.")).color(net.md_5.bungee.api.ChatColor.GRAY).create()));
         }
         return compb.create();
     }

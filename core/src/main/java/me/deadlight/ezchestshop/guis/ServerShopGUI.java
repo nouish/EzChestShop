@@ -8,7 +8,7 @@ import java.util.UUID;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -40,7 +40,7 @@ public final class ServerShopGUI {
 
     public void showGUI(Player player, PersistentDataContainer data, Block containerBlock) {
         LanguageManager lm = LanguageManager.getInstance();
-        String rawId = data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+        String rawId = data.get(Constants.OWNER_KEY, PersistentDataType.STRING);
         OfflinePlayer offlinePlayerOwner = Bukkit.getOfflinePlayer(UUID.fromString(rawId));
         String shopOwner = offlinePlayerOwner.getName();
         if (shopOwner == null) {
@@ -65,10 +65,10 @@ public final class ServerShopGUI {
         }
 
         // Double.MAX_VALUE simply represents a large value to effectively render this shop disabled in the event the data is missing.
-        double sellPrice = data.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
-        double buyPrice = data.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
-        boolean disabledBuy = data.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
-        boolean disabledSell = data.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
+        double sellPrice = data.getOrDefault(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+        double buyPrice = data.getOrDefault(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+        boolean disabledBuy = data.getOrDefault(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean disabledSell = data.getOrDefault(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
 
         ContainerGui container = GuiData.getShop();
 
@@ -79,7 +79,7 @@ public final class ServerShopGUI {
                 .create();
         gui.getFiller().fill(container.getBackground());
 
-        ItemStack mainitem = Utils.decodeItem(data.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
+        ItemStack mainitem = Utils.decodeItem(data.get(Constants.ITEM_KEY, PersistentDataType.STRING));
         if (container.hasItem("shop-item")) {
             ItemStack guiMainItem = mainitem.clone();
             ItemMeta mainmeta = guiMainItem.getItemMeta();

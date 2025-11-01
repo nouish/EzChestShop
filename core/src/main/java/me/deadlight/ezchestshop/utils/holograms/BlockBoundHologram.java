@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -318,11 +318,11 @@ public class BlockBoundHologram {
             Chest leftChest = (Chest) doubleChest.getLeftSide(false);
             Chest rightChest = (Chest) doubleChest.getRightSide(false);
 
-            if (leftChest != null && leftChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+            if (leftChest != null && leftChest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                 return leftChest.getLocation();
             }
 
-            if (rightChest != null && rightChest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+            if (rightChest != null && rightChest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                 return rightChest.getLocation();
             }
         }

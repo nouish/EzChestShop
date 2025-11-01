@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -71,7 +71,7 @@ public class ChestOpeningListener implements Listener {
         TileState state = (TileState) chestblock.getState(false);
         Inventory inventory = Utils.getBlockInventory(chestblock);
 
-        if (EzChestShopConstants.TAG_CHEST.contains(clickedType)) {
+        if (Constants.TAG_CHEST.contains(clickedType)) {
             if (inventory instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
                 Chest chestleft = (Chest) doubleChest.getLeftSide(false);
@@ -94,7 +94,7 @@ public class ChestOpeningListener implements Listener {
             dataContainer = state.getPersistentDataContainer();
         }
 
-        if (dataContainer != null && dataContainer.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+        if (dataContainer != null && dataContainer.has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
             // If CoreProtect integration is enabled and the player is
             // in inspect mode, we don't want to open the shop UI.
             if (CoreProtectIntegration.isInspectEnabledFor(event.getPlayer())) {
@@ -122,8 +122,8 @@ public class ChestOpeningListener implements Listener {
                 }
             }
 
-            String owneruuid = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-            boolean isAdminShop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+            String owneruuid = dataContainer.get(Constants.OWNER_KEY, PersistentDataType.STRING);
+            boolean isAdminShop = dataContainer.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
             Player player = event.getPlayer();
 
             if (isAdminShop) {

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import io.papermc.paper.block.TileStateInventoryHolder;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -47,7 +47,7 @@ public class BlockBreakListener implements Listener {
             Collection<Entity> entityList = event.getBlock().getLocation().getWorld().getNearbyEntities(event.getBlock().getLocation(), 2, 2 ,2);
 
             for (Entity entity : entityList) {
-                if (entity instanceof Item item && EzChestShopConstants.TAG_CHEST.contains(item.getItemStack().getType())) {
+                if (entity instanceof Item item && Constants.TAG_CHEST.contains(item.getItemStack().getType())) {
                     entity.remove();
                 }
             }
@@ -85,7 +85,7 @@ public class BlockBreakListener implements Listener {
                         ItemMeta meta = shulker.getItemMeta();
                         PersistentDataContainer container = meta.getPersistentDataContainer();
                         PersistentDataContainer bcontainer = ((TileState) event.getBlock().getState(false)).getPersistentDataContainer();
-                        if (bcontainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) != null) {
+                        if (bcontainer.get(Constants.OWNER_KEY, PersistentDataType.STRING) != null) {
                             container = ShopContainer.copyContainerData(bcontainer, container);
                             meta = addLore(meta, container);
                             shulker.setItemMeta(meta);
@@ -104,10 +104,10 @@ public class BlockBreakListener implements Listener {
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
-            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, EzChestShopConstants.OWNER_KEY))).getName(),
-                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, EzChestShopConstants.ITEM_KEY))),
-                    getContainerDouble(container, EzChestShopConstants.BUY_PRICE_KEY),
-                    getContainerDouble(container, EzChestShopConstants.SELL_PRICE_KEY));
+            List<String> nlore = lm.shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, Constants.OWNER_KEY))).getName(),
+                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, Constants.ITEM_KEY))),
+                    getContainerDouble(container, Constants.BUY_PRICE_KEY),
+                    getContainerDouble(container, Constants.SELL_PRICE_KEY));
             meta.setLore(nlore);
         }
         return meta;

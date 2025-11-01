@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.enums.Changes;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
 import me.deadlight.ezchestshop.integrations.CoreProtectIntegration;
@@ -142,17 +142,17 @@ public class ShopContainer {
     public static void loadShop(Location loc, PersistentDataContainer dataContainer) {
         DatabaseManager db = EzChestShop.getPlugin().getDatabase();
         String sloc = Utils.LocationtoString(loc);
-        boolean msgtoggle = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1;
-        boolean dbuy = dataContainer.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
-        boolean dsell = dataContainer.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
-        String admins = dataContainer.get(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING);
-        boolean shareincome = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
-        boolean adminshop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
-        String owner = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-        String encodedItem = dataContainer.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING);
-        double buyprice = dataContainer.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
-        double sellprice = dataContainer.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
-        String rotation = dataContainer.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
+        boolean msgtoggle = dataContainer.getOrDefault(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean dbuy = dataContainer.getOrDefault(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean dsell = dataContainer.getOrDefault(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
+        String admins = dataContainer.get(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING);
+        boolean shareincome = dataContainer.getOrDefault(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean adminshop = dataContainer.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+        String owner = dataContainer.get(Constants.OWNER_KEY, PersistentDataType.STRING);
+        String encodedItem = dataContainer.get(Constants.ITEM_KEY, PersistentDataType.STRING);
+        double buyprice = dataContainer.getOrDefault(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+        double sellprice = dataContainer.getOrDefault(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+        String rotation = dataContainer.getOrDefault(Constants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
         db.insertShop(sloc, owner, encodedItem == null ? "Error" : encodedItem, buyprice, sellprice, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
 
         ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
@@ -161,28 +161,28 @@ public class ShopContainer {
     }
 
     public static PersistentDataContainer copyContainerData(PersistentDataContainer oldContainer, PersistentDataContainer newContainer) {
-        newContainer.set(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING,
-                oldContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING));
-        newContainer.set(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE,
-                oldContainer.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE));
-        newContainer.set(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE,
-                oldContainer.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE));
-        newContainer.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER,
-                oldContainer.getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0));
-        newContainer.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER,
-                oldContainer.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0));
-        newContainer.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER,
-                oldContainer.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0));
-        newContainer.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING,
-                oldContainer.get(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING));
-        newContainer.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER,
-                oldContainer.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0));
-        newContainer.set(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER,
-                oldContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0));
-        newContainer.set(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING,
-                oldContainer.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING));
-        newContainer.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING,
-                oldContainer.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation));
+        newContainer.set(Constants.OWNER_KEY, PersistentDataType.STRING,
+                oldContainer.get(Constants.OWNER_KEY, PersistentDataType.STRING));
+        newContainer.set(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE,
+                oldContainer.getOrDefault(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE));
+        newContainer.set(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE,
+                oldContainer.getOrDefault(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE));
+        newContainer.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER,
+                oldContainer.getOrDefault(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0));
+        newContainer.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER,
+                oldContainer.getOrDefault(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0));
+        newContainer.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER,
+                oldContainer.getOrDefault(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0));
+        newContainer.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING,
+                oldContainer.get(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING));
+        newContainer.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER,
+                oldContainer.getOrDefault(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0));
+        newContainer.set(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER,
+                oldContainer.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0));
+        newContainer.set(Constants.ITEM_KEY, PersistentDataType.STRING,
+                oldContainer.get(Constants.ITEM_KEY, PersistentDataType.STRING));
+        newContainer.set(Constants.ROTATION_KEY, PersistentDataType.STRING,
+                oldContainer.getOrDefault(Constants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation));
         return newContainer;
     }
 
@@ -253,17 +253,17 @@ public class ShopContainer {
             //why we would need to use database data for getting settings? just setting them in database is enough
             PersistentDataContainer dataContainer = Utils.getDataContainer(loc.getBlock());
             String sloc = Utils.LocationtoString(loc);
-            boolean msgtoggle = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1;
-            boolean dbuy = dataContainer.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
-            boolean dsell = dataContainer.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
-            String admins = dataContainer.get(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING);
-            boolean shareincome = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
-            boolean adminshop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
-            String owner = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
-            String encodedItem = dataContainer.get(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING);
-            double buyprice = dataContainer.getOrDefault(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
-            double sellprice = dataContainer.getOrDefault(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
-            String rotation = dataContainer.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
+            boolean msgtoggle = dataContainer.getOrDefault(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1;
+            boolean dbuy = dataContainer.getOrDefault(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+            boolean dsell = dataContainer.getOrDefault(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
+            String admins = dataContainer.get(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING);
+            boolean shareincome = dataContainer.getOrDefault(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
+            boolean adminshop = dataContainer.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+            String owner = dataContainer.get(Constants.OWNER_KEY, PersistentDataType.STRING);
+            String encodedItem = dataContainer.get(Constants.ITEM_KEY, PersistentDataType.STRING);
+            double buyprice = dataContainer.getOrDefault(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+            double sellprice = dataContainer.getOrDefault(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, Double.MAX_VALUE);
+            String rotation = dataContainer.getOrDefault(Constants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
             ShopSettings settings = new ShopSettings(sloc, msgtoggle, dbuy, dsell, admins, shareincome, adminshop, rotation, new ArrayList<>());
             shop = new EzShop(loc, owner, Utils.decodeItem(encodedItem), buyprice, sellprice, settings);
             shopMap.put(loc, shop);
@@ -444,7 +444,7 @@ public class ShopContainer {
         thatItem.setAmount(count);
         withdraw(Bukkit.getOfflinePlayer(player.getUniqueId()), price);
         transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
-                data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))),
+                data.get(Constants.OWNER_KEY, PersistentDataType.STRING))),
                 Bukkit.getOfflinePlayer(player.getUniqueId()), price, true, tthatItem, count, containerBlock);
         player.sendMessage(lm.messageSuccBuy(price));
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.5f, 0.5f);
@@ -481,7 +481,7 @@ public class ShopContainer {
         thatItem.setAmount(count);
         deposit(Bukkit.getOfflinePlayer(player.getUniqueId()), price);
         transactionMessage(data, Bukkit.getOfflinePlayer(UUID.fromString(
-                data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING))),
+                data.get(Constants.OWNER_KEY, PersistentDataType.STRING))),
                 Bukkit.getOfflinePlayer(player.getUniqueId()), price, false, tthatItem, count, containerBlock);
         Utils.removeItem(player.getInventory(), thatItem);
         player.sendMessage(lm.messageSuccSell(price));
@@ -542,9 +542,9 @@ public class ShopContainer {
     }
 
     private static void sharedIncomeCheck(PersistentDataContainer data, double price) {
-        boolean isSharedIncome = data.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean isSharedIncome = data.getOrDefault(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
         if (isSharedIncome) {
-            UUID ownerUUID = UUID.fromString(data.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING));
+            UUID ownerUUID = UUID.fromString(data.get(Constants.OWNER_KEY, PersistentDataType.STRING));
             List<UUID> adminsList = Utils.getAdminsList(data);
             double profit = price / (adminsList.size() + 1);
             if (!adminsList.isEmpty()) {
@@ -564,7 +564,7 @@ public class ShopContainer {
         Location loc = state.getLocation();
         if (isShop(loc)) {
             PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
-            container.set(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING, newOwner.getUniqueId().toString());
+            container.set(Constants.OWNER_KEY, PersistentDataType.STRING, newOwner.getUniqueId().toString());
             EzShop shop = getShop(loc);
             shop.getSqlQueue().setChange(Changes.SHOP_OWNER, newOwner.getUniqueId().toString());
             shop.setOwner(newOwner);
@@ -576,7 +576,7 @@ public class ShopContainer {
         Location loc = state.getLocation();
         if (isShop(loc)) {
             PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
-            NamespacedKey key = isBuyPrice ? EzChestShopConstants.BUY_PRICE_KEY : EzChestShopConstants.SELL_PRICE_KEY;
+            NamespacedKey key = isBuyPrice ? Constants.BUY_PRICE_KEY : Constants.SELL_PRICE_KEY;
             container.set(key, PersistentDataType.DOUBLE, newPrice);
             EzShop shop = getShop(loc);
             shop.getSqlQueue().setChange(isBuyPrice ? Changes.BUY_PRICE : Changes.SELL_PRICE, newPrice);

@@ -12,7 +12,7 @@ import org.jspecify.annotations.NullMarked;
 
 @Internal
 @NullMarked
-public final class EzChestShopConstants {
+public final class Constants {
     public static final int BSTATS_PROJECT_ID = 23732;
 
     public static final String REPOSITORY = "nouish/EzChestShop";
@@ -50,7 +50,7 @@ public final class EzChestShopConstants {
     public static final NamespacedKey ROTATION_KEY = createKey("rotation");
 
     private static NamespacedKey createKey(String key) {
-        return new NamespacedKey(EzChestShopConstants.NAMESPACE, key);
+        return new NamespacedKey(Constants.NAMESPACE, key);
     }
 
     private static Set<Material> buildSet(Consumer<ImmutableSet.Builder<Material>> builder) {
@@ -66,6 +66,6 @@ public final class EzChestShopConstants {
         }
     }
 
-    private EzChestShopConstants() {
+    private Constants() {
     }
 }

@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import org.jetbrains.annotations.NotNull;
 
 public final class GitHubUtil {
@@ -22,10 +22,10 @@ public final class GitHubUtil {
     private static final String API_BASE = "https://api.github.com/repos/";
 
     // https://docs.github.com/en/rest/releases/releases#get-the-latest-release
-    private static final String API_LATEST_RELEASE = API_BASE + EzChestShopConstants.REPOSITORY + "/releases/latest";
+    private static final String API_LATEST_RELEASE = API_BASE + Constants.REPOSITORY + "/releases/latest";
 
     // https://docs.github.com/en/rest/commits/commits#compare-two-commits
-    private static final String API_COMPARE = API_BASE + EzChestShopConstants.REPOSITORY + "/compare/%s...%s";
+    private static final String API_COMPARE = API_BASE + Constants.REPOSITORY + "/compare/%s...%s";
 
     private GitHubUtil() {
     }

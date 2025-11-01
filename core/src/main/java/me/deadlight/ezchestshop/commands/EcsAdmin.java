@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopCommandManager;
@@ -304,9 +304,9 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                 if (Utils.isApplicableContainer(target)) {
                     PersistentDataContainer container = state.getPersistentDataContainer();
 
-                    if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                    if (container.has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                         if (EzChestShop.worldguard) {
-                            if (container.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1) {
+                            if (container.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1) {
                                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, player)) {
                                     player.spigot().sendMessage(LanguageManager.getInstance().notAllowedToCreateOrRemove(player));
                                     return;
@@ -319,18 +319,18 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                             }
                         }
 
-                        container.remove(EzChestShopConstants.OWNER_KEY);
-                        container.remove(EzChestShopConstants.BUY_PRICE_KEY);
-                        container.remove(EzChestShopConstants.SELL_PRICE_KEY);
-                        container.remove(EzChestShopConstants.ITEM_KEY);
+                        container.remove(Constants.OWNER_KEY);
+                        container.remove(Constants.BUY_PRICE_KEY);
+                        container.remove(Constants.SELL_PRICE_KEY);
+                        container.remove(Constants.ITEM_KEY);
 
                         try {
-                            container.remove(EzChestShopConstants.ENABLE_MESSAGE_KEY);
-                            container.remove(EzChestShopConstants.DISABLE_BUY_KEY);
-                            container.remove(EzChestShopConstants.DISABLE_SELL_KEY);
-                            container.remove(EzChestShopConstants.ADMIN_LIST_KEY);
-                            container.remove(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY);
-                            container.remove(EzChestShopConstants.ENABLE_ADMINSHOP_KEY);
+                            container.remove(Constants.ENABLE_MESSAGE_KEY);
+                            container.remove(Constants.DISABLE_BUY_KEY);
+                            container.remove(Constants.DISABLE_SELL_KEY);
+                            container.remove(Constants.ADMIN_LIST_KEY);
+                            container.remove(Constants.ENABLE_SHARED_INCOME_KEY);
+                            container.remove(Constants.ENABLE_ADMINSHOP_KEY);
                             //msgtoggle 0/1
                             //dbuy 0/1
                             //dsell 0/1
@@ -400,7 +400,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                     //item (String) (itemstack)
 
                     //already a shop
-                    if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                    if (container.has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                         player.sendMessage(LanguageManager.getInstance().alreadyAShop());
                     } else {
                         //not a shop
@@ -423,16 +423,16 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                                     (sellprice == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
                                     : (Config.settings_defaults_dsell ? 1 : 0);
 
-                            container.set(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
-                            container.set(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, buyprice);
-                            container.set(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, sellprice);
-                            container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, Config.settings_defaults_transactions ? 1 : 0);
-                            container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, isDBuy);
-                            container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, isDSell);
-                            container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
-                            container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
-                            container.set(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 1);
-                            container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
+                            container.set(Constants.OWNER_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
+                            container.set(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, buyprice);
+                            container.set(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, sellprice);
+                            container.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, Config.settings_defaults_transactions ? 1 : 0);
+                            container.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, isDBuy);
+                            container.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, isDSell);
+                            container.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none");
+                            container.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, Config.settings_defaults_shareprofits ? 1 : 0);
+                            container.set(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 1);
+                            container.set(Constants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
 
                             ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
                                     isDBuy == 1, isDSell == 1, "none", true, true, Config.settings_defaults_rotation);
@@ -503,8 +503,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                 Chest leftchest = (Chest) doubleChest.getLeftSide(false);
                 Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
-                if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
-                        || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+                if (leftchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)
+                        || rightchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                     Chest rightone;
 
                     if (!leftchest.getPersistentDataContainer().isEmpty()) {
@@ -533,7 +533,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             if (blockState instanceof TileState) {
                 if (Utils.isApplicableContainer(target)) {
                     if (checkIfLocation(target.getLocation(), player)) {
-                        if (EzChestShopConstants.TAG_CHEST.contains(target.getType())) {
+                        if (Constants.TAG_CHEST.contains(target.getType())) {
                             Inventory inventory = Utils.getBlockInventory(target);
                             if (Utils.getBlockInventory(target) instanceof DoubleChestInventory) {
                                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
@@ -551,7 +551,7 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
                         PersistentDataContainer container = ((TileState) blockState).getPersistentDataContainer();
                         Chest chkIfDCS = ifItsADoubleChestShop(target);
 
-                        if (container.has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) || chkIfDCS != null) {
+                        if (container.has(Constants.OWNER_KEY, PersistentDataType.STRING) || chkIfDCS != null) {
                             return blockState;
                         } else if (sendErrors) {
                             player.sendMessage(LanguageManager.getInstance().notAChestOrChestShop());
@@ -584,8 +584,8 @@ public class EcsAdmin implements CommandExecutor, TabCompleter {
             Chest leftchest = (Chest) doubleChest.getLeftSide(false);
             Chest rightchest = (Chest) doubleChest.getRightSide(false);
 
-            if (leftchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)
-                    || rightchest.getPersistentDataContainer().has(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING)) {
+            if (leftchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)
+                    || rightchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
                 if (!leftchest.getPersistentDataContainer().isEmpty()) {
                     target = leftchest.getBlock();
                 } else {

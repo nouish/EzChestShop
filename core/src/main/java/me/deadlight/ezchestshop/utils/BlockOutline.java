@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.utils;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import org.bukkit.block.Block;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
@@ -57,7 +57,7 @@ public class BlockOutline {
 
     private void checkForDoubleChestShop() {
         //check if the block is a chest and if it is a double chest
-        if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
+        if (Constants.TAG_CHEST.contains(block.getType())) {
             //now we check if its a double chest instance
             Inventory blockInv = Utils.getBlockInventory(block);
             if (blockInv instanceof DoubleChestInventory) {

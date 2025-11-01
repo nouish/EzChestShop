@@ -280,7 +280,7 @@ public final class EzChestShop extends JavaPlugin {
             LOGGER.info(line);
             LOGGER.info("");
             LOGGER.info("This seems to be your first time running {}!", getName());
-            LOGGER.info("Learn more about the plugin here: {}", EzChestShopConstants.WIKI_LINK);
+            LOGGER.info("Learn more about the plugin here: {}", Constants.WIKI_LINK);
             LOGGER.info("");
             LOGGER.info(line);
         }
@@ -315,8 +315,8 @@ public final class EzChestShop extends JavaPlugin {
                 LOGGER.warn("Download at: https://github.com/nouish/EzChestShop/releases/tag/{}", latest.getId());
             } else {
                 LOGGER.warn("You are running an outdated snapshot of EzChestShopReborn! The latest snapshot is {} commits ahead.", status.getDistance());
-                LOGGER.warn("Downloads are available from GitHub (must be logged in): {}", EzChestShopConstants.GITHUB_LINK);
-                LOGGER.warn("Alternatively, join us on Discord ({}) for developer snapshot builds.", EzChestShopConstants.DISCORD_LINK);
+                LOGGER.warn("Downloads are available from GitHub (must be logged in): {}", Constants.GITHUB_LINK);
+                LOGGER.warn("Alternatively, join us on Discord ({}) for developer snapshot builds.", Constants.DISCORD_LINK);
             }
         } else if (status.isIdentical() || status.isAhead()) {
             LOGGER.info("You are running the latest version of EzChestShopReborn.");
@@ -349,7 +349,7 @@ public final class EzChestShop extends JavaPlugin {
     }
 
     private void registerMetrics() {
-        Metrics metrics = new Metrics(this, EzChestShopConstants.BSTATS_PROJECT_ID);
+        Metrics metrics = new Metrics(this, Constants.BSTATS_PROJECT_ID);
         metrics.addCustomChart(new SimplePie("databaseType", () -> Config.database_type.getName()));
         metrics.addCustomChart(new SimplePie("updateNotification", () -> Config.notify_updates ? "Enabled" : "Disabled"));
         metrics.addCustomChart(new SimplePie("discordWebhook", () -> DiscordWebhook.isEnabled() ? "Enabled" : "Disabled"));

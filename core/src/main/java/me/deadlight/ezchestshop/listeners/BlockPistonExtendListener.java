@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -62,7 +62,7 @@ public class BlockPistonExtendListener implements Listener {
                     //it is a shulkerbox, now checking if its a shop
                     Location shulkerLoc = block.getLocation();
                     if (ShopContainer.isShop(shulkerLoc)) {
-                        boolean adminshop = container.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+                        boolean adminshop = container.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
                         if (EzChestShop.worldguard) {
                             if (adminshop) {
                                 if (!WorldGuardUtils.queryStateFlag(FlagRegistry.REMOVE_ADMIN_SHOP, shulkerLoc)) {
@@ -179,10 +179,10 @@ public class BlockPistonExtendListener implements Listener {
 
     private ItemMeta addLore(ItemMeta meta, PersistentDataContainer container) {
         if (Config.settings_add_shulkershop_lore) {
-            List<String> nlore = LanguageManager.getInstance().shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, EzChestShopConstants.OWNER_KEY))).getName(),
-                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, EzChestShopConstants.ITEM_KEY))),
-                    getContainerDouble(container, EzChestShopConstants.BUY_PRICE_KEY),
-                    getContainerDouble(container, EzChestShopConstants.SELL_PRICE_KEY));
+            List<String> nlore = LanguageManager.getInstance().shulkerboxLore(Bukkit.getOfflinePlayer(UUID.fromString(getContainerString(container, Constants.OWNER_KEY))).getName(),
+                    Utils.getFinalItemName(Utils.decodeItem(getContainerString(container, Constants.ITEM_KEY))),
+                    getContainerDouble(container, Constants.BUY_PRICE_KEY),
+                    getContainerDouble(container, Constants.SELL_PRICE_KEY));
             meta.setLore(nlore);
         }
         return meta;

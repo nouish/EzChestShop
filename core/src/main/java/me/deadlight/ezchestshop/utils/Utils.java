@@ -24,7 +24,7 @@ import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -123,7 +123,7 @@ public final class Utils {
     public static void storeItem(ItemStack item, PersistentDataContainer data) {
         String encodedItem = encodeItem(item);
         if (encodedItem != null) {
-            data.set(EzChestShopConstants.ITEM_KEY, PersistentDataType.STRING, encodedItem);
+            data.set(Constants.ITEM_KEY, PersistentDataType.STRING, encodedItem);
         }
     }
 
@@ -161,7 +161,7 @@ public final class Utils {
      * Get the Inventory of the given Block if it is a Chest, Barrel or any Shulker
      */
     public static Inventory getBlockInventory(Block block) {
-        if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
+        if (Constants.TAG_CHEST.contains(block.getType())) {
             return ((Chest) block.getState(false)).getInventory();
         } else if (block.getType() == Material.BARREL) {
             return ((Barrel) block.getState(false)).getInventory();
@@ -181,13 +181,13 @@ public final class Utils {
     public static boolean isApplicableContainer(Material type) {
         // Check trapped chest first, because TAG_CHEST contains trapped chests _and_ other chests.
         return (type == Material.TRAPPED_CHEST && Config.container_trapped_chests)
-                || (EzChestShopConstants.TAG_CHEST.contains(type) && Config.container_chests)
+                || (Constants.TAG_CHEST.contains(type) && Config.container_chests)
                 || (type == Material.BARREL && Config.container_barrels)
                 || (Tag.SHULKER_BOXES.isTagged(type) && Config.container_shulkers);
     }
 
     public static List<UUID> getAdminsList(PersistentDataContainer data) {
-        String adminList = data.get(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING);
+        String adminList = data.get(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING);
         Preconditions.checkNotNull(adminList);
         // UUID@UUID@UUID
         if (adminList.equalsIgnoreCase("none")) {
@@ -787,17 +787,17 @@ public final class Utils {
         player.spigot().sendMessage(
                 new ComponentBuilder("EzChestShopReborn v" + EzChestShop.getPlugin().getDescription().getVersion())
                         .color(net.md_5.bungee.api.ChatColor.GREEN)
-                        .append("\nDiscord: ").color(net.md_5.bungee.api.ChatColor.BLUE).append(EzChestShopConstants.DISCORD_LINK)
+                        .append("\nDiscord: ").color(net.md_5.bungee.api.ChatColor.BLUE).append(Constants.DISCORD_LINK)
                         .color(net.md_5.bungee.api.ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 TextComponent.fromLegacyText(colorify("&fClick to join the plugin discord!"))))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, EzChestShopConstants.DISCORD_LINK))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, Constants.DISCORD_LINK))
                         .append("\nGitHub: ", ComponentBuilder.FormatRetention.NONE)
-                        .color(net.md_5.bungee.api.ChatColor.RED).append(EzChestShopConstants.GITHUB_LINK)
+                        .color(net.md_5.bungee.api.ChatColor.RED).append(Constants.GITHUB_LINK)
                         .color(net.md_5.bungee.api.ChatColor.GRAY)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 TextComponent.fromLegacyText(colorify("&fClick to browse the GitHub repository!"))))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, EzChestShopConstants.GITHUB_LINK))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, Constants.GITHUB_LINK))
                         .create());
     }
 
@@ -806,7 +806,7 @@ public final class Utils {
         TileState state = (TileState) block.getState(false);
         Inventory inventory = Utils.getBlockInventory(block);
 
-        if (EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
+        if (Constants.TAG_CHEST.contains(block.getType())) {
             if (inventory instanceof DoubleChestInventory) {
                 DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
                 Chest chestleft = (Chest) doubleChest.getLeftSide(false);
@@ -859,7 +859,7 @@ public final class Utils {
     }
 
     public static EzShop isPartOfTheChestShop(@NotNull Block block) {
-        if (!EzChestShopConstants.TAG_CHEST.contains(block.getType())) {
+        if (!Constants.TAG_CHEST.contains(block.getType())) {
             return null;
         }
 
@@ -964,21 +964,21 @@ public final class Utils {
             return false; //false means the shop doesn't even exist in the database, so we don't need to do anything and send the message
         }
 
-        container.set(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING, shop.getOwnerID().toString());
-        container.set(EzChestShopConstants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, shop.getBuyPrice());
-        container.set(EzChestShopConstants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, shop.getSellPrice());
+        container.set(Constants.OWNER_KEY, PersistentDataType.STRING, shop.getOwnerID().toString());
+        container.set(Constants.BUY_PRICE_KEY, PersistentDataType.DOUBLE, shop.getBuyPrice());
+        container.set(Constants.SELL_PRICE_KEY, PersistentDataType.DOUBLE, shop.getSellPrice());
         //add new settings data later
-        container.set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, shop.getSettings().isMsgtoggle() ? 1 : 0);
-        container.set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, shop.getSettings().isDbuy() ?
+        container.set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, shop.getSettings().isMsgtoggle() ? 1 : 0);
+        container.set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, shop.getSettings().isDbuy() ?
                 (shop.getBuyPrice() == 0 ? 1 : (Config.settings_defaults_dbuy ? 1 : 0))
                 : (Config.settings_defaults_dbuy ? 1 : 0));
-        container.set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, shop.getSettings().isDsell() ?
+        container.set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, shop.getSettings().isDsell() ?
                 (shop.getSellPrice() == 0 ? 1 : (Config.settings_defaults_dsell ? 1 : 0))
                 : (Config.settings_defaults_dsell ? 1 : 0));
-        container.set(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, shop.getSettings().getAdmins());
-        container.set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
-        container.set(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
-        container.set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, shop.getSettings().getRotation());
+        container.set(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, shop.getSettings().getAdmins());
+        container.set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, shop.getSettings().isShareincome() ? 1 : 0);
+        container.set(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, shop.getSettings().isAdminshop() ? 1 : 0);
+        container.set(Constants.ROTATION_KEY, PersistentDataType.STRING, shop.getSettings().getRotation());
         return true;
     }
 }

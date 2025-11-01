@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -49,7 +49,7 @@ public class SettingsGUI {
     public void showGUI(Player player, Block containerBlock, boolean isAdmin) {
         ContainerGui container = GuiData.getSettings();
         PersistentDataContainer dataContainer = ((TileState) containerBlock.getState(false)).getPersistentDataContainer();
-        boolean isAdminShop = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
+        boolean isAdminShop = dataContainer.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 1;
         Gui gui = Gui.gui()
                 .rows(container.getRows())
                 .title(Component.text(lm.settingsGuiTitle()))
@@ -83,22 +83,22 @@ public class SettingsGUI {
 
         //Message Toggle Item
         if (container.hasItem("toggle-transaction-message-on") && container.hasItem("toggle-transaction-message-off")) {
-            boolean isToggleMessageOn = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1;
+            boolean isToggleMessageOn = dataContainer.getOrDefault(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1;
             ContainerGuiItem messageToggleItem = container.getItem(isToggleMessageOn ? "toggle-transaction-message-on" : "toggle-transaction-message-off")
                     .setName(lm.toggleTransactionMessageButton()).setLore(toggleMessageChooser(isToggleMessageOn, lm));
             GuiItem messageToggle = new GuiItem(messageToggleItem.getItem(), event -> {
                 event.setCancelled(true);
                 //start the functionality for toggle message
-                if (dataContainer.getOrDefault(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
+                if (dataContainer.getOrDefault(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0) == 1) {
                     TileState state = ((TileState) containerBlock.getState(false));
-                    state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0);
+                    state.getPersistentDataContainer().set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.toggleTransactionMessageOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setMsgtoggle(false);
                 } else {
                     TileState state = ((TileState) containerBlock.getState(false));
-                    state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 1);
+                    state.getPersistentDataContainer().set(Constants.ENABLE_MESSAGE_KEY, PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.toggleTransactionMessageOnInChat());
                     showGUI(player, containerBlock, isAdmin);
@@ -110,22 +110,22 @@ public class SettingsGUI {
 
         //Message Toggle Item
         if (container.hasItem("disable-buy-on") && container.hasItem("disable-buy-off")) {
-            boolean isBuyDisabled = dataContainer.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
+            boolean isBuyDisabled = dataContainer.getOrDefault(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1;
             ContainerGuiItem buyDisabledItem = container.getItem(isBuyDisabled ? "disable-buy-on" : "disable-buy-off")
                     .setName(lm.disableBuyingButtonTitle()).setLore(buyMessageChooser(isBuyDisabled, lm));
             GuiItem buyDisabled = new GuiItem(buyDisabledItem.getItem(), event -> {
                 event.setCancelled(true);
                 //start the functionality for disabling buy
-                if (dataContainer.getOrDefault(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1) {
+                if (dataContainer.getOrDefault(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0) == 1) {
                     TileState state = ((TileState) containerBlock.getState(false));
-                    state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0);
+                    state.getPersistentDataContainer().set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.disableBuyingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
                 } else {
                     TileState state = ((TileState) containerBlock.getState(false));
-                    state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 1);
+                    state.getPersistentDataContainer().set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.disableBuyingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
@@ -137,22 +137,22 @@ public class SettingsGUI {
         }
 
         if (container.hasItem("disable-sell-on") && container.hasItem("disable-sell-off")) {
-            boolean isSellDisabled = dataContainer.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
+            boolean isSellDisabled = dataContainer.getOrDefault(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1;
             ContainerGuiItem sellDisabledItem = container.getItem(isSellDisabled ? "disable-sell-on" : "disable-sell-off")
                     .setName(lm.disableSellingButtonTitle()).setLore(sellMessageChooser(isSellDisabled, lm));
             GuiItem sellDisabled = new GuiItem(sellDisabledItem.getItem(), event -> {
                 event.setCancelled(true);
                 //start the functionality for disabling sell
-                if (dataContainer.getOrDefault(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1) {
+                if (dataContainer.getOrDefault(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0) == 1) {
                     TileState state = ((TileState) containerBlock.getState(false));
-                    state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0);
+                    state.getPersistentDataContainer().set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0);
                     state.update();
                     player.sendMessage(lm.disableSellingOffInChat());
                     showGUI(player, containerBlock, isAdmin);
                     ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
                 } else {
                     TileState state = ((TileState) containerBlock.getState(false));
-                    state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 1);
+                    state.getPersistentDataContainer().set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 1);
                     state.update();
                     player.sendMessage(lm.disableSellingOnInChat());
                     showGUI(player, containerBlock, isAdmin);
@@ -167,7 +167,7 @@ public class SettingsGUI {
         //if empty: "none"
         //otherwise: UUID@UUID@UUID@UUID
         if (!isAdmin) {
-            boolean hastAtLeastOneAdmin = !dataContainer.getOrDefault(EzChestShopConstants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none").equals("none");
+            boolean hastAtLeastOneAdmin = !dataContainer.getOrDefault(Constants.ADMIN_LIST_KEY, PersistentDataType.STRING, "none").equals("none");
             if (container.hasItem("shop-admins")) {
                 ContainerGuiItem signItem = container.getItem("shop-admins").setName(lm.shopAdminsButtonTitle()).setLore(signLoreChooser(hastAtLeastOneAdmin, dataContainer, lm));
                 GuiItem signItemg = new GuiItem(signItem.getItem(), event -> {
@@ -188,23 +188,23 @@ public class SettingsGUI {
                 Utils.addItemIfEnoughSlots(gui, signItem.getSlot(), signItemg);
             }
             if (container.hasItem("share-income-on") && container.hasItem("share-income-off")) {
-                boolean isSharedIncome = dataContainer.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
+                boolean isSharedIncome = dataContainer.getOrDefault(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1;
                 ContainerGuiItem sharedIncomeItem = container.getItem(isSharedIncome ? "share-income-on" : "share-income-off")
                         .setName(lm.shareIncomeButtonTitle()).setLore(shareIncomeLoreChooser(isSharedIncome, lm));
                 GuiItem sharedIncome = new GuiItem(sharedIncomeItem.getItem(), event -> {
                     event.setCancelled(true);
                     //start the functionality for shared income
 
-                    if (dataContainer.getOrDefault(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1) {
+                    if (dataContainer.getOrDefault(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0) == 1) {
                         TileState state = ((TileState) containerBlock.getState(false));
-                        state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0);
+                        state.getPersistentDataContainer().set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 0);
                         state.update();
                         player.sendMessage(lm.sharedIncomeOffInChat());
                         showGUI(player, containerBlock, isAdmin);
                         ShopContainer.getShopSettings(containerBlock.getLocation()).setShareincome(false);
                     } else {
                         TileState state = ((TileState) containerBlock.getState(false));
-                        state.getPersistentDataContainer().set(EzChestShopConstants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 1);
+                        state.getPersistentDataContainer().set(Constants.ENABLE_SHARED_INCOME_KEY, PersistentDataType.INTEGER, 1);
                         state.update();
                         player.sendMessage(lm.sharedIncomeOnInChat());
                         showGUI(player, containerBlock, isAdmin);
@@ -212,7 +212,7 @@ public class SettingsGUI {
                     }
                 });
                 if (hastAtLeastOneAdmin) {
-                    if (dataContainer.getOrDefault(EzChestShopConstants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 0) {
+                    if (dataContainer.getOrDefault(Constants.ENABLE_ADMINSHOP_KEY, PersistentDataType.INTEGER, 0) == 0) {
                         Utils.addItemIfEnoughSlots(gui, sharedIncomeItem.getSlot(), sharedIncome);
                     }
                 }
@@ -253,7 +253,7 @@ public class SettingsGUI {
             }
         }
 
-        String rotation = dataContainer.getOrDefault(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
+        String rotation = dataContainer.getOrDefault(Constants.ROTATION_KEY, PersistentDataType.STRING, Config.settings_defaults_rotation);
         if (container.hasItem("hologram-rotation-" + rotation) || container.hasItem("hologram-rotation-all")) {
             ContainerGuiItem rotationItemStack;
             if (container.hasItem("hologram-rotation-" + rotation)) {
@@ -275,7 +275,7 @@ public class SettingsGUI {
                     return;
                 }
                 TileState state = ((TileState) containerBlock.getState(false));
-                state.getPersistentDataContainer().set(EzChestShopConstants.ROTATION_KEY, PersistentDataType.STRING, next_rotation);
+                state.getPersistentDataContainer().set(Constants.ROTATION_KEY, PersistentDataType.STRING, next_rotation);
                 state.update();
                 player.sendMessage(lm.rotateHologramInChat(next_rotation));
                 showGUI(player, containerBlock, isAdmin);
@@ -375,7 +375,7 @@ public class SettingsGUI {
                     .setName(lm.backToShopGuiButton());
             GuiItem backItem = new GuiItem(backItemStack.getItem(), event -> {
                event.setCancelled(true);
-                String owneruuid = dataContainer.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING);
+                String owneruuid = dataContainer.get(Constants.OWNER_KEY, PersistentDataType.STRING);
 
                 if (isAdminShop) {
                     ServerShopGUI serverShopGUI = new ServerShopGUI();
@@ -490,7 +490,7 @@ public class SettingsGUI {
          // Revert from disabling buy sell.
          if (Config.settings_zero_equals_disabled && isBuy && shop.getBuyPrice() == 0 && price != 0) {
              TileState state = ((TileState) containerBlock.getState(false));
-             state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0);
+             state.getPersistentDataContainer().set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 0);
              state.update();
              player.sendMessage(lm.disableBuyingOffInChat());
              ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(false);
@@ -498,7 +498,7 @@ public class SettingsGUI {
          }
          if (Config.settings_zero_equals_disabled && !isBuy && shop.getSellPrice() == 0 && price != 0) {
              TileState state = ((TileState) containerBlock.getState(false));
-             state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0);
+             state.getPersistentDataContainer().set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 0);
              state.update();
              player.sendMessage(lm.disableSellingOffInChat());
              ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(false);
@@ -508,7 +508,7 @@ public class SettingsGUI {
          if (price == 0 && Config.settings_zero_equals_disabled) {
              if (isBuy && shop.getBuyPrice() != 0) {
                  TileState state = ((TileState) containerBlock.getState(false));
-                 state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 1);
+                 state.getPersistentDataContainer().set(Constants.DISABLE_BUY_KEY, PersistentDataType.INTEGER, 1);
                  state.update();
                  player.sendMessage(lm.disableBuyingOffInChat());
                  ShopContainer.getShopSettings(containerBlock.getLocation()).setDbuy(true);
@@ -516,7 +516,7 @@ public class SettingsGUI {
              }
              if (!isBuy && shop.getSellPrice() != 0) {
                  TileState state = ((TileState) containerBlock.getState(false));
-                 state.getPersistentDataContainer().set(EzChestShopConstants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 1);
+                 state.getPersistentDataContainer().set(Constants.DISABLE_SELL_KEY, PersistentDataType.INTEGER, 1);
                  state.update();
                  player.sendMessage(lm.disableSellingOffInChat());
                  ShopContainer.getShopSettings(containerBlock.getLocation()).setDsell(true);

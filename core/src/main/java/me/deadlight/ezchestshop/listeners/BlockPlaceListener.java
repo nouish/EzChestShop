@@ -1,7 +1,7 @@
 package me.deadlight.ezchestshop.listeners;
 
 import me.deadlight.ezchestshop.EzChestShop;
-import me.deadlight.ezchestshop.EzChestShopConstants;
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -43,7 +43,7 @@ public class BlockPlaceListener implements Listener {
             if (shulker.hasItemMeta()) {
                 ItemMeta meta = shulker.getItemMeta();
                 PersistentDataContainer container = meta.getPersistentDataContainer();
-                if (container.get(EzChestShopConstants.OWNER_KEY, PersistentDataType.STRING) != null) {
+                if (container.get(Constants.OWNER_KEY, PersistentDataType.STRING) != null) {
                     TileState state = ((TileState) block.getState(false));
                     PersistentDataContainer bcontainer = ShopContainer.copyContainerData(container, state.getPersistentDataContainer());
                     state.update();
