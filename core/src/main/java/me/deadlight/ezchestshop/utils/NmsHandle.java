@@ -4,29 +4,29 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 
-public abstract class NmsHandle {
+@NullMarked
+public interface NmsHandle {
+    void destroyEntity(Player player, int entityId);
 
-    public abstract void destroyEntity(Player player, int entityID);
+    void spawnHologram(Player player, Location location, String line, int id);
 
-    public abstract void spawnHologram(Player player, Location location, String line, int ID);
+    void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int id);
 
-    public abstract void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID);
+    void renameEntity(Player player, int entityId, String name);
 
-    public abstract void renameEntity(Player player, int entityID, String name);
+    void teleportEntity(Player player, int entityId, Location location);
 
-    public abstract void teleportEntity(Player player, int entityID, Location location);
+    void signFactoryListen(SignMenuFactory signMenuFactory);
 
-    public abstract void signFactoryListen(SignMenuFactory signMenuFactory);
+    void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory);
 
-    public abstract void removeSignMenuFactoryListen(SignMenuFactory signMenuFactory);
+    void openMenu(SignMenuFactory.Menu menu, Player player);
 
-    public abstract void openMenu(SignMenuFactory.Menu menu, Player player);
+    void injectConnection(Player player);
 
-    public abstract void injectConnection(Player player);
+    void ejectConnection(Player player);
 
-    public abstract void ejectConnection(Player player);
-
-    public abstract void showOutline(Player player, Block block, int eID);
-
+    void showOutline(Player player, Block block, int entityId);
 }

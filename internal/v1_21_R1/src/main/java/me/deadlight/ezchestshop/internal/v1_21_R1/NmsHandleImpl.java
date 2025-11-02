@@ -12,6 +12,7 @@ import me.deadlight.ezchestshop.utils.NmsHandle;
 import me.deadlight.ezchestshop.utils.SignMenuFactory;
 import me.deadlight.ezchestshop.utils.UpdateSignListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -33,21 +34,23 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
-public class NmsHandleImpl extends NmsHandle {
+@NullMarked
+public final class NmsHandleImpl implements NmsHandle {
     private static final Logger LOGGER = EzChestShop.logger();
     private static final Map<SignMenuFactory, UpdateSignListener> listeners = new HashMap<>();
     private static final Map<Integer, Entity> entities = new HashMap<>();
 
     @Override
-    public void destroyEntity(Player player, int entityID) {
-        ((CraftPlayer) player).getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket(entityID));
-        entities.remove(entityID);
+    public void destroyEntity(Player player, int entityId) {
+        ((CraftPlayer) player).getHandle().connection.send(new ClientboundRemoveEntitiesPacket(entityId));
+        entities.remove(entityId);
     }
 
     @Override
-    public void spawnHologram(Player player, Location location, String line, int ID) {
+    public void spawnHologram(Player player, Location location, String line, int id) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         ServerPlayer ServerPlayer = craftPlayer.getHandle();
         ServerGamePacketListenerImpl ServerGamePacketListenerImpl = ServerPlayer.connection;
@@ -61,7 +64,7 @@ public class NmsHandleImpl extends NmsHandle {
         armorstand.setCustomName(CraftChatMessage.fromStringOrNull(line)); //set custom name
         armorstand.setCustomNameVisible(true); //make custom name visible
         armorstand.setNoGravity(true); //no gravity
-        armorstand.setId(ID); //set entity id
+        armorstand.setId(id); //set entity id
 
         ClientboundAddEntityPacket ClientboundAddEntityPacket = new ClientboundAddEntityPacket(
                 armorstand.getId(), armorstand.getUUID(), armorstand.getX(), armorstand.getY(), armorstand.getZ(), armorstand.getXRot(), armorstand.getYRot(), armorstand.getType(), 0, armorstand.getDeltaMovement(), armorstand.getYHeadRot());
@@ -69,13 +72,13 @@ public class NmsHandleImpl extends NmsHandle {
         //------------------------------------------------------
         //create a list of datawatcher objects
 
-        ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(ID, armorstand.getEntityData().getNonDefaultValues());
+        ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(id, armorstand.getEntityData().getNonDefaultValues());
         ServerGamePacketListenerImpl.send(metaPacket);
-        entities.put(ID, armorstand);
+        entities.put(id, armorstand);
     }
 
     @Override
-    public void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int ID) {
+    public void spawnFloatingItem(Player player, Location location, ItemStack itemStack, int id) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         ServerPlayer ServerPlayer = craftPlayer.getHandle();
         ServerGamePacketListenerImpl ServerGamePacketListenerImpl = ServerPlayer.connection;
@@ -86,7 +89,7 @@ public class NmsHandleImpl extends NmsHandle {
         ItemEntity floatingItem = new ItemEntity(world, location.getX(), location.getY(), location.getZ(), CraftItemStack.asNMSCopy(itemStack));
         floatingItem.makeFakeItem(); //no merge with other items
         floatingItem.setNoGravity(true); //no gravity
-        floatingItem.setId(ID); //set entity id
+        floatingItem.setId(id); //set entity id
         floatingItem.setDeltaMovement(0, 0, 0); //set velocity
 
         ClientboundAddEntityPacket ClientboundAddEntityPacket = new ClientboundAddEntityPacket(
@@ -94,23 +97,23 @@ public class NmsHandleImpl extends NmsHandle {
         ServerGamePacketListenerImpl.send(ClientboundAddEntityPacket);
         //------------------------------------------------------
         // sending meta packet
-        ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(ID, floatingItem.getEntityData().getNonDefaultValues());
+        ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(id, floatingItem.getEntityData().getNonDefaultValues());
         ServerGamePacketListenerImpl.send(metaPacket);
 
         //sending a velocity packet
         floatingItem.setDeltaMovement(0, 0, 0);
         ClientboundSetEntityMotionPacket velocityPacket = new ClientboundSetEntityMotionPacket(floatingItem);
         ServerGamePacketListenerImpl.send(velocityPacket);
-        entities.put(ID, floatingItem);
+        entities.put(id, floatingItem);
     }
 
     @Override
-    public void renameEntity(Player player, int entityID, String newName) {
+    public void renameEntity(Player player, int entityId, String newName) {
         try {
             // the entity only exists on the client, how can I get it?
-            Entity e = entities.get(entityID);
+            Entity e = entities.get(entityId);
             e.setCustomName(CraftChatMessage.fromStringOrNull(newName));
-            ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(entityID, e.getEntityData().getNonDefaultValues());
+            ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(entityId, e.getEntityData().getNonDefaultValues());
             ((CraftPlayer) player).getHandle().connection.send(packet);
         } catch (Exception e) {
             LOGGER.warn("Unable to rename entity", e);
@@ -118,9 +121,9 @@ public class NmsHandleImpl extends NmsHandle {
     }
 
     @Override
-    public void teleportEntity(Player player, int entityID, Location location) {
+    public void teleportEntity(Player player, int entityId, Location location) {
         ServerPlayer ServerPlayer = ((CraftPlayer) player).getHandle();
-        Entity e = entities.get(entityID);
+        Entity e = entities.get(entityId);
         Set<RelativeMovement> set = new HashSet<>();
         e.teleportTo(((CraftWorld) location.getWorld()).getHandle(), location.getX(), location.getY(), location.getZ(), set, 0, 0);
         // not sure if it's needed
@@ -184,7 +187,7 @@ public class NmsHandleImpl extends NmsHandle {
     }
 
     @Override
-    public void showOutline(Player player, Block block, int eID) {
+    public void showOutline(Player player, Block block, int entityId) {
         ServerLevel ServerLevel = ((CraftWorld) block.getLocation().getWorld()).getHandle();
         CraftPlayer craftPlayer = (CraftPlayer) player;
         ServerPlayer ServerPlayer = craftPlayer.getHandle();
@@ -194,7 +197,7 @@ public class NmsHandleImpl extends NmsHandle {
         shulker.setInvisible(true); //invisible
         shulker.setNoGravity(true); //no gravity
         shulker.setDeltaMovement(0, 0, 0); //set velocity
-        shulker.setId(eID); //set entity id
+        shulker.setId(entityId); //set entity id
         shulker.setGlowingTag(true); //set outline
         shulker.setNoAi(true); //set noAI
         Location newLoc = block.getLocation().clone();
@@ -206,7 +209,7 @@ public class NmsHandleImpl extends NmsHandle {
                 shulker.getId(), shulker.getUUID(), shulker.getX(), shulker.getY(), shulker.getZ(), shulker.getXRot(), shulker.getYRot(), shulker.getType(), 0, shulker.getDeltaMovement(), shulker.getYHeadRot());
         ServerGamePacketListenerImpl.send(spawnPacket);
 
-        ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(eID, shulker.getEntityData().getNonDefaultValues());
+        ClientboundSetEntityDataPacket metaPacket = new ClientboundSetEntityDataPacket(entityId, shulker.getEntityData().getNonDefaultValues());
         ServerGamePacketListenerImpl.send(metaPacket);
     }
 
