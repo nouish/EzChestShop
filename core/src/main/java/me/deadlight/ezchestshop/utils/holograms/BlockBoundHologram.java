@@ -25,6 +25,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -350,7 +351,7 @@ public class BlockBoundHologram {
             // Get the shulker box inventory
             if (item.getItemMeta() instanceof BlockStateMeta shulkerBlockStateMeta
                     && shulkerBlockStateMeta.getBlockState() instanceof ShulkerBox shulker) {
-                Inventory inv = Bukkit.createInventory(null, 27, "Shulker Box");
+                Inventory inv = Bukkit.createInventory(null, InventoryType.SHULKER_BOX);
                 inv.setContents(shulker.getInventory().getContents());
 
                 // Collect all the item counts into a map and sort them by count
