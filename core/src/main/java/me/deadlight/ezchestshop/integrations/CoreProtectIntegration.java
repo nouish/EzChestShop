@@ -27,7 +27,6 @@ public final class CoreProtectIntegration {
                 && plugin.isEnabled()
                 && plugin instanceof CoreProtect co) {
             api = co.getAPI();
-            // noinspection UnstableApiUsage
             LOGGER.info("CoreProtect: {}", co.getPluginMeta().getVersion());
         }
     }
