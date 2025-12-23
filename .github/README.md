@@ -39,6 +39,7 @@ Find more information on the [projects wiki](https://github.com/nouish/EzChestSh
 
 | Minecraft version |  | Status |
 |-------------------|--|--|
+| Minecraft 1.21.11  | ⚠️ | Supported in latest development build. |
 | Minecraft 1.21.10  | ⚠️ | Supported in latest development build. |
 | Minecraft 1.21.9  | ⚠️ | Supported in latest development build. |
 | Minecraft 1.21.8  | ✅️ | |
