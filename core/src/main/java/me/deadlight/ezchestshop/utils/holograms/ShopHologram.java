@@ -38,6 +38,8 @@ import org.slf4j.Logger;
 public class ShopHologram {
     private static final Logger LOGGER = EzChestShop.logger();
 
+    private static final String DEFAULT_NO_PLAYER_NAME = "<Unknown>";
+
     private static final Map<UUID, HashMap<Location, ShopHologram>> playerLocationShopHoloMap = new HashMap<>();
     private static final Map<Location, BlockBoundHologram> locationBlockHoloMap = new HashMap<>();
 
@@ -69,6 +71,7 @@ public class ShopHologram {
 
             String itemName = Utils.getFinalItemName(shop.getShopItem());
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            String ownerName = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
             if (shopInventory == null) {
                 World world = Objects.requireNonNullElse(location.getWorld(), player.getWorld());
                 Block blockAtLocation = world.getBlockAt(location);
@@ -113,7 +116,7 @@ public class ShopHologram {
             textReplacements.put("%buy%", Utils.formatNumber(shop.getBuyPrice(), Utils.FormatType.HOLOGRAM));
             textReplacements.put("%sell%", Utils.formatNumber(shop.getSellPrice(), Utils.FormatType.HOLOGRAM));
             textReplacements.put("%currency%", Config.currency);
-            textReplacements.put("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName());
+            textReplacements.put("%owner%", Objects.requireNonNullElse(ownerName, DEFAULT_NO_PLAYER_NAME));
             textReplacements.put("%maxbuy%", possibleCounts.get(0));
             textReplacements.put("%maxsell%", possibleCounts.get(1));
             textReplacements.put("%maxStackSize%", shop.getShopItem().getMaxStackSize() + "");
@@ -459,7 +462,8 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName(), true, true);
+            String ownerName = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
+            playerHolo.updateTextReplacement("%owner%", Objects.requireNonNullElse(ownerName, DEFAULT_NO_PLAYER_NAME), true, true);
         }
     }
 
