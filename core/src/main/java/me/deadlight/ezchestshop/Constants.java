@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableSet;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -19,6 +20,7 @@ public final class Constants {
     public static final String DISCORD_LINK = "https://discord.gg/invite/gjV6BgKxFV";
     public static final String GITHUB_LINK = "https://github.com/" + REPOSITORY;
     public static final String WIKI_LINK = GITHUB_LINK + "/wiki";
+    public static final String ERROR = ChatColor.RED + "Error";
 
     public static final Set<Material> TAG_CHEST = buildSet(builder -> {
         builder.add(Material.CHEST);

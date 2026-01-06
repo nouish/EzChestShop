@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import me.deadlight.ezchestshop.Constants;
 import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -69,6 +70,7 @@ public class ShopHologram {
 
             String itemName = Utils.getFinalItemName(shop.getShopItem());
             Inventory shopInventory = Utils.getBlockInventory(location.getBlock());
+            String ownerName = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
             if (shopInventory == null) {
                 World world = Objects.requireNonNullElse(location.getWorld(), player.getWorld());
                 Block blockAtLocation = world.getBlockAt(location);
@@ -113,7 +115,7 @@ public class ShopHologram {
             textReplacements.put("%buy%", Utils.formatNumber(shop.getBuyPrice(), Utils.FormatType.HOLOGRAM));
             textReplacements.put("%sell%", Utils.formatNumber(shop.getSellPrice(), Utils.FormatType.HOLOGRAM));
             textReplacements.put("%currency%", Config.currency);
-            textReplacements.put("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName());
+            textReplacements.put("%owner%", ownerName != null ? ownerName : Constants.ERROR);
             textReplacements.put("%maxbuy%", possibleCounts.get(0));
             textReplacements.put("%maxsell%", possibleCounts.get(1));
             textReplacements.put("%maxStackSize%", shop.getShopItem().getMaxStackSize() + "");
@@ -459,7 +461,8 @@ public class ShopHologram {
         PlayerBlockBoundHologram playerHolo = blockHolo.getPlayerHologram(player);
         if (playerHolo != null) {
             shop = ShopContainer.getShop(location);
-            playerHolo.updateTextReplacement("%owner%", Bukkit.getOfflinePlayer(shop.getOwnerID()).getName(), true, true);
+            String ownerName = Bukkit.getOfflinePlayer(shop.getOwnerID()).getName();
+            playerHolo.updateTextReplacement("%owner%", ownerName != null ? ownerName : Constants.ERROR, true, true);
         }
     }
 
