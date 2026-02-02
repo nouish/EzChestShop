@@ -32,7 +32,7 @@ dependencies {
     compileOnly("net.coreprotect:coreprotect:23.1")
     compileOnly("com.github.Slimefun:Slimefun4:RC-37")
     compileOnly("net.alex9849.advancedregionmarket:advancedregionmarket:3.5.5")
-    compileOnly("me.clip:placeholderapi:2.11.7")
+    compileOnly("me.clip:placeholderapi:2.12.0")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.15")
 }
 
