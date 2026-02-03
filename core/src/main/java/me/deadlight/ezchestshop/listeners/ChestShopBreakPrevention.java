@@ -1,5 +1,6 @@
 package me.deadlight.ezchestshop.listeners;
 
+import io.papermc.paper.event.entity.ItemTransportingEntityValidateTargetEvent;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.utils.Utils;
@@ -28,6 +29,16 @@ public class ChestShopBreakPrevention implements Listener {
         event.blockList().removeIf(block -> Utils.isPartOfTheChestShop(block) != null);
     }
 
+    @EventHandler
+    public void onItemTransportingEntityValidateTargetEvent(ItemTransportingEntityValidateTargetEvent event) {
+        if (!event.isAllowed()) {
+            return;
+        }
+
+        if (ShopContainer.isShop(event.getBlock().getLocation()) || Utils.isPartOfTheChestShop(event.getBlock()) != null) {
+            event.setAllowed(false);
+        }
+    }
 
     @EventHandler
     public void onBurn(BlockBurnEvent event) {
