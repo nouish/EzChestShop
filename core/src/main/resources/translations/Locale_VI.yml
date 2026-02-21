@@ -320,6 +320,7 @@ command-messages:
       &eTổng số cửa hàng trống gần bạn: &b%emptyCount%
     disabled: "&cĐã TẮT, &bCác cửa hàng &eshop lân cận mà bạn sở hữu và trống không
       còn được đánh dấu cho bạn nữa."
+  shopInSpawnProtectedArea: "&cWarning: Spawn protection will prevent regular players from using this shop."
 checkprofits:
   landing-menu:
     - "&e========================================"

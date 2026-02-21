@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.palmergames.bukkit.towny.utils.ShopPlotUtil;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Constants;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -35,6 +35,7 @@ import org.bukkit.Note;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -376,6 +377,12 @@ public class MainCommands implements CommandExecutor, TabCompleter {
                                 ShopContainer.createShop(target.getLocation(), player, thatItem, buyprice, sellprice, false,
                                         isDbuy == 1, isDSell == 1, "none", true, false, Config.settings_defaults_rotation);
                                 player.sendMessage(LanguageManager.getInstance().shopCreated());
+
+                                // Chests inside the spawn protected area don't fire the events we depend on for the shop UIs,
+                                // effectively making these shops OP-only.
+                                if (isInProtectedSpawnArea(target)) {
+                                    player.sendMessage(LanguageManager.getInstance().shopInSpawnProtectedArea());
+                                }
                             } else {
                                 player.sendMessage(LanguageManager.getInstance().holdSomething());
                             }
@@ -392,6 +399,27 @@ public class MainCommands implements CommandExecutor, TabCompleter {
         } else {
             player.sendMessage(LanguageManager.getInstance().lookAtChest());
         }
+    }
+
+    private boolean isInProtectedSpawnArea(Block block) {
+        World world = block.getWorld();
+        if (world.getEnvironment() != World.Environment.NORMAL) {
+            return false;
+        }
+
+        int radius = Bukkit.getServer().getSpawnRadius();
+        if (radius < 1) {
+            return false;
+        }
+
+        Location spawnLocation = world.getSpawnLocation();
+        int blockX = block.getX();
+        int blockZ = block.getZ();
+        int minX = spawnLocation.getBlockX() - radius;
+        int minZ = spawnLocation.getBlockZ() - radius;
+        int maxX = spawnLocation.getBlockX() + radius;
+        int maxZ = spawnLocation.getBlockZ() + radius;
+        return blockX >= minX && blockX <= maxX && blockZ >= minZ && blockZ <= maxZ;
     }
 
     private void removeShop(Player player, String[] args, Block target) {

@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 import de.themoep.minedown.MineDown;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Constants;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.gui.GuiData;
 import me.deadlight.ezchestshop.utils.Utils;
 import me.deadlight.ezchestshop.utils.objects.CheckProfitEntry;
@@ -815,6 +815,10 @@ public final class LanguageManager {
 
     public String holdSomething() {
         return Utils.colorify(getString("command-messages.holdsomething"));
+    }
+
+    public String shopInSpawnProtectedArea() {
+        return Utils.colorify(getString("command-messages.shopInSpawnProtectedArea"));
     }
 
     public BaseComponent[] notAllowedToCreateOrRemove(Player player) {

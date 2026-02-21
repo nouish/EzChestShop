@@ -301,6 +301,7 @@ command-messages:
   emptyShopHightLighted:
     enabled: "&aActivado, &bLos &ecofres vacíos de tiendas que posees ahora se resaltan para ti. \n&eTotal de tiendas vacías cerca de ti: &b%emptyCount%"
     disabled: "&cDesactivado, &bLos &ecofres vacíos de tiendas que posees ya no se resaltan para ti."
+  shopInSpawnProtectedArea: "&cWarning: Spawn protection will prevent regular players from using this shop."
 checkprofits:
   landing-menu:
     - "&e========================================"

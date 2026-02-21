@@ -296,6 +296,7 @@ command-messages:
   emptyShopHightLighted:
     enabled: "&aActiver ON, &bLes boutiques a proximitée de vous &eSont mis en évidence. \n&eBoutiques vides proche: &b%emptyCount%"
     disabled: "&cDésactiver OFF, &bLes boutiques a proximitée de vous &eNe sont plus mis en évidence."
+  shopInSpawnProtectedArea: "&cWarning: Spawn protection will prevent regular players from using this shop."
 checkprofits:
   landing-menu:
     - '&e========================================'

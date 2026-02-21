@@ -308,6 +308,7 @@ command-messages:
   emptyShopHightLighted:
     enabled: "&aUmgestellt auf EIN, &bNahe &eShops die dir gehören & leer sind werden jetzt für dich hervorgehoben. \n&eTotal leere Shops in deiner Nähe: &b%emptyCount%"
     disabled: "&cUmgestellt auf AUS, &bNahe &eShops die dir gehören & leer sind werden jetzt nicht mehr für dich hervorgehoben."
+  shopInSpawnProtectedArea: "&cWarning: Spawn protection will prevent regular players from using this shop."
 checkprofits:
   landing-menu:
     - '&e========================================'

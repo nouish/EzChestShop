@@ -301,6 +301,7 @@ command-messages:
   emptyShopHightLighted:
     enabled: "&aZapnuté, tvoje &bblízke &eobchody, ktoré sú prázdne sú zvýraznené. \n&eCelkový počet prázdnych obchodov blízko teba: &b%emptyCount%"
     disabled: "&cVypnuté, tvoje &bblízke &eobchody, ktoré sú prázdne už nie sú zvýraznené."
+  shopInSpawnProtectedArea: "&cWarning: Spawn protection will prevent regular players from using this shop."
 checkprofits:
   landing-menu:
     - '&e========================================'

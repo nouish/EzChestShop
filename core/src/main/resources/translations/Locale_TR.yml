@@ -314,6 +314,7 @@ command-messages:
   emptyShopHightLighted:
     enabled: "&aToggled ON, &bNearby &eshops that you own & empty are now highlighted for you. \n&eTotal empty shops near you: &b%emptyCount%"
     disabled: "&cToggled OFF, &bNearby &eshops that you own & empty are no longer highlighted for you."
+  shopInSpawnProtectedArea: "&cWarning: Spawn protection will prevent regular players from using this shop."
 checkprofits:
   landing-menu:
     - ''

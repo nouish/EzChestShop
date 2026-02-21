@@ -301,6 +301,7 @@ command-messages:
   emptyShopHightLighted:
     enabled: "&aFremheving aktivert! &eNærliggende tomme butikker du eier er nå markert. \n&eTotalt antall nærliggende tomme butikker: &b%emptyCount%"
     disabled: "&cFremheving deaktivert! &eDine tomme butikker vil ikke lenger være markert."
+  shopInSpawnProtectedArea: "&cAdvarsel: Spawn-beskyttelse vil hindre vanlige spillere i å bruke denne butikken."
 
 checkprofits:
   landing-menu:
