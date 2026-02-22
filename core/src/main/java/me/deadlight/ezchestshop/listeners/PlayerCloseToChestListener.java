@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Constants;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.ShopContainer;
 import me.deadlight.ezchestshop.events.PlayerTransactEvent;
@@ -18,8 +17,6 @@ import me.deadlight.ezchestshop.utils.objects.EzShop;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,13 +31,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.util.RayTraceResult;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
-public class PlayerCloseToChestListener implements Listener {
+@ApiStatus.Internal
+@NullMarked
+public final class PlayerCloseToChestListener implements Listener {
     private final Map<UUID, ShopHologram> inspectedShops = new HashMap<>();
 
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    void onPlayerMove(PlayerMoveEvent event) {
         if (!Config.showholo) {
             return;
         }
@@ -133,7 +133,6 @@ public class PlayerCloseToChestListener implements Listener {
                 } else {
                     shopHolo.show();
                 }
-
             }
             // Hide the Hologram that is too far away from the player
             else if (dist > Config.holodistancing_distance + 1 && dist < Config.holodistancing_distance + 3) {
@@ -151,12 +150,12 @@ public class PlayerCloseToChestListener implements Listener {
         ShopHologram.hideAll(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         ShopHologram.hideAll(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         if (ShopHologram.isPlayerInspectingShop(player)) {
@@ -165,20 +164,21 @@ public class PlayerCloseToChestListener implements Listener {
         } else if (!Config.holodistancing_show_item_first) {
             // When holodistancing_show_item_first is off, the shop needs to be queried separately.
             // It's less reactive but it works.
-            if (!event.isSneaking() && inspectedShops.containsKey(player.getUniqueId())) {
-                ShopHologram hologram = inspectedShops.get(player.getUniqueId());
+            if (!event.isSneaking()) {
+                ShopHologram hologram = inspectedShops.remove(player.getUniqueId());
                 if (hologram != null) {
                     hologram.setItemDataVisible(false);
-                    inspectedShops.remove(player.getUniqueId());
                     return;
                 }
             }
             RayTraceResult result = player.rayTraceBlocks(5);
-            if (result == null)
+            if (result == null) {
                 return;
+            }
             Block block = result.getHitBlock();
-            if (block == null)
+            if (block == null) {
                 return;
+            }
             Location loc = block.getLocation();
             if (ShopContainer.isShop(loc)) {
                 ShopHologram hologram = ShopHologram.getHologram(loc, player);
@@ -190,40 +190,44 @@ public class PlayerCloseToChestListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onShopContentsChangeByBlock(InventoryMoveItemEvent event) {
-        if (!event.isCancelled() && ShopContainer.isShop(event.getDestination().getLocation())) {
-            EzChestShop.getScheduler().runTaskLater(() -> ShopHologram.updateInventoryReplacements(event.getDestination().getLocation()), 1);
+        Location location = event.getDestination().getLocation();
+        if (ShopContainer.isShop(location)) {
+            EzChestShop.getScheduler().runTask(location, () -> ShopHologram.updateInventoryReplacements(location));
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onInventoryChangeByPlayerItemClick(InventoryClickEvent event) {
-        inventoryModifyEventHandler(event.isCancelled(), event.getWhoClicked());
-    }
-
-    @EventHandler
-    public void onInventoryChangeByPlayerItemDrag(InventoryDragEvent event) {
-        inventoryModifyEventHandler(event.isCancelled(), event.getWhoClicked());
-    }
-
-    @EventHandler
-    public void onInventoryChangeByPlayerItemDrop(PlayerDropItemEvent event) {
-        inventoryModifyEventHandler(event.isCancelled(), event.getPlayer());
-    }
-
-    @EventHandler
-    public void onInventoryChangeByPlayerItemPickup(EntityPickupItemEvent event) {
-        if (!event.isCancelled() && event.getEntity().getType() == EntityType.PLAYER) {
-            ShopHologram.getViewedHolograms((Player) event.getEntity()).forEach(shopHolo ->
-                    EzChestShop.getScheduler().runTaskLater(() -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation()), 1));
+        if (event.getWhoClicked() instanceof Player player) {
+            inventoryModifyEventHandler(player);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryChangeByPlayerItemDrag(InventoryDragEvent event) {
+        if (event.getWhoClicked() instanceof Player player) {
+            inventoryModifyEventHandler(player);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryChangeByPlayerItemDrop(PlayerDropItemEvent event) {
+        inventoryModifyEventHandler(event.getPlayer());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryChangeByPlayerItemPickup(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            ShopHologram.getViewedHolograms(player)
+                    .forEach(shopHolo -> EzChestShop.getScheduler().runTask(shopHolo.getLocation(),
+                            () -> ShopHologram.updateInventoryReplacements(shopHolo.getLocation())));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onShopCapacityChangeByBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled())
-            return;
         Block block = event.getBlockPlaced();
         if (!Constants.TAG_CHEST.contains(block.getType())) {
             return;
@@ -243,22 +247,17 @@ public class PlayerCloseToChestListener implements Listener {
         EzChestShop.getScheduler().runTask(location, () -> ShopHologram.updateInventoryReplacements(location));
     }
 
-    private void inventoryModifyEventHandler(boolean cancelled, HumanEntity whoClicked) {
-        if (cancelled)
-            return;
-
-        List<ShopHologram> viewed = ShopHologram.getViewedHolograms((Player) whoClicked);
+    private void inventoryModifyEventHandler(Player player) {
+        List<ShopHologram> viewed = ShopHologram.getViewedHolograms(player);
         for (ShopHologram hologram : viewed) {
-            EzChestShop.getScheduler().runTaskLater(
-                    hologram.getLocation(),
-                    () -> ShopHologram.updateInventoryReplacements(hologram.getLocation()), 1);
+            Location location = hologram.getLocation();
+            EzChestShop.getScheduler().runTask(location, () -> ShopHologram.updateInventoryReplacements(location));
         }
     }
 
-    private boolean hasMovedLocation(@NotNull PlayerMoveEvent event) {
-        Location from = Preconditions.checkNotNull(event.getFrom(), "from");
-        Location to = Preconditions.checkNotNull(event.getTo(), "to");
-
+    private boolean hasMovedLocation(PlayerMoveEvent event) {
+        Location from = event.getFrom();
+        Location to = event.getTo();
         return (Math.abs(from.getX() - to.getX()) >= 0.001)
                 || (Math.abs(from.getY() - to.getY()) >= 0.001)
                 || (Math.abs(from.getZ() - to.getZ()) >= 0.001);

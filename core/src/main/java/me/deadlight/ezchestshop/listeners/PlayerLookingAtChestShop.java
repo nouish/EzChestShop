@@ -5,11 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Constants;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.LanguageManager;
 import me.deadlight.ezchestshop.data.ShopContainer;
@@ -37,15 +36,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-public class PlayerLookingAtChestShop implements Listener {
+@ApiStatus.Internal
+@NullMarked
+public final class PlayerLookingAtChestShop implements Listener {
 
     private final Map<Player, Location> map = new HashMap<>();
 
     private static final Map<Location, List<Player>> playershopmap = new HashMap<>();
 
-    @EventHandler
-    public void onLook(PlayerMoveEvent event) {
+    @EventHandler(ignoreCancelled = true)
+    void onLook(PlayerMoveEvent event) {
         Block target = event.getPlayer().getTargetBlockExact(5);
 
         if (target == null) {
@@ -57,18 +61,13 @@ public class PlayerLookingAtChestShop implements Listener {
         }
 
         Inventory inventory = Utils.getBlockInventory(target);
-        if (inventory instanceof DoubleChestInventory) {
-            //double chest
-
-            DoubleChest doubleChest = (DoubleChest) inventory.getHolder(false);
-            Chest leftchest = (Chest) doubleChest.getLeftSide(false);
-            Chest rightchest = (Chest) doubleChest.getRightSide(false);
-
+        if (inventory instanceof DoubleChestInventory doubleChestInventory
+                && doubleChestInventory.getHolder(false) instanceof DoubleChest doubleChest
+                && doubleChest.getLeftSide(false) instanceof Chest leftchest
+                && doubleChest.getRightSide(false) instanceof Chest rightchest) {
             if (leftchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)
                     || rightchest.getPersistentDataContainer().has(Constants.OWNER_KEY, PersistentDataType.STRING)) {
-
-                PersistentDataContainer rightone = null;
-
+                PersistentDataContainer rightone;
                 if (!leftchest.getPersistentDataContainer().isEmpty()) {
                     target = leftchest.getBlock();
                     rightone = leftchest.getPersistentDataContainer();
@@ -218,9 +217,8 @@ public class PlayerLookingAtChestShop implements Listener {
             }
         }
 
-        List<Player> players = Objects.requireNonNullElseGet(playershopmap.get(shopLocation), ArrayList::new);
+        List<Player> players = playershopmap.computeIfAbsent(shopLocation, ignored -> new ArrayList<>());
         players.add(player);
-        playershopmap.put(shopLocation, players);
 
         EzChestShop.getScheduler().runTaskLater(() -> {
             for (ASHologram holo : holoTextList) {
@@ -246,11 +244,13 @@ public class PlayerLookingAtChestShop implements Listener {
     }
 
     private boolean isAlreadyLooking(Player player, Block block) {
-        return map.get(player) != null && block.getLocation().equals(map.get(player));
+        Location location = map.get(player);
+        return location != null && block.getLocation().equals(location);
     }
 
     private boolean isAlreadyPresenting(Location location, Player player) {
-        return playershopmap.containsKey(location) && playershopmap.get(location).contains(player);
+        List<Player> viewers = playershopmap.get(location);
+        return viewers != null && viewers.contains(player);
     }
 
     private Location getHoloLoc(Block containerBlock) {
@@ -269,12 +269,12 @@ public class PlayerLookingAtChestShop implements Listener {
         };
     }
 
-    private Location getCentralLocation(Block containerBlock, Inventory inventory, Vector direction) {
+    private Location getCentralLocation(Block containerBlock, @Nullable Inventory inventory, Vector direction) {
         Location holoLoc;
-        if (inventory instanceof DoubleChestInventory doubleChestInventory) {
-            DoubleChest doubleChest = (DoubleChest) Objects.requireNonNull(doubleChestInventory.getHolder(false), "Double Chest");
-            Chest leftchest = (Chest) Objects.requireNonNull(doubleChest.getLeftSide(false), "Left Chest");
-            Chest rightchest = (Chest) Objects.requireNonNull(doubleChest.getRightSide(false), "Right Chest");
+        if (inventory instanceof DoubleChestInventory doubleChestInventory
+                && doubleChestInventory.getHolder(false) instanceof DoubleChest doubleChest
+                && doubleChest.getLeftSide(false) instanceof Chest leftchest
+                && doubleChest.getRightSide(false) instanceof Chest rightchest) {
             holoLoc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D).add(rightchest.getLocation().add(0.5D, 0, 0.5D)).multiply(0.5);
             if (direction.getY() == 0) {
                 Location lloc = leftchest.getLocation().clone().add(0.5D, 0, 0.5D);
@@ -297,5 +297,4 @@ public class PlayerLookingAtChestShop implements Listener {
         }
         return holoLoc;
     }
-
 }
