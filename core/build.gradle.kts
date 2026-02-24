@@ -25,7 +25,7 @@ dependencies {
     implementation("de.themoep:minedown:1.7.1-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("dev.triumphteam:triumph-gui:3.1.13")
-    implementation("org.bstats:bstats-bukkit:3.1.0")
+    implementation("org.bstats:bstats-bukkit:3.2.0")
 
     // Optional integrations
     compileOnly("com.palmergames.bukkit.towny:towny:0.102.0.7")
