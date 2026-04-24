@@ -40,7 +40,8 @@ dependencyResolutionManagement {
             }
         }
 
-        maven("https://nexus.alex9849.net/repository/maven-releases/") {
+//      maven("https://nexus.alex9849.net/repository/maven-releases/") {
+        maven("https://maven.nouish.no/repository/maven-releases/") {
             content {
                 includeGroup("net.alex9849.advancedregionmarket")
             }
