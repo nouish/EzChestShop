@@ -11,7 +11,7 @@ public class FloatingItem {
 
     public FloatingItem(Player player, ItemStack itemStack, Location location) {
         this.player = player;
-        this.entityID = Utils.nextEntityId();
+        this.entityID = Utils.nextEntityId(location.getWorld());
         this.location = location;
         Utils.nmsHandle.spawnFloatingItem(player, location, itemStack, entityID);
     }

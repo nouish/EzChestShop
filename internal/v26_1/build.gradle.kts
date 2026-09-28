@@ -4,12 +4,13 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 dependencies {
     compileOnly(project(":core"))
-    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("26.3.build.47-alpha")
+    tasks["reobfJar"].enabled = false
 }
 
 repositories {

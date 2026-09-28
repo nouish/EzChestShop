@@ -11,7 +11,7 @@ public class ASHologram {
 
     public ASHologram(Player p, String name, Location location) {
         this.name = name;
-        this.entityID = Utils.nextEntityId();
+        this.entityID = Utils.nextEntityId(location.getWorld());
         this.handler = p;
         this.location = location;
         Utils.nmsHandle.spawnHologram(p, location, name, entityID);

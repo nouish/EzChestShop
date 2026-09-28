@@ -1,6 +1,8 @@
 package me.deadlight.ezchestshop.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -8,6 +10,12 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public interface NmsHandle {
+    /** Allocates an entity ID using the server allocator for this version. */
+    @SuppressWarnings("deprecation")
+    default int nextEntityId(World world) {
+        return Bukkit.getUnsafe().nextEntityId();
+    }
+
     void destroyEntity(Player player, int entityId);
 
     void spawnHologram(Player player, Location location, String line, int id);
