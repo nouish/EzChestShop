@@ -29,7 +29,7 @@ public class BlockOutline {
             checkForDoubleChestShop();
         }
 
-        outlineID = Utils.nextEntityId();
+        outlineID = Utils.nextEntityId(block.getWorld());
         nmsHandle.showOutline(player, block, outlineID);
         Utils.activeOutlines.put(outlineID, this);
 

@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("com.gradleup.shadow") version "9.6.0"
+    id("com.gradleup.shadow") version "9.6.1"
     id("com.gorylenko.gradle-git-properties") version "4.0.1"
 }
 
@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":internal:v1_21_R2"))
     implementation(project(":internal:v1_21_R3"))
     implementation(project(":internal:v1_21_R6"))
+    implementation(project(":internal:v26_2"))
 }
 
 gitProperties {

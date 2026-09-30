@@ -23,8 +23,8 @@ import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.Constants;
+import me.deadlight.ezchestshop.EzChestShop;
 import me.deadlight.ezchestshop.data.Config;
 import me.deadlight.ezchestshop.data.DatabaseManager;
 import me.deadlight.ezchestshop.data.LanguageManager;
@@ -102,10 +102,9 @@ public final class Utils {
     /**
      * UnsafeValues: Use this when sending custom packets, so that there are no collisions on the client or server.
      */
-    public static int nextEntityId() {
+    public static int nextEntityId(World world) {
         try {
-            // noinspection deprecation
-            return Bukkit.getUnsafe().nextEntityId();
+            return nmsHandle.nextEntityId(world);
         } catch (Exception e) {
             // Methods in org.bukkit.UnsafeValues could change or be removed, so we anticipate this and provide a fallback.
             if (!WARN_ON_ENTITY_ID_EXCEPTION.getAndSet(true)) {
